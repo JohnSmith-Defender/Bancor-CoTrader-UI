@@ -42,7 +42,7 @@ class TradeModal extends Component {
 
   // helper for setState
   change = e => {
-    if(e.target.name === "selectToOficial" || e.target.name ===  "selectFromOficial"){
+    if(typeof this.state[e.target.name] === "boolean"){
       this.setState({
         [e.target.name]: !this.state[e.target.name]
       })

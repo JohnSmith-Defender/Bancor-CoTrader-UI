@@ -7,6 +7,7 @@ export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
 export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
 export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
+export const EtherscanLink = "https://etherscan.io/"
 
 
 // ROPSTEN
