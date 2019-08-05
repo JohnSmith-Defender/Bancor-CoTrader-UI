@@ -279,11 +279,15 @@ class PoolModal extends Component {
   trade = () => {
   if(this.state.to && this.state.from && this.state.directionAmount > 0){
     if(this.state.to !== this.state.from){
-      if(this.state.to === "BNT" || this.state.from === "BNT" || !this.state.useERC20AsSelectFrom){
-        this.quickConvert()
-      }else if(this.state.from === "ETH"){
+      if(this.state.from === "ETH"){
         this.convertFromETH()
-      }else{
+      }
+      else if(this.state.from === "BNT" || !this.state.useERC20AsSelectFrom){
+        this.quickConvert()
+      }else if(this.state.to === "BNT" && this.state.from !== "ETH"){
+        this.quickConvert()
+      }
+      else{
         this.claimAndConvert()
       }
     }
