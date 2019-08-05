@@ -63,9 +63,7 @@ class PoolModal extends Component {
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
-      this.getRate()
-      this.checkRequireApprove()
-      // this.setTokensData()
+      this.checkRateAndApprove()
     }
 
     // Update state with tokens data
@@ -114,11 +112,28 @@ class PoolModal extends Component {
   //   }
   // }
 
-  // not need approve for ETH, BNT or smart token
+  // override for case not input the same parameters each time
+  overrideGetDirectionData = () => {
+    return getDirectionData(
+      this.state.from,
+      this.state.to,
+      this.state.bancorTokensStorageJson,
+      this.state.useERC20AsSelectFrom,
+      this.state.useERC20AsSelectTo
+    )
+  }
+
+  // not need approve for ETH, BNT, smart token
   checkRequireApprove = () => {
-    if(!this.state.useERC20AsSelectFrom || this.state.from === "ETH" || this.state.from === "BNT"){
+    const { isRelatedDirection } = this.overrideGetDirectionData()
+
+    if(isRelatedDirection){
+      this.setState({ requireApprove: true})
+    }
+    else if(!this.state.useERC20AsSelectFrom || this.state.from === "ETH" || this.state.from === "BNT"){
       this.setState({ requireApprove: false})
-    }else{
+    }
+    else{
       this.setState({ requireApprove: true})
     }
   }
@@ -126,43 +141,42 @@ class PoolModal extends Component {
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // View rate
   getRate = async () => {
-    if(this.state.from && this.state.to && this.state.directionAmount > 0){
-      const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-      const { objPropsFrom, objPropsTo } = getDirectionData(
-        this.state.from,
-        this.state.to,
-        this.state.bancorTokensStorageJson,
-        this.state.useERC20AsSelectFrom,
-        this.state.useERC20AsSelectTo
-      )
+    const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
+    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
 
-      const path = getPath(
-        this.state.from,
-        this.state.to,
-        this.state.bancorTokensStorageJson,
-        objPropsFrom,
-        objPropsTo
-      )
+    const path = getPath(
+      this.state.from,
+      this.state.to,
+      this.state.bancorTokensStorageJson,
+      objPropsFrom,
+      objPropsTo,
+      isRelatedDirection
+    )
 
-      let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
-        path,
-        toWei(this.state.directionAmount)
-      ).call()
+    let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
+      path,
+      toWei(this.state.directionAmount)
+    ).call()
 
-      if(amountReturn){
-        amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
-      }else{
-        amountReturn = 0
-      }
-
-      this.setState({
-        reciveSymbol:this.state.to,
-        amountReturn
-      })
+    if(amountReturn){
+      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
+    }else{
+      amountReturn = 0
     }
-    else{
-      this.setState({ amountReturn:0 })
+
+    this.setState({
+      reciveSymbol:this.state.to,
+      amountReturn
+    })
+  }
+
+  // not need call this functions if user not select to and from
+  checkRateAndApprove = () => {
+    if(this.state.from && this.state.to && this.state.directionAmount > 0){
+      this.getRate()
+      this.checkRequireApprove()
+      // this.setTokensData()
     }
   }
 
@@ -170,13 +184,7 @@ class PoolModal extends Component {
   // approve ERC20 standard
   approve = (reciver) => {
     if(this.state.from){
-      const { sendFrom } = getDirectionData(
-        this.state.from,
-        this.state.to,
-        this.state.bancorTokensStorageJson,
-        this.state.useERC20AsSelectFrom,
-        this.state.useERC20AsSelectTo
-      )
+      const { sendFrom } = this.overrideGetDirectionData()
 
       const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
       token.methods.approve(
@@ -195,13 +203,7 @@ class PoolModal extends Component {
   wrapperApprove = async () => {
     if(this.state.to === "BNT" || this.state.from === "BNT"){
       console.log("Approve to converter")
-      const { tokenInfoFrom } = getDirectionData(
-        this.state.from,
-        this.state.to,
-        this.state.bancorTokensStorageJson,
-        this.state.useERC20AsSelectFrom,
-        this.state.useERC20AsSelectTo
-      )
+      const { tokenInfoFrom } = this.overrideGetDirectionData()
 
       const converterAddress = tokenInfoFrom.converterAddress
       this.approve(converterAddress)
@@ -213,17 +215,12 @@ class PoolModal extends Component {
 
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // trade between source and source
+  // or COTBNT/COT or vice versa case
   claimAndConvert = () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const { objPropsFrom, objPropsTo } = getDirectionData(
-      this.state.from,
-      this.state.to,
-      this.state.bancorTokensStorageJson,
-      this.state.useERC20AsSelectFrom,
-      this.state.useERC20AsSelectTo
-    )
-    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+    const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
+    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo, isRelatedDirection)
 
     bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
@@ -237,13 +234,7 @@ class PoolModal extends Component {
   // or if from === smart token
   quickConvert = () => {
     const web3 = this.props.MobXStorage.web3
-    const { tokenInfoFrom, objPropsFrom, objPropsTo } = getDirectionData(
-      this.state.from,
-      this.state.to,
-      this.state.bancorTokensStorageJson,
-      this.state.useERC20AsSelectFrom,
-      this.state.useERC20AsSelectTo
-    )
+    const { tokenInfoFrom, objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const converterContract = web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
@@ -260,13 +251,7 @@ class PoolModal extends Component {
   convertFromETH = () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const { objPropsFrom, objPropsTo } = getDirectionData(
-      this.state.from,
-      this.state.to,
-      this.state.bancorTokensStorageJson,
-      this.state.useERC20AsSelectFrom,
-      this.state.useERC20AsSelectTo
-    )
+    const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 
@@ -279,8 +264,12 @@ class PoolModal extends Component {
   trade = () => {
   if(this.state.to && this.state.from && this.state.directionAmount > 0){
     if(this.state.to !== this.state.from){
+      const { isRelatedDirection } = this.overrideGetDirectionData()
       if(this.state.from === "ETH"){
         this.convertFromETH()
+      }
+      else if (isRelatedDirection){
+        this.claimAndConvert()
       }
       else if(this.state.from === "BNT" || !this.state.useERC20AsSelectFrom){
         this.quickConvert()

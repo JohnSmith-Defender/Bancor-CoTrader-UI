@@ -2,7 +2,7 @@ import findByProps from './findByProps'
 
 import { BancorETH } from '../config'
 
-// parse direction addresses and info object by symbol
+// parse direction addresses, tokeninfo object, isRelatedDirection info by symbol
 const getDirectionData = (from, to, bancorTokensStorageJson, useERC20AsSelectFrom = true, useERC20AsSelectTo = true) => {
   // parse by token or smart token (dependse of user input)
   const objPropsFrom = useERC20AsSelectFrom ? "symbol" : "smartTokenSymbol"
@@ -19,13 +19,27 @@ const getDirectionData = (from, to, bancorTokensStorageJson, useERC20AsSelectFro
   const sendFrom = useERC20AsSelectFrom ? tokenFrom : tokenInfoFrom.smartTokenAddress
   const sendTo = useERC20AsSelectTo ? tokenTo : tokenInfoTo.smartTokenAddress
 
+  // // detect prop for case if app use smart token
+  const fromProp = objPropsFrom === 'symbol' ? 'tokenAddress' : 'smartTokenAddress'
+  const toProp = objPropsTo === 'symbol' ? 'tokenAddress' : 'smartTokenAddress'
+
+  // for case COT/COTBNT
+  let isRelatedDirection
+  
+  if(tokenInfoFrom[fromProp] === tokenTo || tokenInfoTo[toProp] === tokenFrom){
+    isRelatedDirection = true
+  }else{
+    isRelatedDirection = false
+  }
+
   return {
     objPropsFrom,
     objPropsTo,
     tokenInfoFrom,
     tokenInfoTo,
     sendFrom,
-    sendTo
+    sendTo,
+    isRelatedDirection
   }
 }
 
