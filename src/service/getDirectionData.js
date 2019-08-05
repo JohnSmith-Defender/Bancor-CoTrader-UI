@@ -25,10 +25,13 @@ const getDirectionData = (from, to, bancorTokensStorageJson, useERC20AsSelectFro
 
   // for case COT/COTBNT
   let isRelatedDirection
-  
-  if(tokenInfoFrom[fromProp] === tokenTo || tokenInfoTo[toProp] === tokenFrom){
+  if(to === "ETH" || from === "ETH"){
+    isRelatedDirection = false
+  }
+  else if(tokenInfoFrom[fromProp] === tokenTo || tokenInfoTo[toProp] === tokenFrom){
     isRelatedDirection = true
-  }else{
+  }
+  else{
     isRelatedDirection = false
   }
 

@@ -1,4 +1,4 @@
-export const updateData = "Tuesday, July 30, 2019"
+export const updateData = "Monday, August 5, 2019"
 
 
 // MAINNET
@@ -16,7 +16,7 @@ export const EtherscanLink = "https://etherscan.io/"
 // export const ConvertersRegistryList = "0xb858d5a0e682a3fd441964a3c6e47db90c79fd91"
 // export const BancorNetwork = "0x39Dd546F2DA1f6bb0fEa7A086cE04A519fCB6A1A"
 // export const BancorETH = "0xd43391b8fa168dcb34517877334672bcc3343ca1"
-
+// export const EtherscanLink = "https://etherscan.io/"
 
 export const ConvertersRegistryListABI = [
 	{
