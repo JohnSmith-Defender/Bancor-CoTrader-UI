@@ -1,3 +1,4 @@
+// THIS COMPONENT CONVERT ETH, ERC20 and SmartTokens
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 import React, { Component } from 'react'

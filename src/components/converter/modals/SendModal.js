@@ -1,3 +1,4 @@
+// THIS COMPONENT CONVERT ONLY ETH AND ERC20 AND THEN SEND TO ANY ETH ADDRESS 
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 

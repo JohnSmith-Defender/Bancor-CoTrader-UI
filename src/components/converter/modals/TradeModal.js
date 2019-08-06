@@ -1,3 +1,4 @@
+// THIS COMPONENT CONVERT ONLY ETH AND ERC20 
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 
