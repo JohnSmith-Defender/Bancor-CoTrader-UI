@@ -35,31 +35,44 @@ class StepFive extends Component {
   const accounts = this.props.MobXStorage.accounts
 
   const smartTokenAddress = window.localStorage.getItem('smartToken')
+  const connectorTokenAddress = window.localStorage.getItem('userToken')
 
   const BNTcontract = web3.eth.Contract(ABISmartToken, BNTToken)
   let balance = await BNTcontract.methods.balanceOf(this.state.converterAddress).call()
-
-  // Balance 2x for BNT rate
   balance = web3.utils.hexToNumberString(balance._hex)
-  balance = web3.utils.fromWei(balance)
-  balance = Number(balance) * 2
-  balance = web3.utils.toWei(String(balance))
+  balance = Number(web3.utils.fromWei(balance))
 
-  const converter = web3.eth.Contract(ABISmartToken, smartTokenAddress)
+  const ConnectorToken = web3.eth.Contract(ABISmartToken, connectorTokenAddress)
+  let connectorBalance = await ConnectorToken.methods.balanceOf(this.state.converterAddress).call()
+  connectorBalance = web3.utils.hexToNumberString(connectorBalance._hex)
+  connectorBalance  = Number(web3.utils.fromWei(connectorBalance))
 
-  console.log("PARAMS: ", accounts[0], balance)
+  console.log(connectorBalance, balance)
 
-  converter.methods.issue(accounts[0], balance).send({
-    from:accounts[0],
-    gas:1372732
-  }).on('transactionHash', (hash) => {
-   console.log("SetFee hash ", hash)
-   window.localStorage.setItem('Step', "Six");
-   this.props.MobXStorage.setPending(true)
-  })
-  .on('confirmation', (confirmationNumber, receipt) => {
-    this.props.MobXStorage.txFinish()
-  })
+  if(balance > 0 && connectorBalance > 0){
+    // Balance 2x for BNT rate
+    balance = balance * 2
+    balance = web3.utils.toWei(String(balance))
+
+    const converter = web3.eth.Contract(ABISmartToken, smartTokenAddress)
+
+    console.log("PARAMS: ", accounts[0], balance)
+
+    converter.methods.issue(accounts[0], balance).send({
+      from:accounts[0],
+      gas:1372732
+    }).on('transactionHash', (hash) => {
+     console.log("SetFee hash ", hash)
+     window.localStorage.setItem('Step', "Six");
+     this.props.MobXStorage.setPending(true)
+    })
+    .on('confirmation', (confirmationNumber, receipt) => {
+      this.props.MobXStorage.txFinish()
+    })
+  }
+  else{
+    alert("Converter has not received balance yet")
+  }
  }
 
 
