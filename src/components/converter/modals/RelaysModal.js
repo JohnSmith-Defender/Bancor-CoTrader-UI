@@ -313,7 +313,7 @@ class PoolModal extends Component {
       ?
       (
         <Button variant="primary" size="sm" onClick={() => this.setState({ ShowModal: true })}>
-        Pool
+        Relays
         </Button>
       )
       :
@@ -328,7 +328,7 @@ class PoolModal extends Component {
       >
       <Modal.Header closeButton>
       <Modal.Title id="example-modal-sizes-title-lg">
-      <small>Pool relays</small>
+      <small>Buy/sell relays</small>
       </Modal.Title>
       </Modal.Header>
       <Modal.Body>

@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react'
 
 import TradePage from "./components/converter/TradePage"
 import SendPage from "./components/converter/SendPage"
+import RelaysPage from "./components/converter/RelaysPage"
 import PoolPage from "./components/converter/PoolPage"
 
 import AddConverter from "./components/converter/AddConverter"
@@ -79,6 +80,10 @@ class App extends Component {
 
         <Tab eventKey="pool" title="Pool">
         <PoolPage/>
+        </Tab>
+
+        <Tab eventKey="relays" title="Relays">
+        <RelaysPage/>
         </Tab>
 
         <Tab eventKey="create" title="Create converter">
