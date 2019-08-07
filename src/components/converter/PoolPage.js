@@ -1,15 +1,16 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import { updateData } from '../../config'
+import PoolModal from './modals/PoolModal'
 
-function RelaysPage() {
+
+function PoolPage() {
   return (
     <React.Fragment>
 
     <Card className="text-center">
     <Card.Header>Pool</Card.Header>
     <Card.Body>
-    <Card.Title></Card.Title>
     <Card.Text>
     To own part of any token's exchange, add liquidity to that token's pool.
     </Card.Text>
@@ -34,9 +35,7 @@ function RelaysPage() {
     <Card.Text>
     More updates coming soon.
     </Card.Text>
-    <Card.Text>
-    [Pool now]
-    </Card.Text>
+    <PoolModal/>
      </Card.Body>
      <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
     </Card>
@@ -45,4 +44,4 @@ function RelaysPage() {
 
 }
 
-export default RelaysPage
+export default PoolPage

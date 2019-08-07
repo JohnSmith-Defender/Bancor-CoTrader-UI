@@ -1,4 +1,4 @@
-// THIS COMPONENT CONVERT ETH, ERC20 and SmartTokens
+// THIS COMPONENT CONVERT ETH, ERC20 and SMARTTOKEN
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 import React, { Component } from 'react'
@@ -20,7 +20,7 @@ import getPath from '../../../service/getPath'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 
-class PoolModal extends Component {
+class RelaysModal extends Component {
   constructor(props, context) {
    super(props, context)
     this.state = {
@@ -497,4 +497,4 @@ class PoolModal extends Component {
   }
 }
 
-export default inject('MobXStorage')(observer(PoolModal))
+export default inject('MobXStorage')(observer(RelaysModal))

@@ -10,7 +10,6 @@ function RelaysPage() {
     <Card className="text-center">
     <Card.Header>Buy pool relays</Card.Header>
     <Card.Body>
-    <Card.Title></Card.Title>
     <Card.Text>
     To own part of any token's exchange, buy its relay.
     </Card.Text>

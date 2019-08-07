@@ -1,4 +1,4 @@
-// THIS COMPONENT CONVERT ONLY ETH AND ERC20 
+// THIS COMPONENT CONVERT ONLY ETH AND ERC20 TO msg.sender 
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 

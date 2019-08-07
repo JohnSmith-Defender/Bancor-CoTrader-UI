@@ -12,7 +12,6 @@ function TradePage() {
     <Card className="text-center">
     <Card.Header>Convert ERC20 to ERC20</Card.Header>
     <Card.Body>
-    <Card.Title></Card.Title>
     <Card.Text>
     This opensource dapp allows you to convert both official and unofficial tokens in the Bancor Network.
     </Card.Text>

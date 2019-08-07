@@ -10,9 +10,8 @@ function SendPage() {
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Convert ERC20 to ERC20</Card.Header>
+    <Card.Header>Convert ERC20 to ERC20 and send</Card.Header>
     <Card.Body>
-    <Card.Title></Card.Title>
     <Card.Text>
     This page allow You exchange tokens and send for any ETH address
     </Card.Text>

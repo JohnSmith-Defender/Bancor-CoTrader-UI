@@ -3,6 +3,7 @@ import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
+import { updateData } from '../../config'
 
 class AddConverter extends Component {
   state = {
@@ -36,13 +37,15 @@ render() {
     <React.Fragment>
     <br />
     <Card className="text-center">
-    <strong>Add converter</strong>
-    <small>To add your token to an unofficial list that will enable anyone to trade it, add it to this registry contract.</small>
+    <Card.Header>Add converter</Card.Header>
+    <Card.Text>To add your token to an unofficial list that will enable anyone to trade it, add it to this registry contract.</Card.Text>
 
     <Form>
-    <Form.Control name="converter" onChange={e => this.change(e)}/>
+    <Form.Control name="converter" placeholder="Your converter address" onChange={e => this.change(e)}/>
+    <br/>
     <Button variant="primary" size="sm" onClick={() => this.AddToList()}>add to list</Button>
     </Form>
+    <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
     </Card>
     <br />
     {

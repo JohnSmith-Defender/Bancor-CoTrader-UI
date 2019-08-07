@@ -13,7 +13,7 @@ import CreateConverter from "./components/converter/CreateConverter"
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
 
-import { Tabs, Tab } from "react-bootstrap"
+import { Tabs, Tab, Alert } from "react-bootstrap"
 
 class App extends Component {
   constructor(props, context) {
@@ -92,7 +92,7 @@ class App extends Component {
           ?
           (<CreateConverter/>)
           :
-          (<p>Please connect to web3</p>)
+          (<Alert variant="warning">Please connect to web3</Alert>)
         }
         </Tab>
 
@@ -102,13 +102,12 @@ class App extends Component {
           ?
           (<AddConverter />)
           :
-          (<p>Please connect to web3</p>)
+          (<Alert variant="warning">Please connect to web3</Alert>)
         }
         </Tab>
 
         </Tabs>
         </div>
-      )
 
       </React.Fragment>
     )
