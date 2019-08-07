@@ -75,9 +75,8 @@ render() {
   return(
     <Card className="text-center">
    <h3>Step 1</h3>
-   <strong>Create SmartToken</strong>
-   <p>Initially, the SmartToken is deployed that serves as a “bridge” between the existing ERC20
-   token and bancor network.</p>
+   <strong>Create Relay Token (aka SmartToken)</strong>
+   <p>Relay tokens are a bridge between your token and the Bancor BNT trade network.</p>
    <strong>This will be executed with these parameters</strong>
    <small>Name: XXX Smart Relay Token</small>
    <small>Symbol: XXXBNT</small>

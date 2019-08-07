@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
-import { updateData } from '../../config'
 import PoolModal from './modals/PoolModal'
 
 
@@ -9,7 +8,7 @@ function PoolPage() {
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Pool</Card.Header>
+    <Card.Header>Liquidity pools</Card.Header>
     <Card.Body>
     <Card.Text>
     To own part of any token's exchange, add liquidity to that token's pool.
@@ -37,7 +36,7 @@ function PoolPage() {
     </Card.Text>
     <PoolModal/>
      </Card.Body>
-     <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
+     <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
     </Card>
     </React.Fragment>
   )

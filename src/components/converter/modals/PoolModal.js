@@ -3,11 +3,9 @@ import React, { Component } from 'react'
 import { Button, ButtonGroup, Alert, Form,  Modal, Badge } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
-
-import {
-  ABISmartToken,
-  ABIConverter
-} from '../../../config'
+import findByProps from '../../../service/findByProps'
+import getWeb3ForRead from '../../../service/getWeb3ForRead'
+import { ABIConverter, ABISmartToken } from '../../../config'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 
@@ -15,15 +13,15 @@ class PoolModal extends Component {
   constructor(props, context) {
    super(props, context)
     this.state = {
-    to:undefined,
     from:undefined,
     directionAmount:0,
     ShowModal:false,
     bancorTokensStorageJson:null,
-    selectToOficial:true,
     selectFromOficial:true,
     officialSymbols:undefined,
-    unofficialSymbols:undefined
+    unofficialSymbols:undefined,
+    connectorAmount:0,
+    BNTAmount:0
     }
   }
 
@@ -40,7 +38,7 @@ class PoolModal extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState){
+  componentDidUpdate = async (prevProps, prevState) => {
     // Update state with tokens data
     if (prevProps.MobXStorage.bancorTokensStorageJson !== this.state.bancorTokensStorageJson) {
       const officialSymbols = this.props.MobXStorage.officialSymbols
@@ -51,6 +49,110 @@ class PoolModal extends Component {
         unofficialSymbols,
         bancorTokensStorageJson
       })
+    }
+
+    // Update connctors info
+    if(prevState.from !== this.state.from || prevState.directionAmount !== this.state.directionAmount){
+      if(this.state.from)
+        if(this.state.directionAmount > 0){
+          const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
+          console.log(connectorsInfo[0], connectorsInfo[1])
+          const BNTAmount = connectorsInfo[0]
+          const connectorAmount = connectorsInfo[1]
+          this.setState({ BNTAmount, connectorAmount })
+        }else{
+          this.setState({ BNTAmount:0, connectorAmount:0 })
+      }
+    }
+  }
+
+  // return converter contract, converter address, connector (ERC20) token address, smart token address and smart token contract
+  getInfoBySymbol = () => {
+    if(this.state.from && this.state.bancorTokensStorageJson){
+      const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
+      const tokenInfo = findByProps(this.state.bancorTokensStorageJson, 'symbol', this.state.from)[0]
+      return [
+        web3.eth.Contract(ABIConverter, tokenInfo.converterAddress),
+        tokenInfo.converterAddress,
+        tokenInfo.tokenAddress,
+        tokenInfo.smartToken,
+        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
+      ]
+    }
+  }
+
+
+ // return BNT and ERC20 connectors amount calculated by smart token amount
+ calculateConnectorBySmartTokenAmount = async () => {
+   const amount = toWei(String(this.state.directionAmount))
+   const converterInfo = this.getInfoBySymbol()
+   const token = converterInfo[4]
+   const converter = converterInfo[0]
+   const connectorCount = await converter.methods.connectorTokenCount().call()
+
+   let supply = await token.methods.totalSupply().call()
+   supply = hexToNumberString(supply._hex)
+
+   let connectorsAmount = []
+   let connectorAmount
+   let connectorToken
+   let connectorBalance
+
+   for(let i = 0; i < connectorCount; i++){
+     connectorToken = await converter.methods.connectorTokens(i).call()
+     connectorBalance = await converter.methods.getConnectorBalance(connectorToken).call()
+     connectorBalance = hexToNumberString(connectorBalance._hex)
+     // Bancor calculation
+     // _amount.mul(connectorBalance).div(supply);
+     connectorAmount = Number(fromWei(amount)) * Number(fromWei(connectorBalance))
+     connectorAmount = connectorAmount / Number(fromWei(supply))
+
+     connectorsAmount.push(connectorAmount)
+   }
+
+   return connectorsAmount
+ }
+
+
+  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
+ // approve ERC20 standard
+ approve = (reciver) => {
+   if(this.state.from){
+     const info = this.getInfoBySymbol()
+     const reciver = info[1]
+     const sendFrom = info[2]
+
+     const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
+     token.methods.approve(
+       reciver,
+       this.props.MobXStorage.web3.utils.toWei(String(this.state.connectorAmount))
+     ).send({from: this.props.MobXStorage.accounts[0]})
+   }
+   else{
+     alert('Not correct input data')
+   }
+ }
+
+  fund = () => {
+    if(this.state.directionAmount > 0){
+      const converter = this.getInfoBySymbol()[0]
+      const info = this.getInfoBySymbol()
+      const reciver = info[1]
+      console.log(reciver)
+      converter.methods.fund(toWei(String(this.state.directionAmount))).send({ from:this.props.MobXStorage.accounts[0] })
+    }
+    else {
+      alert("Please input amount")
+    }
+  }
+
+  liquidate = () => {
+    if(this.state.directionAmount > 0){
+      const converter = this.getInfoBySymbol()[0]
+      converter.methods.liquidate(toWei(String(this.state.directionAmount))).send({ from:this.props.MobXStorage.accounts[0] })
+    }
+    else {
+      alert("Please input amount")
     }
   }
 
@@ -134,6 +236,36 @@ class PoolModal extends Component {
                     placeholder="Choose a symbol for send"
                 />
               )
+            }
+            <br/>
+            <Form.Control name="directionAmount" placeholder="Enter relay amount to recive" onChange={e => this.change(e)} type="number" min="1"/>
+            <br/>
+            {/* Connectors info */}
+            {
+              this.state.BNTAmount && this.state.connectorAmount
+              ?
+              (
+                <Alert variant="info">
+                You will pay BNT: &nbsp; {this.state.BNTAmount}, &nbsp; {this.state.from}: &nbsp; {this.state.connectorAmount}
+                </Alert>
+              )
+              :
+              (null)
+            }
+            {/* Buttons */}
+            <br/>
+            {
+              this.state.from && this.props.MobXStorage.web3
+              ?
+              (
+              <ButtonGroup>
+              <Button variant="outline-primary" size="sm" onClick={() => this.approve()}>Approve</Button>
+              <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Fund</Button>
+              <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
+              </ButtonGroup>
+              )
+              :
+              (null)
             }
             </React.Fragment>
           )

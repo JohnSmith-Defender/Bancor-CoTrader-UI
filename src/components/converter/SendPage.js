@@ -1,16 +1,14 @@
 import React from 'react'
-
 import SendModal from './modals/SendModal'
 import { Card } from 'react-bootstrap'
 
-import { updateData } from '../../config'
 
 function SendPage() {
   return (
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Convert ERC20 to ERC20 and send</Card.Header>
+    <Card.Header>Trade and send via Bancor</Card.Header>
     <Card.Body>
     <Card.Text>
     This page allow You exchange tokens and send for any ETH address
@@ -24,7 +22,7 @@ function SendPage() {
 
     <SendModal/>
      </Card.Body>
-     <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
+     <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
     </Card>
     </React.Fragment>
   )

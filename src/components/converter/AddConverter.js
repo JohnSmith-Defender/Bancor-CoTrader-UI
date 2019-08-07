@@ -3,7 +3,6 @@ import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
-import { updateData } from '../../config'
 
 class AddConverter extends Component {
   state = {
@@ -45,7 +44,7 @@ render() {
     <br/>
     <Button variant="primary" size="sm" onClick={() => this.AddToList()}>add to list</Button>
     </Form>
-    <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
+    <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
     </Card>
     <br />
     {

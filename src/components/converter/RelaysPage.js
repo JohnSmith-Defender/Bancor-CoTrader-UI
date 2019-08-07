@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
-import { updateData } from '../../config'
 import RelaysModal from './modals/RelaysModal'
 
 function RelaysPage() {
@@ -8,7 +7,7 @@ function RelaysPage() {
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Buy pool relays</Card.Header>
+    <Card.Header>Bancor relay tokens</Card.Header>
     <Card.Body>
     <Card.Text>
     To own part of any token's exchange, buy its relay.
@@ -24,7 +23,7 @@ function RelaysPage() {
     </Card.Text>
     <RelaysModal />
      </Card.Body>
-     <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
+     <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
     </Card>
     </React.Fragment>
   )

@@ -1,16 +1,14 @@
 import React from 'react'
-
 import TradeModal from './modals/TradeModal'
 import { Card } from 'react-bootstrap'
 
-import { updateData } from '../../config'
 
 function TradePage() {
   return (
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Convert ERC20 to ERC20</Card.Header>
+    <Card.Header>Trade via Bancor</Card.Header>
     <Card.Body>
     <Card.Text>
     This opensource dapp allows you to convert both official and unofficial tokens in the Bancor Network.
@@ -27,7 +25,7 @@ function TradePage() {
 
     <TradeModal/>
      </Card.Body>
-     <Card.Footer className="text-muted">last update: { updateData }</Card.Footer>
+     <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
     </Card>
     </React.Fragment>
   )
