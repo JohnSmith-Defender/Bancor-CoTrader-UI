@@ -10,16 +10,14 @@ import {
   ABISmartToken,
   ABIBancorNetwork,
   BancorNetwork,
-  ABIConverter,
-  EtherscanLink
+  ABIConverter
 } from '../../../config'
 
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import findByProps from '../../../service/findByProps'
 import getPath from '../../../service/getPath'
-import getDirectionData from '../../../service/getDirectionData'
-
 import { Typeahead } from 'react-bootstrap-typeahead'
+import DirectionInfo from './modules/DirectionInfo'
 
 class TradeModal extends Component {
   constructor(props, context) {
@@ -61,7 +59,6 @@ class TradeModal extends Component {
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
       this.getRate()
       this.checkRequireApprove()
-      this.setTokensData()
     }
 
     // Update state with tokens data
@@ -112,29 +109,6 @@ class TradeModal extends Component {
       this.setState({ requireApprove: true})
     }
   }
-
-  // set state addreses to and from and user balance from
-  setTokensData = async () => {
-    if(this.state.to && this.state.from && this.props.MobXStorage){
-      const { sendFrom, sendTo } = getDirectionData(
-      this.state.from,
-      this.state.to,
-      this.state.bancorTokensStorageJson)
-
-      const web3 = this.props.MobXStorage.web3
-      let userBalanceFrom
-      if(this.state.from !== "ETH"){
-        const token = web3.eth.Contract(ABISmartToken, sendFrom)
-        userBalanceFrom = await token.methods.balanceOf(this.props.MobXStorage.accounts[0]).call()
-        userBalanceFrom = web3.utils.fromWei(web3.utils.hexToNumberString(userBalanceFrom._hex))
-      }else{
-        userBalanceFrom = await web3.eth.getBalance((this.props.MobXStorage.accounts[0]))
-        userBalanceFrom = web3.utils.fromWei(String(userBalanceFrom))
-      }
-      this.setState({ sendFrom, sendTo, userBalanceFrom })
-    }
-  }
-
 
   // approve ERC20 standard
   approve = () => {
@@ -375,22 +349,21 @@ class TradeModal extends Component {
       <br/>
       <Form.Control name="directionAmount" placeholder="Enter token amount" onChange={e => this.change(e)} type="number" min="1"/>
       <br/>
+      <DirectionInfo
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
+      web3={this.props.MobXStorage.web3}
+      accounts={this.props.MobXStorage.accounts}
+      useERC20AsSelectFrom={true}
+      useERC20AsSelectTo={true}
+      />
       {
-        this.state.amountReturn > 0
+        this.state.directionAmount > 0
         ?
         ( <div>
           <Alert variant="primary">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
-          {
-            /*Token info*/
-            this.state.sendTo && this.state.sendFrom && this.state.directionAmount > 0 && this.props.MobXStorage.web3
-            ?
-            (<Alert variant="info">
-            Etherscan: { <a href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.state.to}</a> }
-            &nbsp; Your balance of {this.state.from} {this.state.userBalanceFrom}
-            </Alert>)
-            :
-            (null)
-          }
           <br/>
           {
             this.props.MobXStorage.web3

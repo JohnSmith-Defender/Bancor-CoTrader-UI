@@ -294,7 +294,7 @@ class PoolModal extends Component {
                 <Button variant="outline-info" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve connector</Button>
                 <Button variant="outline-info" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
                 </ButtonGroup>
-                <Card.Text><small>Please do not press fund button untill step 1 and 2 will not be confirmed</small></Card.Text>
+                <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
                 </Card.Body>
                 </Card>
                 </React.Fragment>

@@ -11,15 +11,14 @@ import {
   ABISmartToken,
   ABIConverter,
   ABIBancorNetwork,
-  BancorNetwork,
-  EtherscanLink
+  BancorNetwork
 } from '../../../config'
 
 import getDirectionData from '../../../service/getDirectionData'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
-
 import { Typeahead } from 'react-bootstrap-typeahead'
+import DirectionInfo from './modules/DirectionInfo'
 
 class RelaysModal extends Component {
   constructor(props, context) {
@@ -41,10 +40,7 @@ class RelaysModal extends Component {
     web3:null,
     useERC20AsSelectFrom:true,
     useERC20AsSelectTo:false,
-    requireApprove:false,
-    sendFrom:undefined,
-    sendTo:undefined,
-    userBalanceFrom:0
+    requireApprove:false
     }
   }
 
@@ -89,24 +85,7 @@ class RelaysModal extends Component {
     }
   }
 
-  // set state addreses to and from and user balance from
-  setTokensData = async () => {
-    if(this.state.to && this.state.from && this.props.MobXStorage){
-      const { sendFrom, sendTo } = this.overrideGetDirectionData()
 
-      const web3 = this.props.MobXStorage.web3
-      let userBalanceFrom
-      if(this.state.from !== "ETH"){
-        const token = web3.eth.Contract(ABISmartToken, sendFrom)
-        userBalanceFrom = await token.methods.balanceOf(this.props.MobXStorage.accounts[0]).call()
-        userBalanceFrom = web3.utils.fromWei(web3.utils.hexToNumberString(userBalanceFrom._hex))
-      }else{
-        userBalanceFrom = await web3.eth.getBalance((this.props.MobXStorage.accounts[0]))
-        userBalanceFrom = web3.utils.fromWei(String(userBalanceFrom))
-      }
-      this.setState({ sendFrom, sendTo, userBalanceFrom })
-    }
-  }
 
   // override for case not input the same parameters each time
   overrideGetDirectionData = () => {
@@ -172,7 +151,6 @@ class RelaysModal extends Component {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
       this.getRate()
       this.checkRequireApprove()
-      this.setTokensData()
     }
   }
 
@@ -441,22 +419,21 @@ class RelaysModal extends Component {
       <br/>
       <Form.Control name="directionAmount" placeholder="Enter amount to send" onChange={e => this.change(e)} type="number" min="1"/>
       <br/>
+      <DirectionInfo
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
+      web3={this.props.MobXStorage.web3}
+      accounts={this.props.MobXStorage.accounts}
+      useERC20AsSelectFrom={this.state.useERC20AsSelectFrom}
+      useERC20AsSelectTo={this.state.useERC20AsSelectTo}
+      />
       {
-        this.state.amountReturn > 0
+        this.state.directionAmount > 0
         ?
         ( <div>
           <Alert variant="primary">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
-          {
-            /*Token info*/
-            this.state.sendTo && this.state.sendFrom && this.state.directionAmount > 0 && this.props.MobXStorage.web3
-            ?
-            (<Alert variant="info">
-            Etherscan: { <a href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.state.to}</a> }
-            &nbsp; Your balance of {this.state.from} {this.state.userBalanceFrom}
-            </Alert>)
-            :
-            (null)
-          }
           {
             /*Buttons*/
             this.props.MobXStorage.web3
