@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
-import RelaysModal from './modals/RelaysModal'
+import RelaysModal from '../modals/RelaysModal'
 
 function RelaysPage() {
   return (

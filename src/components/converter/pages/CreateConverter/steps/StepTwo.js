@@ -1,4 +1,4 @@
-import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../config'
+import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'

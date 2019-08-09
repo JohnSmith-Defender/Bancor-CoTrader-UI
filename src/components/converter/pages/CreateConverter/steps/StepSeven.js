@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ABIConverter } from '../../../config'
+import { ABIConverter } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 

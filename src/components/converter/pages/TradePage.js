@@ -1,5 +1,5 @@
 import React from 'react'
-import TradeModal from './modals/TradeModal'
+import TradeModal from '../modals/TradeModal'
 import { Card } from 'react-bootstrap'
 
 

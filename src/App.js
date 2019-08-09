@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import getWeb3 from "./utils/getWeb3"
 import { inject, observer } from 'mobx-react'
 
-import TradePage from "./components/converter/TradePage"
-import SendPage from "./components/converter/SendPage"
-import RelaysPage from "./components/converter/RelaysPage"
-import PoolPage from "./components/converter/PoolPage"
+import TradePage from "./components/converter/pages/TradePage"
+import SendPage from "./components/converter/pages/SendPage"
+import RelaysPage from "./components/converter/pages/RelaysPage"
+import PoolPage from "./components/converter/pages/PoolPage"
 
-import AddConverter from "./components/converter/AddConverter"
-import CreateConverter from "./components/converter/CreateConverter"
+import AddConverter from "./components/converter/pages/AddConverter"
+import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
 
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"

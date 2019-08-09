@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ABISmartToken } from '../../../config'
+import { ABISmartToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 

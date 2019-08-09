@@ -1,5 +1,5 @@
 import React from 'react'
-import SendModal from './modals/SendModal'
+import SendModal from '../modals/SendModal'
 import { Card } from 'react-bootstrap'
 
 

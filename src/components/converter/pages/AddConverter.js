@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../config'
+import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -30,8 +30,6 @@ class AddConverter extends Component {
  }
 
 render() {
-  const smartTokenTx = window.localStorage.getItem('txSmartToken')
-  const converterTx = window.localStorage.getItem('txConverter')
   return(
     <React.Fragment>
     <br />
@@ -54,14 +52,6 @@ render() {
        <React.Fragment>
        <Alert variant="info">
        <p>Congratulations, after confirm transaction Your smart token will be added</p>
-       <br/>
-       <p style={{"color":"red"}}>Please save this info, in case if You need manualy interact with Bancor converter contract</p>
-       <br/>
-       <p>Your converter transaction hash: {converterTx}</p>
-       <p>Converter ABI: https://gist.github.com/RuslanMirov/3256cb419618a6ebe34e9b588053ea71</p>
-       <br/>
-       <p>Your smart token transaction hash: {smartTokenTx}</p>
-       <p>SmartToken ABI: https://gist.github.com/RuslanMirov/9de739810eaab40affe49d21ad393710</p>
        </Alert>
        </React.Fragment>
       )

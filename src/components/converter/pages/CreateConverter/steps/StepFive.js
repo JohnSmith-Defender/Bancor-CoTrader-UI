@@ -1,4 +1,4 @@
-import { ABISmartToken, BNTToken } from '../../../config'
+import { ABISmartToken, BNTToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'

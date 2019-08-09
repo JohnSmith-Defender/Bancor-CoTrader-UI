@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../config'
+import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
