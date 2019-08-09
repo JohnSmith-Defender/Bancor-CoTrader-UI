@@ -21,8 +21,8 @@ class PoolModal extends Component {
     selectFromOficial:true,
     officialSymbols:undefined,
     unofficialSymbols:undefined,
-    connectorAmount:0,
-    BNTAmount:0
+    connectorAmount:undefined,
+    BNTAmount:undefined
     }
   }
 
@@ -120,6 +120,7 @@ class PoolModal extends Component {
  approveBNT = async () => {
    const tokenInfo = this.getInfoBySymbol()
    const converterAddress = tokenInfo[1]
+   console.log("converterAddress", converterAddress)
 
    const bnt = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, BNTToken)
    bnt.methods.approve(
@@ -264,7 +265,7 @@ class PoolModal extends Component {
             {/* Buttons */}
             <br/>
             {
-              this.state.from && this.props.MobXStorage.web3
+              this.state.from && this.props.MobXStorage.web3 && this.state.BNTAmount
               ?
               (
               <ButtonGroup>
