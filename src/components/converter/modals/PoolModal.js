@@ -5,7 +5,8 @@ import { inject, observer } from 'mobx-react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import findByProps from '../../../service/findByProps'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
-import { ABIConverter, ABISmartToken } from '../../../config'
+import { ABIConverter, ABISmartToken, BNTToken } from '../../../config'
+import BigNumber from 'bignumber.js'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 
@@ -59,6 +60,7 @@ class PoolModal extends Component {
           console.log(connectorsInfo[0], connectorsInfo[1])
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
+          console.log(connectorAmount)
           this.setState({ BNTAmount, connectorAmount })
         }else{
           this.setState({ BNTAmount:0, connectorAmount:0 })
@@ -80,7 +82,6 @@ class PoolModal extends Component {
       ]
     }
   }
-
 
  // return BNT and ERC20 connectors amount calculated by smart token amount
  calculateConnectorBySmartTokenAmount = async () => {
@@ -104,8 +105,10 @@ class PoolModal extends Component {
      connectorBalance = hexToNumberString(connectorBalance._hex)
      // Bancor calculation
      // _amount.mul(connectorBalance).div(supply);
-     connectorAmount = Number(fromWei(amount)) * Number(fromWei(connectorBalance))
-     connectorAmount = connectorAmount / Number(fromWei(supply))
+     let bigAmount = new BigNumber(amount)
+     let bigConnectorBalance = new BigNumber(connectorBalance)
+     let bigSupply = new BigNumber(supply)
+     connectorAmount = bigAmount.multipliedBy(bigConnectorBalance).dividedBy(bigSupply).toFixed(0)
 
      connectorsAmount.push(connectorAmount)
    }
@@ -113,25 +116,31 @@ class PoolModal extends Component {
    return connectorsAmount
  }
 
+ // TEMPORARY SOLUTION UNTIL ISSUE WITH BATCHREQUEST
+ approveBNT = async () => {
+   const tokenInfo = this.getInfoBySymbol()
+   const converterAddress = tokenInfo[1]
 
-  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
- // approve ERC20 standard
- approve = (reciver) => {
-   if(this.state.from){
-     const info = this.getInfoBySymbol()
-     const reciver = info[1]
-     const sendFrom = info[2]
-
-     const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
-     token.methods.approve(
-       reciver,
-       this.props.MobXStorage.web3.utils.toWei(String(this.state.connectorAmount))
-     ).send({from: this.props.MobXStorage.accounts[0]})
-   }
-   else{
-     alert('Not correct input data')
-   }
+   const bnt = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, BNTToken)
+   bnt.methods.approve(
+   converterAddress,
+   this.state.BNTAmount
+   ).send({from: this.props.MobXStorage.accounts[0]})
  }
+
+ approveConnector = async () => {
+   const tokenInfo = this.getInfoBySymbol()
+   const converterAddress = tokenInfo[1]
+   const connectorAddress = tokenInfo[2]
+   const connector = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, connectorAddress)
+   connector.methods.approve(
+   converterAddress,
+   this.state.connectorAmount
+   ).send({from: this.props.MobXStorage.accounts[0]})
+  }
+
+
+
 
   fund = () => {
     if(this.state.directionAmount > 0){
@@ -246,7 +255,7 @@ class PoolModal extends Component {
               ?
               (
                 <Alert variant="info">
-                You will pay BNT: &nbsp; {this.state.BNTAmount}, &nbsp; {this.state.from}: &nbsp; {this.state.connectorAmount}
+                You will pay BNT: &nbsp; {fromWei(this.state.BNTAmount)}, &nbsp; {this.state.from}: &nbsp; {fromWei(this.state.connectorAmount)}
                 </Alert>
               )
               :
@@ -259,7 +268,8 @@ class PoolModal extends Component {
               ?
               (
               <ButtonGroup>
-              <Button variant="outline-primary" size="sm" onClick={() => this.approve()}>Approve</Button>
+              <Button variant="outline-primary" size="sm" onClick={() => this.approveBNT()}>Approve BNT</Button>
+              <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Approve connector</Button>
               <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Fund</Button>
               <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
               </ButtonGroup>
