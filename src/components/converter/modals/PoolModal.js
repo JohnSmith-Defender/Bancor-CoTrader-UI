@@ -1,6 +1,9 @@
 // THIS COMPONENT ALLOW USER CALL FUND AND LIQUIDATE FROM A CERTAIN CONVERTER
+// TODO refactoring (Presentational and Container)
+// TODO DRY
+
 import React, { Component } from 'react'
-import { Button, ButtonGroup, Alert, Form,  Modal, Badge } from "react-bootstrap"
+import { Button, ButtonGroup, Alert, Form,  Modal, Badge, Card } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import findByProps from '../../../service/findByProps'
@@ -22,7 +25,8 @@ class PoolModal extends Component {
     officialSymbols:undefined,
     unofficialSymbols:undefined,
     connectorAmount:undefined,
-    BNTAmount:undefined
+    BNTAmount:undefined,
+    isFundAction:false
     }
   }
 
@@ -269,11 +273,31 @@ class PoolModal extends Component {
               ?
               (
               <ButtonGroup>
-              <Button variant="outline-primary" size="sm" onClick={() => this.approveBNT()}>Approve BNT</Button>
-              <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Approve connector</Button>
-              <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Fund</Button>
+              <Button variant={ this.state.isFundAction ? "primary":"outline-primary" }size="sm" name="isFundAction" onClick={e => this.change(e)}>Fund</Button>
               <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
               </ButtonGroup>
+              )
+              :
+              (null)
+            }
+            {
+              this.state.isFundAction && this.state.BNTAmount
+              ?
+              (
+                <React.Fragment>
+                <br/>
+                <br/>
+                <Card className="text-center">
+                <Card.Body>
+                <ButtonGroup>
+                <Button variant="outline-info" size="sm" onClick={() => this.approveBNT()}>Step 1: Approve BNT</Button>
+                <Button variant="outline-info" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve connector</Button>
+                <Button variant="outline-info" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
+                </ButtonGroup>
+                <Card.Text><small>Please do not press fund button untill step 1 and 2 will not be confirmed</small></Card.Text>
+                </Card.Body>
+                </Card>
+                </React.Fragment>
               )
               :
               (null)

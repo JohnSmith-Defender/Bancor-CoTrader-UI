@@ -1,4 +1,4 @@
-// THIS COMPONENT CONVERT ONLY ETH AND ERC20 AND THEN SEND TO ANY ETH ADDRESS 
+// THIS COMPONENT CONVERT ONLY ETH AND ERC20 AND THEN SEND TO ANY ETH ADDRESS
 // TODO refactoring (Presentational and Container)
 // TODO DRY
 
@@ -9,12 +9,14 @@ import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import {
   ABISmartToken,
   ABIBancorNetwork,
-  BancorNetwork
+  BancorNetwork,
+  EtherscanLink
 } from '../../../config'
 
 import findByProps from '../../../service/findByProps'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
+import getDirectionData from '../../../service/getDirectionData'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 
@@ -37,7 +39,10 @@ class TradeModal extends Component {
     selectFromOficial:true,
     web3:null,
     receiverAddress: null,
-    requireApprove:false
+    requireApprove:false,
+    sendFrom:undefined,
+    sendTo:undefined,
+    userBalanceFrom:undefined
     }
   }
 
@@ -60,6 +65,7 @@ class TradeModal extends Component {
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
       this.getRate()
       this.checkRequireApprove()
+      this.setTokensData()
     }
 
     // Update state with tokens data
@@ -100,6 +106,28 @@ class TradeModal extends Component {
       })
     }
   }
+  }
+
+  // set state addreses to and from and user balance from
+  setTokensData = async () => {
+    if(this.state.to && this.state.from && this.props.MobXStorage){
+      const { sendFrom, sendTo } = getDirectionData(
+      this.state.from,
+      this.state.to,
+      this.state.bancorTokensStorageJson)
+
+      const web3 = this.props.MobXStorage.web3
+      let userBalanceFrom
+      if(this.state.from !== "ETH"){
+        const token = web3.eth.Contract(ABISmartToken, sendFrom)
+        userBalanceFrom = await token.methods.balanceOf(this.props.MobXStorage.accounts[0]).call()
+        userBalanceFrom = web3.utils.fromWei(web3.utils.hexToNumberString(userBalanceFrom._hex))
+      }else{
+        userBalanceFrom = await web3.eth.getBalance((this.props.MobXStorage.accounts[0]))
+        userBalanceFrom = web3.utils.fromWei(String(userBalanceFrom))
+      }
+      this.setState({ sendFrom, sendTo, userBalanceFrom })
+    }
   }
 
   // in this case we need aprove for BNT but not need for ETH
@@ -325,6 +353,17 @@ class TradeModal extends Component {
         ?
         ( <div>
           <Alert variant="primary">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
+          {
+            /*Token info*/
+            this.state.sendTo && this.state.sendFrom && this.state.directionAmount > 0 && this.props.MobXStorage.web3
+            ?
+            (<Alert variant="info">
+            Etherscan: { <a href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.state.to}</a> }
+            &nbsp; Your balance of {this.state.from} {this.state.userBalanceFrom}
+            </Alert>)
+            :
+            (null)
+          }
           <br/>
           {
             this.props.MobXStorage.web3
