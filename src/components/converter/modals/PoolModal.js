@@ -87,6 +87,14 @@ class PoolModal extends Component {
     }
   }
 
+ // calculateRelayByTokenInput = async () => {
+ //  // partRelay = geRalayByInput(userInputInBNT)
+ //  // Cot = getCOTByRalayRate(partRelay)
+ //  // secondPart = geRalayByInput(Cot)
+ //  // result = partRelay + secondPart
+ //  // return calculateConnectorBySmartTokenAmount(result)
+ // }
+
  // return BNT and ERC20 connectors amount calculated by smart token amount
  calculateConnectorBySmartTokenAmount = async () => {
    const amount = toWei(String(this.state.directionAmount))
