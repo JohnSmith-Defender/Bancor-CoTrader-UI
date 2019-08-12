@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import getWeb3 from "./utils/getWeb3"
 import { inject, observer } from 'mobx-react'
+import { netId } from './config'
 
 import TradePage from "./components/converter/pages/TradePage"
 import SendPage from "./components/converter/pages/SendPage"
 import RelaysPage from "./components/converter/pages/RelaysPage"
 import PoolPage from "./components/converter/pages/PoolPage"
-
 import AddConverter from "./components/converter/pages/AddConverter"
 import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
 
@@ -20,7 +20,8 @@ class App extends Component {
   super(props, context);
   this.state = {
     accounts: null,
-    isDataLoad:false
+    isDataLoad:false,
+    netId:undefined
     }
   }
 
@@ -37,6 +38,13 @@ class App extends Component {
       const web3 = await getWeb3()
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts()
+
+      // Get network ID
+      web3.eth.net.getId().then(netId => {
+      this.setState({
+        netId
+      })
+      })
 
       // Set web3 and accounts to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -67,48 +75,57 @@ class App extends Component {
   render() {
     return(
       <React.Fragment>
-        <div className="container-fluid">
-        <Tabs defaultActiveKey="trade" id="create">
+       {
+         this.state.netId && this.state.netId !== netId
+         ?
+         (
+           <Alert variant="warning">Please switch network to mainnet in Your wallet</Alert>
+         )
+         :
+         (
+           <div className="container-fluid">
+           <Tabs defaultActiveKey="trade" id="create">
 
-        <Tab eventKey="trade" title="Trade">
-        <TradePage/>
-        </Tab>
+           <Tab eventKey="trade" title="Trade">
+           <TradePage/>
+           </Tab>
 
-        <Tab eventKey="send" title="Send">
-        <SendPage/>
-        </Tab>
+           <Tab eventKey="send" title="Send">
+           <SendPage/>
+           </Tab>
 
-        <Tab eventKey="pool" title="Pool">
-        <PoolPage/>
-        </Tab>
+           <Tab eventKey="pool" title="Pool">
+           <PoolPage/>
+           </Tab>
 
-        <Tab eventKey="relays" title="Relays">
-        <RelaysPage/>
-        </Tab>
+           <Tab eventKey="relays" title="Relays">
+           <RelaysPage/>
+           </Tab>
 
-        <Tab eventKey="create" title="Create converter">
-        {
-          this.props.MobXStorage.web3
-          ?
-          (<CreateConverter/>)
-          :
-          (<Alert variant="warning">Please connect to web3</Alert>)
-        }
-        </Tab>
+           <Tab eventKey="create" title="Create converter">
+           {
+             this.props.MobXStorage.web3
+             ?
+             (<CreateConverter/>)
+             :
+             (<Alert variant="warning">Please connect to web3</Alert>)
+           }
+           </Tab>
 
-        <Tab eventKey="addConverter" title="Add converter">
-        {
-          this.props.MobXStorage.web3
-          ?
-          (<AddConverter />)
-          :
-          (<Alert variant="warning">Please connect to web3</Alert>)
-        }
-        </Tab>
+           <Tab eventKey="addConverter" title="Add converter">
+           {
+             this.props.MobXStorage.web3
+             ?
+             (<AddConverter />)
+             :
+             (<Alert variant="warning">Please connect to web3</Alert>)
+           }
+           </Tab>
 
-        </Tabs>
-        </div>
-
+           </Tabs>
+           </div>
+         )
+       }
       </React.Fragment>
     )
   }

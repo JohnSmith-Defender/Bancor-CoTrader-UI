@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Alert } from "react-bootstrap"
+import { Card, Badge } from "react-bootstrap"
 
 import { hexToNumberString, fromWei } from 'web3-utils'
 
@@ -17,7 +17,8 @@ class DirectionInfo extends Component {
     this.state = {
     sendFrom:undefined,
     sendTo:undefined,
-    userBalanceFrom:undefined
+    userBalanceFrom:undefined,
+    balanceOfTo:undefined
   }
   }
 
@@ -41,15 +42,22 @@ class DirectionInfo extends Component {
 
       const web3 = this.props.web3
       let userBalanceFrom
+      let token
+      let tokenTo
+      let balanceOfTo
       if(this.props.from !== "ETH"){
-        const token = web3.eth.Contract(ABISmartToken, sendFrom)
+        token = web3.eth.Contract(ABISmartToken, sendFrom)
         userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
         userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
+        tokenTo = web3.eth.Contract(ABISmartToken, sendTo)
+        balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
+        balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
       }else{
         userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
         userBalanceFrom = fromWei(String(userBalanceFrom))
       }
-      this.setState({ sendFrom, sendTo, userBalanceFrom })
+
+      this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo })
     }
   }
 
@@ -60,10 +68,20 @@ class DirectionInfo extends Component {
       /*Token info*/
       this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0
       ?
-      (<Alert variant="info">
+      (
+      <Card className="text-center">
+      <Card.Text><Badge variant="primary">Additional info</Badge></Card.Text>
+      <Badge variant="Light">
       Etherscan: { <a href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }
-      &nbsp; Your balance of {this.props.from} {this.state.userBalanceFrom}
-      </Alert>)
+      </Badge>
+      <Badge variant="Light">
+      Your balance of {this.props.from} {this.state.userBalanceFrom}
+      </Badge>
+      <Badge variant="Light">
+      Your balance of {this.props.to}: &nbsp; {this.state.balanceOfTo}
+      </Badge>
+      </Card>
+      )
       :
       (null)
     }

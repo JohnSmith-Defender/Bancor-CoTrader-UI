@@ -419,16 +419,6 @@ class RelaysModal extends Component {
       <br/>
       <Form.Control name="directionAmount" placeholder="Enter amount to send" onChange={e => this.change(e)} type="number" min="1"/>
       <br/>
-      <DirectionInfo
-      from={this.state.from}
-      to={this.state.to}
-      directionAmount={this.state.directionAmount}
-      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
-      web3={this.props.MobXStorage.web3}
-      accounts={this.props.MobXStorage.accounts}
-      useERC20AsSelectFrom={this.state.useERC20AsSelectFrom}
-      useERC20AsSelectTo={this.state.useERC20AsSelectTo}
-      />
       {
         this.state.directionAmount > 0
         ?
@@ -460,6 +450,17 @@ class RelaysModal extends Component {
         :
         (null)
       }
+      <br/>
+      <DirectionInfo
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
+      web3={this.props.MobXStorage.web3}
+      accounts={this.props.MobXStorage.accounts}
+      useERC20AsSelectFrom={this.state.useERC20AsSelectFrom}
+      useERC20AsSelectTo={this.state.useERC20AsSelectTo}
+      />
       </Modal.Body>
     </Modal>
     </React.Fragment>

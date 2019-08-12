@@ -324,16 +324,6 @@ class TradeModal extends Component {
       <br/>
       <Form.Control name="receiverAddress" placeholder="Enter receiver address" onChange={e => this.change(e)}/>
       <br/>
-      <DirectionInfo
-      from={this.state.from}
-      to={this.state.to}
-      directionAmount={this.state.directionAmount}
-      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
-      web3={this.props.MobXStorage.web3}
-      accounts={this.props.MobXStorage.accounts}
-      useERC20AsSelectFrom={true}
-      useERC20AsSelectTo={true}
-      />
       {
         this.state.directionAmount > 0
         ?
@@ -365,6 +355,18 @@ class TradeModal extends Component {
         :
         (null)
       }
+      <br/>
+      <br/>
+      <DirectionInfo
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
+      web3={this.props.MobXStorage.web3}
+      accounts={this.props.MobXStorage.accounts}
+      useERC20AsSelectFrom={true}
+      useERC20AsSelectTo={true}
+      />
       </Modal.Body>
     </Modal>
     </React.Fragment>

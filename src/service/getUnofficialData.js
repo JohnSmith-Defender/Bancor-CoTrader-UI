@@ -1,5 +1,5 @@
 // Get all unofficial converters, then parse unofficial connectors and unofficial smart tokens, and symbols
-// return unofficialSymbols, unofficialSmartTokenSymbols, bancorTokensStorageJson, 
+// return unofficialSymbols, unofficialSmartTokenSymbols, bancorTokensStorageJson,
 
 import {
   ABISmartToken,
