@@ -260,7 +260,7 @@ class PoolModal extends Component {
               )
             }
             <br/>
-            <Form.Control name="directionAmount" placeholder="Enter relay amount to recive" onChange={e => this.change(e)} type="number" min="1"/>
+            <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
             <br/>
             {/* Connectors info */}
             {

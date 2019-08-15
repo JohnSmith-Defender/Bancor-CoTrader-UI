@@ -9,6 +9,7 @@ import RelaysPage from "./components/converter/pages/RelaysPage"
 import PoolPage from "./components/converter/pages/PoolPage"
 import AddConverter from "./components/converter/pages/AddConverter"
 import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
+import Footer from "./components/static/Footer"
 
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
@@ -21,7 +22,8 @@ class App extends Component {
   this.state = {
     accounts: null,
     isDataLoad:false,
-    netId:undefined
+    netId:undefined,
+    web3:null
     }
   }
 
@@ -42,7 +44,8 @@ class App extends Component {
       // Get network ID
       web3.eth.net.getId().then(netId => {
       this.setState({
-        netId
+        netId,
+        web3
       })
       })
 
@@ -59,6 +62,7 @@ class App extends Component {
   }
 
   initData = async () => {
+    this.setState({ isDataLoad:true })
     // init converters data
     const officialData = getOfficialData()
     const unoficialData = await getUnofficialData(null)
@@ -73,8 +77,18 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.isDataLoad)
     return(
       <React.Fragment>
+       {
+         this.state.isDataLoad && !this.state.web3
+         ?
+         (
+          <Alert variant="danger">Please connect to web3 <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">MetaMask</a> for laptop or <a href="https://trustwallet.com/" target="_blank" rel="noopener noreferrer">TrustWallet</a> for mobile</Alert>
+         )
+         :
+         (null)
+       }
        {
          this.state.netId && this.state.netId !== netId
          ?
@@ -126,6 +140,7 @@ class App extends Component {
            </div>
          )
        }
+       <Footer/>
       </React.Fragment>
     )
   }
