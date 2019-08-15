@@ -81,10 +81,11 @@ class App extends Component {
     return(
       <React.Fragment>
        {
+        /*TODO separate component*/
          this.state.isDataLoad && !this.state.web3
          ?
          (
-          <Alert variant="danger">Please connect to web3 <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">MetaMask</a> for laptop or <a href="https://trustwallet.com/" target="_blank" rel="noopener noreferrer">TrustWallet</a> for mobile</Alert>
+          <Alert variant="warning">To actually make trades, you'll need to use <strong>Metamask</strong> for <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">web</a> or <a href="https://addons.mozilla.org/ru/android/addon/ether-metamask/" target="_blank" rel="noopener noreferrer">Android</a>  or <strong>TrustWallet</strong> for <a href="https://apps.apple.com/us/app/trust-ethereum-wallet/id1288339409" target="_blank" rel="noopener noreferrer">IPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp" target="_blank" rel="noopener noreferrer">Android</a> </Alert>
          )
          :
          (null)
