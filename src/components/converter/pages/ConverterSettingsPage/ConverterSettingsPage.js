@@ -94,7 +94,11 @@ class ConverterSettingsPage extends Component {
                     <br/>
                     <br/>
                     <ButtonGroup size="sm">
-                    <ChangeCommision/>
+                    <ChangeCommision
+                    converterAddress={this.state.converterInfoObj.converterAddress}
+                    web3={this.props.MobXStorage.web3}
+                    accounts={this.props.MobXStorage.accounts}
+                    />
                     </ButtonGroup>
                       </Form.Group>
                     </React.Fragment>
