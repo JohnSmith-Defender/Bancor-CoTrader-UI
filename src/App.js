@@ -32,7 +32,7 @@ class App extends Component {
     // init curent step for create converter
     this.props.MobXStorage.updateStep()
     // load tokens data
-    // make litle delay for correct getweb3() call getWeb3()
+    // make litle delay for correct call getWeb3()
     setTimeout(() => this.initData(), 500)
 
     // get web3 and account
