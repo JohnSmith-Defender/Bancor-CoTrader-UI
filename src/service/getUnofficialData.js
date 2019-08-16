@@ -9,6 +9,8 @@ import {
 } from '../config'
 
 import getWeb3ForRead from './getWeb3ForRead'
+import blackList from '../storage/blackList'
+
 
 const getUnofficialData = async (_web3) => {
    const web3 = getWeb3ForRead(_web3)
@@ -20,30 +22,46 @@ const getUnofficialData = async (_web3) => {
      total = web3.utils.hexToNumberString(total._hex)
      let unofficialSymbols = []
      let unofficialSmartTokenSymbols = []
-
-     // concat oficial info with unoficial in storage
      let bancorTokensStorageJson = []
-     const unofficialConverters = await registry.methods.getAllConverters().call()
+     let unofficialConverters = await registry.methods.getAllConverters().call()
+
+     // remove black list
+     unofficialConverters = unofficialConverters.filter(function(item) {
+     return !blackList.includes(item);
+     })
+
+     let converter
+     let tokenAddress
+     let token
+     let symbol
+     let smartTokenAddress
+     let smartToken
+     let smartTokenSymbol
+     let owner
+     let relayObj
 
      for(let i = 0; i < unofficialConverters.length; i++){
-       let converter = web3.eth.Contract(ABIConverter, unofficialConverters[i])
-       let tokenAddress = await converter.methods.connectorTokens(1).call()
-       let token = web3.eth.Contract(ABISmartToken, tokenAddress)
-       let symbol = await token.methods.symbol.call()
-       let smartTokenAddress = await converter.methods.token().call()
-       let smartToken = web3.eth.Contract(ABISmartToken, smartTokenAddress)
-       let smartTokenSymbol = await smartToken.methods.symbol.call()
+       // load data expect black list
+       converter = web3.eth.Contract(ABIConverter, unofficialConverters[i])
+       tokenAddress = await converter.methods.connectorTokens(1).call()
+       token = web3.eth.Contract(ABISmartToken, tokenAddress)
+       symbol = await token.methods.symbol.call()
+       smartTokenAddress = await converter.methods.token().call()
+       smartToken = web3.eth.Contract(ABISmartToken, smartTokenAddress)
+       smartTokenSymbol = await smartToken.methods.symbol.call()
+       owner = await converter.methods.owner().call()
 
-       let relayObj = {
+       relayObj = {
          tokenAddress, symbol,
          converterAddress:unofficialConverters[i],
          smartTokenAddress,
-         smartTokenSymbol
-       }
+         smartTokenSymbol,
+         owner
+         }
 
-       bancorTokensStorageJson.push(relayObj)
-       unofficialSymbols.push(symbol)
-       unofficialSmartTokenSymbols.push(smartTokenSymbol)
+        bancorTokensStorageJson.push(relayObj)
+        unofficialSymbols.push(symbol)
+        unofficialSmartTokenSymbols.push(smartTokenSymbol)
      }
 
      return [unofficialSymbols, unofficialSmartTokenSymbols, bancorTokensStorageJson]

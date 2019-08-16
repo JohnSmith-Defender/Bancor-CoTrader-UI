@@ -9,6 +9,7 @@ import RelaysPage from "./components/converter/pages/RelaysPage"
 import PoolPage from "./components/converter/pages/PoolPage"
 import AddConverter from "./components/converter/pages/AddConverter"
 import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
+import ConverterSettingsPage from "./components/converter/pages/ConverterSettingsPage/ConverterSettingsPage"
 import Footer from "./components/static/Footer"
 import Web3Info from "./components/static/Web3Info"
 
@@ -126,6 +127,10 @@ class App extends Component {
              :
              (<Alert variant="warning">Please connect to web3</Alert>)
            }
+           </Tab>
+
+           <Tab eventKey="editConverter" title="Converter settings">
+           <ConverterSettingsPage />
            </Tab>
 
            </Tabs>
