@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { Form, Alert, Badge, Card } from 'react-bootstrap'
+import { Form, Alert, Badge, Card, ButtonGroup } from 'react-bootstrap'
 import { EtherscanLink } from '../../../../config'
+import ChangeCommision from './actions/ChangeCommision'
 
 class ConverterSettingsPage extends Component {
   constructor(props, context) {
@@ -15,10 +16,8 @@ class ConverterSettingsPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("componentDidUpdate")
     if(prevProps.MobXStorage.bancorTokensStorageJson !== this.state.bancorTokensStorageJson){
       this.setConvertersByOwner()
-      console.log("this.setConvertersByOwner()")
     }
   }
 
@@ -39,71 +38,90 @@ class ConverterSettingsPage extends Component {
   }
 
   render() {
-    console.log(this.state.symbols)
     return (
       <React.Fragment>
-      <br/>
-      <Card className="text-center">
-      <Card.Header>
-       Manage your converter
-      </Card.Header>
-      <Card.Text>This page allow You get converter info, and also cal such functions as changeCommision</Card.Text>
       {
-        this.props.MobXStorage.bancorTokensStorageJson && this.props.MobXStorage.web3 && this.state.symbols
+        this.props.MobXStorage.web3
         ?
         (
           <React.Fragment>
+          <br/>
+          <Card className="text-center">
+          <Card.Header>
+           Manage your converter
+          </Card.Header>
+          <Card.Text>This page allow You get converter info, and the ability to interact with contract functionality</Card.Text>
+          <Card.Text>More contract methods will be added soon.</Card.Text>
           {
-            this.state.symbols.length > 0
+            this.props.MobXStorage.bancorTokensStorageJson&&this.state.symbols
             ?
             (
-              <Form.Group>
-              <Form.Label>Select Your token from list</Form.Label>
-              <Form.Control
-              name="selectConverters"
-              onChange={(e) => this.setConverterInfoObjBySymbol(e.target.value)}
-              as="select"
-              >
-              <option>...</option>
-              {this.state.symbols.map((index, key) => <option key={key}>{index}</option>)}
-              </Form.Control>
-              </Form.Group>
+              <React.Fragment>
+              {
+                this.state.symbols.length > 0
+                ?
+                (
+                  <div style={{width:"300px", margin: "0px auto"}}>
+                  <Form.Group>
+                  <Form.Label>Select Your token from list</Form.Label>
+                  <Form.Control
+                  name="selectConverters"
+                  onChange={(e) => this.setConverterInfoObjBySymbol(e.target.value)}
+                  as="select"
+                  >
+                  <option>...</option>
+                  {this.state.symbols.map((index, key) => <option key={key}>{index}</option>)}
+                  </Form.Control>
+                  </Form.Group>
+                  </div>
+                )
+                :
+                (
+                  <Alert variant="warning">You not have any converter</Alert>
+                )
+              }
+              {
+                // Converters info
+                <React.Fragment>
+                {
+                  this.state.converterInfoObj
+                  ?
+                  (
+                    <React.Fragment>
+                    <Form.Group>
+                    <Badge variant="light">Converter address: <a href={EtherscanLink+ "address/" +this.state.converterInfoObj.converterAddress} target="_blank" rel="noopener noreferrer">{this.state.converterInfoObj.converterAddress.substr(0, this.state.converterInfoObj.converterAddress.length - 15)}...</a></Badge>
+                    <Badge variant="light">Smart token address: <a href={EtherscanLink+ "address/" +this.state.converterInfoObj.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.converterInfoObj.smartTokenAddress.substr(0, this.state.converterInfoObj.smartTokenAddress.length - 15)}...</a></Badge>
+                    <br/>
+                    <br/>
+                    <ButtonGroup size="sm">
+                    <ChangeCommision/>
+                    </ButtonGroup>
+                      </Form.Group>
+                    </React.Fragment>
+                  )
+                  :
+                  (null)
+                }
+                </React.Fragment>
+              }
+              </React.Fragment>
             )
             :
             (
-              <Alert variant="warning">You not have any converter</Alert>
+              <Form.Group>
+              <Badge variant="primary">loading data...</Badge>
+              </Form.Group>
             )
           }
-          {
-            // Converters info
-            <React.Fragment>
-            {
-              this.state.converterInfoObj
-              ?
-              (
-                <React.Fragment>
-                <Form.Group>
-                <Badge variant="light">Converter address: <a href={EtherscanLink+ "address/" +this.state.converterInfoObj.converterAddress} target="_blank" rel="noopener noreferrer">{this.state.converterInfoObj.converterAddress.substr(0, this.state.converterInfoObj.converterAddress.length - 15)}...</a></Badge>
-                <Badge variant="light">Smart token address: <a href={EtherscanLink+ "address/" +this.state.converterInfoObj.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.converterInfoObj.smartTokenAddress.substr(0, this.state.converterInfoObj.smartTokenAddress.length - 15)}...</a></Badge>
-                </Form.Group>
-                </React.Fragment>
-              )
-              :
-              (null)
-            }
-            </React.Fragment>
-          }
+          <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
+          </Card>
           </React.Fragment>
         )
         :
         (
-          <Form.Group>
-          <Badge variant="primary">loading data...</Badge>
-          </Form.Group>
+          <Alert variant="warning">Please connect to web3</Alert>
         )
       }
-      <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
-      </Card>
       </React.Fragment>
     )
   }

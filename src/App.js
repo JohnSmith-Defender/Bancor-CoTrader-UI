@@ -110,23 +110,11 @@ class App extends Component {
            </Tab>
 
            <Tab eventKey="create" title="Create converter">
-           {
-             this.props.MobXStorage.web3
-             ?
-             (<CreateConverter/>)
-             :
-             (<Alert variant="warning">Please connect to web3</Alert>)
-           }
+           <CreateConverter/>
            </Tab>
 
            <Tab eventKey="addConverter" title="Add converter">
-           {
-             this.props.MobXStorage.web3
-             ?
-             (<AddConverter />)
-             :
-             (<Alert variant="warning">Please connect to web3</Alert>)
-           }
+           <AddConverter />
            </Tab>
 
            <Tab eventKey="editConverter" title="Converter settings">

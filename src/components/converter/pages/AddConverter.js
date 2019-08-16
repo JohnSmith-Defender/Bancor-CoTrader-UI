@@ -32,32 +32,44 @@ class AddConverter extends Component {
 render() {
   return(
     <React.Fragment>
-    <br />
-    <Card className="text-center">
-    <Card.Header>Add converter</Card.Header>
-    <Card.Text>To add your token to an unofficial list that will enable anyone to trade it, add it to this registry contract.</Card.Text>
-
-    <Form>
-    <Form.Control name="converter" placeholder="Your converter address" onChange={e => this.change(e)}/>
-    <br/>
-    <Button variant="primary" size="sm" onClick={() => this.AddToList()}>add to list</Button>
-    </Form>
-    <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
-    </Card>
-    <br />
-    {
-      this.state.isFinish
-      ?
-      (
+   {
+     this.props.MobXStorage.web3
+     ?
+     (
        <React.Fragment>
-       <Alert variant="info">
-       <p>Congratulations, after confirm transaction Your smart token will be added</p>
-       </Alert>
+       <br />
+       <Card className="text-center">
+       <Card.Header>Add converter</Card.Header>
+       <Card.Text>To add your token to an unofficial list that will enable anyone to trade it, add it to this registry contract.</Card.Text>
+
+       <Form>
+       <Form.Control name="converter" placeholder="Your converter address" onChange={e => this.change(e)}/>
+       <br/>
+       <Button variant="primary" size="sm" onClick={() => this.AddToList()}>add to list</Button>
+       </Form>
+       <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
+       </Card>
+       <br />
+       {
+         this.state.isFinish
+         ?
+         (
+          <React.Fragment>
+          <Alert variant="info">
+          <p>Congratulations, after confirm transaction Your smart token will be added</p>
+          </Alert>
+          </React.Fragment>
+         )
+         :
+         (null)
+       }
        </React.Fragment>
-      )
-      :
-      (null)
-    }
+     )
+     :
+     (
+       <Alert variant="warning">Please connect to web3</Alert>
+     )
+   }
     </React.Fragment>
   )
 }

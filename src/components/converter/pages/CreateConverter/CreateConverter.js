@@ -45,22 +45,34 @@ class CreateConverter extends Component {
         this.props.MobXStorage.web3
         ?
         (
-          <div className="container-fluid">
-          <br />
-          <Alert variant="primary"><small>Attention this application uses local storage for storing parameters. DO NOT delete your browser history until you have completed all steps. <p style={{"color":"red"}}>Please don't do the next step until current transaction not confirmed in Your wallet!</p></small></Alert>
-          <br />
-          <StepComponent updateRenderStep={this.updateRenderStep}/>
-          <br />
+          <React.Fragment>
           {
-            this.props.MobXStorage.pending
+            this.props.MobXStorage.web3
             ?
-            (<Alert variant="info"><small>Transaction pending, please don't close or reload page and don't do next step, until your wallet confirms the transaction!</small></Alert>)
-            :
-            (null)
+            (
+              <div className="container-fluid">
+              <br />
+              <Alert variant="primary"><small>Attention this application uses local storage for storing parameters. DO NOT delete your browser history until you have completed all steps. <p style={{"color":"red"}}>Please don't do the next step until current transaction not confirmed in Your wallet!</p></small></Alert>
+              <br />
+              <StepComponent updateRenderStep={this.updateRenderStep}/>
+              <br />
+              {
+                this.props.MobXStorage.pending
+                ?
+                (<Alert variant="info"><small>Transaction pending, please don't close or reload page and don't do next step, until your wallet confirms the transaction!</small></Alert>)
+                :
+                (null)
+              }
+              </div>
+            )
+            :(<p>Please connect to web3</p>)
           }
-          </div>
+          </React.Fragment>
         )
-        :(<p>Please connect to web3</p>)
+        :
+        (
+          <Alert variant="warning">Please connect to web3</Alert>
+        )
       }
       </React.Fragment>
     )
