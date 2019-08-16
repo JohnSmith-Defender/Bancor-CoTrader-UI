@@ -1,4 +1,4 @@
-import { ABIConverter } from '../../../../../config'
+import { ABIConverter, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'
@@ -28,7 +28,8 @@ class StepFour extends Component {
 
      converter.methods.setConversionFee(this.state.fee).send({
        from:accounts[0],
-       gas:1372732
+       gas:1372732,
+       gasPrice
      }).on('transactionHash', (hash) => {
       console.log("SetFee hash ", hash)
       window.localStorage.setItem('Step', "Five");

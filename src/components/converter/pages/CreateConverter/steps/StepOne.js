@@ -1,4 +1,4 @@
-import { ABISmartToken, BYTECODESmartToken } from '../../../../../config'
+import { ABISmartToken, BYTECODESmartToken, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'
@@ -53,7 +53,8 @@ class StepOne extends Component {
        })
        .send({
          from: accounts[0],
-         gas:2372732
+         gas:2372732,
+         gasPrice
        })
        .on('transactionHash', (hash) => {
         console.log("smart token hash ", hash)

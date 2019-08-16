@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ABISmartToken } from '../../../../../config'
+import { ABISmartToken, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 
@@ -29,7 +29,8 @@ class StepSix extends Component {
        console.log("PARAMS: ", converterAddress)
        smartToken.methods.transferOwnership(converterAddress).send({
          from:accounts[0],
-         gas:1372732
+         gas:1372732,
+         gasPrice
        }).on('transactionHash', (hash) => {
         window.localStorage.setItem('Step', "Seven");
         this.props.MobXStorage.setPending(true)

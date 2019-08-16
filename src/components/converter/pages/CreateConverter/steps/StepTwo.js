@@ -1,4 +1,4 @@
-import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../../../config'
+import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'
@@ -28,7 +28,8 @@ class StepTwo extends Component {
     })
     .send({
       from: accounts[0],
-      gas:6372732
+      gas:6372732,
+      gasPrice
     })
     .on('transactionHash', (hash) => {
      console.log("converter hash ", hash)

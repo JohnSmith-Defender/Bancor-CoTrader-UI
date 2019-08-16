@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ABIConverter } from '../../../../../config'
+import { ABIConverter, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 
@@ -11,7 +11,8 @@ class StepSeven extends Component {
   const registry = web3.eth.Contract(ABIConverter, converterAddress)
 
   registry.methods.acceptTokenOwnership().send({
-    from:accounts[0]
+    from:accounts[0],
+    gasPrice
   }).on('transactionHash', (hash) => {
    console.log("acceptTokenOwnership hash ", hash)
    window.localStorage.setItem('Step', "Eighth");

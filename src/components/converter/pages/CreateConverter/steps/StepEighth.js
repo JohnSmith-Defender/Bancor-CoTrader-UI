@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../../../config'
+import { ConvertersRegistryList, ConvertersRegistryListABI, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -26,7 +26,8 @@ class StepEighth extends Component {
   const registry = web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
 
   registry.methods.addConverter(converterAddress).send({
-    from:accounts[0]
+    from:accounts[0],
+    gasPrice
   }).on('transactionHash', (hash) => {
    this.setState({ isFinish:true })
   })
