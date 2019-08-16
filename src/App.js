@@ -10,6 +10,7 @@ import PoolPage from "./components/converter/pages/PoolPage"
 import AddConverter from "./components/converter/pages/AddConverter"
 import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
 import Footer from "./components/static/Footer"
+import Web3Info from "./components/static/Web3Info"
 
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
@@ -77,24 +78,14 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.isDataLoad)
     return(
       <React.Fragment>
-       {
-        /*TODO separate component*/
-         this.state.isDataLoad && !this.state.web3
-         ?
-         (
-          <Alert variant="warning">To actually make trades, you'll need to use <strong>Metamask</strong> for <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">web</a> or <a href="https://addons.mozilla.org/ru/android/addon/ether-metamask/" target="_blank" rel="noopener noreferrer">Android</a>  or <strong>TrustWallet</strong> for <a href="https://apps.apple.com/us/app/trust-ethereum-wallet/id1288339409" target="_blank" rel="noopener noreferrer">IPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp" target="_blank" rel="noopener noreferrer">Android</a> </Alert>
-         )
-         :
-         (null)
-       }
+       <Web3Info isDataLoad={this.state.isDataLoad} web3={this.state.web3}/>
        {
          this.state.netId && this.state.netId !== netId
          ?
          (
-           <Alert variant="warning">Please switch network to mainnet in Your wallet</Alert>
+           <Alert variant="warning">Please switch network to { netId === 1 ? <strong>Mainnet</strong> : <strong>Ropsten</strong>} in Your wallet</Alert>
          )
          :
          (
