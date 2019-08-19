@@ -50,7 +50,10 @@ class ConverterSettingsPage extends Component {
           <Card.Header>
            Manage your converter
           </Card.Header>
-          <Card.Text>This page allow You get converter info, and the ability to interact with contract functionality</Card.Text>
+          <Card.Text>Set converter settings such as conversion fee %.</Card.Text>
+          <Card.Text>The conversion fee % is used to buy relay tokens.</Card.Text>
+          <Card.Text>For example, whenever DAI tokens are traded, a small % of the conversion buys DAIBNT relay tokens.</Card.Text>
+          <Card.Text>This benefits those who added to the DAI liquidity pool in the “Pool” tab, or got the DAIBNT relay token in the “Relays’ tab.</Card.Text>
           <Card.Text>More contract methods will be added soon.</Card.Text>
           {
             this.props.MobXStorage.bancorTokensStorageJson&&this.state.symbols

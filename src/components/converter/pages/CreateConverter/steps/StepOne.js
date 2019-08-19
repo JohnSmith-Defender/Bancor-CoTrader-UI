@@ -77,15 +77,18 @@ render() {
     <Card className="text-center">
    <h3>Step 1</h3>
    <strong>Create Relay Token (aka SmartToken)</strong>
+   <p>If your token is called AAA, a relay token called AAABNT will be created.</p>
    <p>Relay tokens are a bridge between your token and the Bancor BNT trade network.</p>
    <strong>This will be executed with these parameters</strong>
-   <small>Name: XXX Smart Relay Token</small>
-   <small>Symbol: XXXBNT</small>
+   <small>Name: AAA Smart Relay Token</small>
+   <small>Symbol: AAABNT</small>
    <small>Decimals: 18</small>
+   <br/>
    <Form>
    <Form.Group>
-    <Form.Label>Token address</Form.Label>
-    <Form.Control name="address" onChange={e => this.change(e)}/>
+    <Form.Label>Enter Token Address:</Form.Label>
+    <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
+    <Form.Text>Note: your token must have 18 decimals.</Form.Text>
    </Form.Group>
    <Button size="sm" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
    </Form>

@@ -8,28 +8,31 @@ function PoolPage() {
     <React.Fragment>
 
     <Card className="text-center">
-    <Card.Header>Liquidity pools</Card.Header>
+    <Card.Header>Bancor liquidity pools</Card.Header>
     <Card.Body>
     <Card.Text>
-    To own part of any token's exchange, add liquidity to that token's pool.
+    To earn from all trades, add liquidity to pools.
     </Card.Text>
     <Card.Text>
-    When you do this, you'll receive a relay token (aka smart token), for that pool.
+    When you do this, you'll receive “relay tokens”.
     </Card.Text>
     <Card.Text>
-    For example, to own part of the COT exchange, you'll deposit both:
+    For example, to earn from every trade of DAI, you can deposit both:
     </Card.Text>
     <Card.Text>
-    BNT and COT
+    BNT and DAI
     </Card.Text>
     <Card.Text>
-    You'll receive the relay token for COT, called COTBNT.
+    You'll receive a relay token called DAIBNT for the DAI pool.
     </Card.Text>
     <Card.Text>
-    This relay token, COTBNT, is bought up whenever COT is traded, which raises its price.
+    To get the deposit back, just return the DAIBNT.
     </Card.Text>
     <Card.Text>
-    Relay tokens like COTBNT are also speculative assets. They can be bought and sold separately in the "Relays" tab.
+    When DAI is traded, a % of the conversion buys DAIBNT relay tokens.  This increases the price of DAIBNT.
+    </Card.Text>
+    <Card.Text>
+    Relay tokens like DAIBNT are also speculative assets. They can be bought and sold separately in the "Relays" tab without depositing in pools. However, that incurs slippage.
     </Card.Text>
     <Card.Text>
     More updates coming soon.

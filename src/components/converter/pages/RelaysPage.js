@@ -10,16 +10,16 @@ function RelaysPage() {
     <Card.Header>Bancor relay tokens</Card.Header>
     <Card.Body>
     <Card.Text>
-    To earn from every trade of any token, add liquidity to that token's pool.
+    To earn from all trades, buy relay tokens.
     </Card.Text>
     <Card.Text>
-    For example, to start earning from COT trades, you'd deposit both:
+    For example, to earn from every trade of DAI, buy the DAIBNT relay.
     </Card.Text>
     <Card.Text>
-    When COT is traded volume, a % of the value buys the COTBNT relay. This increases the relay price.
+    When DAI is traded, a % of the conversion buys DAIBNT relay tokens.  This increases the price of DAIBNT.
     </Card.Text>
     <Card.Text>
-    You can pay less for relays by avoiding slippage. To do this, use the pool tab to get relay tokens, instead of buying them directly, here. The downside is you need to keep funds held in pool.
+    You can pay less for relay tokens by avoiding slippage. To do this, use the pool tab to get relay tokens, instead of buying them directly, here. The downside is you need to keep funds held in pools.
     </Card.Text>
     <Card.Text>
     More updates coming soon.
