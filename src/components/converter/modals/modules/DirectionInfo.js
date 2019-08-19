@@ -21,7 +21,8 @@ class DirectionInfo extends Component {
     balanceOfTo:undefined,
     amountReturnFrom:undefined,
     amountReturnTo:undefined,
-    amountReturnFromTo:undefined
+    amountReturnFromTo:undefined,
+    totalTradeValue:undefined
   }
   }
 
@@ -94,7 +95,22 @@ class DirectionInfo extends Component {
       amountReturnFromTo = 0
     }
 
-    return { amountReturnFrom, amountReturnTo, amountReturnFromTo }
+    // get Total trade value
+    let totalTradeValue
+    if(this.props.amountReturn > 0){
+      let value = await bancorNetwork.methods.getReturnByPath(
+        pathTo,
+        toWei(String(this.props.amountReturn))
+      ).call()
+
+      if(value){
+        totalTradeValue = Number(fromWei(hexToNumberString(value[0]._hex)))
+      }else{
+        totalTradeValue = 0
+      }
+    }
+
+    return { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue }
   }
 
   // set state addreses to and from and user balance from
@@ -109,9 +125,9 @@ class DirectionInfo extends Component {
       )
       const web3 = this.props.web3
       const { userBalanceFrom, balanceOfTo } = await this.getTokensBalance(sendFrom, sendTo, web3)
-      const { amountReturnFrom, amountReturnTo, amountReturnFromTo } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
+      const { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
 
-      this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo, amountReturnFrom, amountReturnTo, amountReturnFromTo })
+      this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo, amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue })
     }
   }
 
@@ -135,13 +151,16 @@ class DirectionInfo extends Component {
       Your balance of {this.props.to}: &nbsp; {this.state.balanceOfTo}
       </Badge>
       <Badge variant="Light">
+      Total trade value USD(DAI): {this.state.totalTradeValue}
+      </Badge>
+      <Badge variant="Light">
       1 {this.props.from} per USD(DAI): {this.state.amountReturnFrom}
       </Badge>
       <Badge variant="Light">
       1 {this.props.to} per USD(DAI): {this.state.amountReturnTo}
       </Badge>
       <Badge variant="Light">
-      1 {this.props.from} per {this.props.to}: {this.state.amountReturnFromTo} 
+      1 {this.props.from} per {this.props.to}: {this.state.amountReturnFromTo}
       </Badge>
       </Card>
       )

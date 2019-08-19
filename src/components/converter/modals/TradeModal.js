@@ -390,6 +390,7 @@ class TradeModal extends Component {
       accounts={this.props.MobXStorage.accounts}
       useERC20AsSelectFrom={true}
       useERC20AsSelectTo={true}
+      amountReturn={this.state.amountReturn}
       />
       </Modal.Body>
     </Modal>

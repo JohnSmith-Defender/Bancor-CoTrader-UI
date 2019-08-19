@@ -460,6 +460,7 @@ class RelaysModal extends Component {
       accounts={this.props.MobXStorage.accounts}
       useERC20AsSelectFrom={this.state.useERC20AsSelectFrom}
       useERC20AsSelectTo={this.state.useERC20AsSelectTo}
+      amountReturn={this.state.amountReturn}
       />
       </Modal.Body>
     </Modal>
