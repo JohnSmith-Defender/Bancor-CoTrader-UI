@@ -99,7 +99,7 @@ class DirectionInfo extends Component {
       Etherscan: { <a href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }
       </Badge>
       <Badge variant="Light">
-      Your balance of {this.props.from} {this.state.userBalanceFrom}
+      Your balance of {this.props.from}: {this.state.userBalanceFrom}
       </Badge>
       <Badge variant="Light">
       Your balance of {this.props.to}: &nbsp; {this.state.balanceOfTo}

@@ -4,6 +4,9 @@ import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 
 class StepTwo extends Component {
+ state = {
+   maxFee:200000
+ }
 
  createConverter = async (tokenAddress) => {
   // Get name for smart token from input tokenAddress
@@ -13,8 +16,10 @@ class StepTwo extends Component {
   const stHash = window.localStorage.getItem('txSmartToken')
 
   const stInfo = await web3.eth.getTransactionReceipt(stHash)
-
-  if(stInfo !== null && stInfo !== "undefined"){
+  if(this.state.maxFee > 1000000 || this.state.maxFee < 1000){
+    alert("please set correct maxFee")
+  }
+  else if(stInfo !== null && stInfo !== "undefined"){
     const smartToken = stInfo.contractAddress
     window.localStorage.setItem('smartToken', smartToken)
     const contract =  new web3.eth.Contract(ABIConverter, null)
@@ -24,7 +29,7 @@ class StepTwo extends Component {
 
     contract.deploy({
         data: BYTECODEConverter,
-        arguments: [smartToken, BancorRegistry, 30000, BNTToken, 500000]
+        arguments: [smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000]
     })
     .send({
       from: accounts[0],
@@ -40,7 +45,8 @@ class StepTwo extends Component {
     .on('confirmation', (confirmationNumber, receipt) => {
       this.props.MobXStorage.txFinish()
     })
-  }else{
+  }
+  else{
     alert("Smart token contract not deployed yet, please wait")
   }
 
@@ -56,10 +62,14 @@ render() {
     <strong>This will be executed with these parameters</strong>
     <small>Smart token address from previos step</small>
     <small>Bancor registry contract address</small>
-    <small>Max Fee: 3000​0 (3%)</small>
+    <small>Max Fee: {this.state.maxFee}</small>
     <small>Connector: BNT token address</small>
     <small>Weight: 500,000 (50%)</small>
     <Form>
+    <Form.Control name="fee" onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
+    <Form.Text className="text-muted">
+    Min fee 1000 (0.1%) max fee 1000000 (100%)
+    </Form.Text>
     <Button size="sm" onClick={() => this.createConverter()}>create converter</Button>
     </Form>
     </Card>
