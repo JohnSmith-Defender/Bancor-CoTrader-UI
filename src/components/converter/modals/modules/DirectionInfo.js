@@ -19,7 +19,9 @@ class DirectionInfo extends Component {
     sendTo:undefined,
     userBalanceFrom:undefined,
     balanceOfTo:undefined,
-    fromInDai:undefined
+    amountReturnFrom:undefined,
+    amountReturnTo:undefined,
+    amountReturnFromTo:undefined
   }
   }
 
@@ -50,27 +52,55 @@ class DirectionInfo extends Component {
     return { userBalanceFrom, balanceOfTo }
   }
 
-  getValueInDAI = async (objPropsFrom, web3) => {
+  getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
     const bancorNetwork = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const path = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
+    const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
+    const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
+    const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
-    let amountReturn = await bancorNetwork.methods.getReturnByPath(
-      path,
-      toWei(String(this.props.directionAmount))
+    // get rate from in DAI
+    let amountReturnFrom = await bancorNetwork.methods.getReturnByPath(
+      pathFrom,
+      toWei(String(1))
     ).call()
 
-    if(amountReturn){
-      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
+    if(amountReturnFrom){
+      amountReturnFrom = Number(fromWei(hexToNumberString(amountReturnFrom[0]._hex)))
     }else{
-      amountReturn = 0
+      amountReturnFrom = 0
     }
-    return amountReturn
+
+    // get rate to in DAI
+    let amountReturnTo = await bancorNetwork.methods.getReturnByPath(
+      pathTo,
+      toWei(String(1))
+    ).call()
+
+    if(amountReturnTo){
+      amountReturnTo = Number(fromWei(hexToNumberString(amountReturnTo[0]._hex)))
+    }else{
+      amountReturnTo = 0
+    }
+
+    // get rate from/to
+    let amountReturnFromTo = await bancorNetwork.methods.getReturnByPath(
+      pathFromTo,
+      toWei(String(1))
+    ).call()
+
+    if(amountReturnFromTo){
+      amountReturnFromTo = Number(fromWei(hexToNumberString(amountReturnFromTo[0]._hex)))
+    }else{
+      amountReturnFromTo = 0
+    }
+
+    return { amountReturnFrom, amountReturnTo, amountReturnFromTo }
   }
 
   // set state addreses to and from and user balance from
   setTokensData = async () => {
     if(this.props.to && this.props.from && this.props.web3 && this.props.accounts){
-      const { objPropsFrom, sendFrom, sendTo } = getDirectionData(
+      const { objPropsFrom, objPropsTo, sendFrom, sendTo } = getDirectionData(
         this.props.from,
         this.props.to,
         this.props.bancorTokensStorageJson,
@@ -79,9 +109,9 @@ class DirectionInfo extends Component {
       )
       const web3 = this.props.web3
       const { userBalanceFrom, balanceOfTo } = await this.getTokensBalance(sendFrom, sendTo, web3)
-      const fromInDai = await this.getValueInDAI(objPropsFrom, web3)
+      const { amountReturnFrom, amountReturnTo, amountReturnFromTo } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
 
-      this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo, fromInDai })
+      this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo, amountReturnFrom, amountReturnTo, amountReturnFromTo })
     }
   }
 
@@ -105,9 +135,14 @@ class DirectionInfo extends Component {
       Your balance of {this.props.to}: &nbsp; {this.state.balanceOfTo}
       </Badge>
       <Badge variant="Light">
-      You will pay in DAI rate:  {this.state.fromInDai}
+      1 {this.props.from} = {this.state.amountReturnFrom} DAI
       </Badge>
-
+      <Badge variant="Light">
+      1 {this.props.to} = {this.state.amountReturnTo} DAI
+      </Badge>
+      <Badge variant="Light">
+      1 {this.props.from} = {this.state.amountReturnFromTo} {this.props.to}
+      </Badge>
       </Card>
       )
       :
