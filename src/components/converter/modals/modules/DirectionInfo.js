@@ -151,13 +151,13 @@ class DirectionInfo extends Component {
       Your balance of {this.props.to}: &nbsp; {this.state.balanceOfTo}
       </Badge>
       <Badge variant="Light">
-      Total trade value USD(DAI): {this.state.totalTradeValue}
+      Total trade value $: {this.state.totalTradeValue}
       </Badge>
       <Badge variant="Light">
-      1 {this.props.from} per USD(DAI): {this.state.amountReturnFrom}
+      1 {this.props.from} per $: {this.state.amountReturnFrom}
       </Badge>
       <Badge variant="Light">
-      1 {this.props.to} per USD(DAI): {this.state.amountReturnTo}
+      1 {this.props.to} per $: {this.state.amountReturnTo}
       </Badge>
       <Badge variant="Light">
       1 {this.props.from} per {this.props.to}: {this.state.amountReturnFromTo}

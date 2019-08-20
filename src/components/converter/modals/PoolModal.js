@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import findByProps from '../../../service/findByProps'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
-import { ABIConverter, ABISmartToken, BNTToken } from '../../../config'
+import { ABIConverter, ABISmartToken, BNTToken, EtherscanLink } from '../../../config'
 import BigNumber from 'bignumber.js'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
@@ -26,7 +26,11 @@ class PoolModal extends Component {
     unofficialSymbols:undefined,
     connectorAmount:undefined,
     BNTAmount:undefined,
-    isFundAction:false
+    isFundAction:false,
+    smartTokenAddress:undefined,
+    smartTokenSupplyOriginal:0,
+    smartTokenSupply:0,
+    userPercent:0
     }
   }
 
@@ -64,10 +68,11 @@ class PoolModal extends Component {
           console.log(connectorsInfo[0], connectorsInfo[1])
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
-          console.log(connectorAmount)
-          this.setState({ BNTAmount, connectorAmount })
+          const { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress } = await this.getRelayInfo()
+
+          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent })
         }else{
-          this.setState({ BNTAmount:0, connectorAmount:0 })
+          this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, smartTokenSupply:0, userPercent:0 })
       }
     }
   }
@@ -81,19 +86,35 @@ class PoolModal extends Component {
         web3.eth.Contract(ABIConverter, tokenInfo.converterAddress),
         tokenInfo.converterAddress,
         tokenInfo.tokenAddress,
-        tokenInfo.smartToken,
-        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
+        tokenInfo.smartTokenAddress,
+        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress),
       ]
     }
   }
 
- // calculateRelayByTokenInput = async () => {
- //  // partRelay = geRalayByInput(userInputInBNT)
- //  // Cot = getCOTByRalayRate(partRelay)
- //  // secondPart = geRalayByInput(Cot)
- //  // result = partRelay + secondPart
- //  // return calculateConnectorBySmartTokenAmount(result)
- // }
+ // return smart token supply (old and new with input) as BN,
+ // and userPercent as number and relay address
+ getRelayInfo = async () => {
+   const info = this.getInfoBySymbol()
+   const smartTokenAddress = info[3]
+   const smartTokenContract = info[4]
+
+   // calculate user input % in relation to totalSupply
+   let smartTokenSupplyOriginal = await smartTokenContract.methods.totalSupply().call()
+   smartTokenSupplyOriginal = new BigNumber(smartTokenSupplyOriginal)
+
+   const input = new BigNumber(toWei(String(this.state.directionAmount)))
+   const smartTokenSupply = smartTokenSupplyOriginal.plus(input)
+
+   const percent = smartTokenSupply.dividedBy(100)
+   const partPercent = percent.dividedBy(input)
+   const one = new BigNumber(1)
+   let userPercent = one.dividedBy(partPercent)
+
+   userPercent = userPercent.toNumber()
+
+   return { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress }
+ }
 
  // return BNT and ERC20 connectors amount calculated by smart token amount
  calculateConnectorBySmartTokenAmount = async () => {
@@ -193,6 +214,7 @@ class PoolModal extends Component {
 
   // TODO move this to a Presentational component
     render(){
+      console.log("this.state.smartTokenSupplyOriginal", this.state.smartTokenSupplyOriginal)
       return(
       <React.Fragment>
       {
@@ -267,9 +289,24 @@ class PoolModal extends Component {
               this.state.BNTAmount && this.state.connectorAmount
               ?
               (
+                <React.Fragment>
                 <Alert variant="info">
+                You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}BNT</a>
+                </Alert>
+
+                <Alert variant="warning">
                 You will pay BNT: &nbsp; {fromWei(this.state.BNTAmount)}, &nbsp; {this.state.from}: &nbsp; {fromWei(this.state.connectorAmount)}
                 </Alert>
+
+                <Alert variant="primary">
+                Current supply of {this.state.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}
+                </Alert>
+
+                <Alert variant="primary">
+                Your share will be {this.state.userPercent} % of {fromWei(String(this.state.smartTokenSupply.toFixed(0)))} new supply
+                </Alert>
+
+                </React.Fragment>
               )
               :
               (null)
