@@ -32,7 +32,9 @@ class PoolModal extends Component {
     smartTokenSupplyOriginal:0,
     smartTokenSupply:0,
     smartTokenBalance:0,
-    userPercent:0
+    currentUserPercent:0,
+    newSmartTokenSupply:0,
+    newUserPercent:0
     }
   }
 
@@ -62,22 +64,23 @@ class PoolModal extends Component {
       })
     }
 
-    // Update connctors info
+    // Update connectors info by input change
     if(prevState.from !== this.state.from || prevState.directionAmount !== this.state.directionAmount){
       if(this.state.from)
         if(this.state.directionAmount > 0){
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
-          const { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress } = await this.getRelayInfo()
-          const smartTokenBalance = this.props.MobXStorage.accounts ? await this.getSmartTokenBalance(this.props.MobXStorage.web3, this.props.MobXStorage.accounts[0]) : 0
+          const { smartTokenSupplyOriginal, newSmartTokenSupply, newUserPercent, smartTokenAddress, tokenAddress, currentUserPercent, smartTokenBalance } = await this.getRelayInfo()
+          console.log("smartTokenBalance", smartTokenBalance)
 
-          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent, tokenAddress, smartTokenBalance })
+          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, newSmartTokenSupply, newUserPercent, tokenAddress, currentUserPercent, smartTokenBalance })
         }else{
-          this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, smartTokenSupply:0, userPercent:0, tokenAddress:undefined })
+          this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, newSmartTokenSupply:0, newUserPercent:0, tokenAddress:undefined, smartTokenBalance:0, currentUserPercent:0})
       }
     }
   }
+
 
   // return converter contract, converter address, connector (ERC20) token address, smart token address and smart token contract
   getInfoBySymbol = () => {
@@ -94,36 +97,63 @@ class PoolModal extends Component {
     }
   }
 
+
  // return smart token supply (old and new with input) as BN,
- // and userPercent as number and token and relay address
+ // and userPercent as number and token and relay address and smartTokenBalance
  getRelayInfo = async () => {
    const info = this.getInfoBySymbol()
    const tokenAddress = info[2]
    const smartTokenAddress = info[3]
    const smartTokenContract = info[4]
 
-   // calculate user input % in relation to totalSupply
+   // get data for calculate user input % in relation to totalSupply
    let smartTokenSupplyOriginal = await smartTokenContract.methods.totalSupply().call()
    smartTokenSupplyOriginal = new BigNumber(smartTokenSupplyOriginal)
+   let share = new BigNumber(toWei(String(this.state.directionAmount)))
+   let currentUserPercent = 0
+   let smartTokenBalance = 0
+   const newSmartTokenSupply = smartTokenSupplyOriginal.plus(share)
 
-   const input = new BigNumber(toWei(String(this.state.directionAmount)))
-   const smartTokenSupply = smartTokenSupplyOriginal.plus(input)
 
+   // if user connect to web3 take into account his balance
+   if(this.props.MobXStorage.accounts){
+     smartTokenBalance = await this.getSmartTokenBalance(this.props.MobXStorage.web3, this.props.MobXStorage.accounts[0])
+     const smartTokenBalanceBN = new BigNumber(smartTokenBalance)
+     // current %
+     currentUserPercent = await this.calculateUserPercentFromSupply(smartTokenBalanceBN, smartTokenSupplyOriginal)
+     // add to input curent user balance
+     share = share.plus(smartTokenBalanceBN)
+   }
+
+   // new %
+   const newUserPercent = await this.calculateUserPercentFromSupply(share, newSmartTokenSupply)
+   smartTokenBalance = fromWei(String(smartTokenBalance))
+   return {
+     smartTokenSupplyOriginal,
+     newSmartTokenSupply,
+     newUserPercent,
+     smartTokenAddress,
+     tokenAddress,
+     currentUserPercent,
+     smartTokenBalance
+   }
+ }
+
+ // return % of total supply
+ calculateUserPercentFromSupply = (share, smartTokenSupply) => {
    const percent = smartTokenSupply.dividedBy(100)
-   const partPercent = percent.dividedBy(input)
+   const partPercent = percent.dividedBy(share)
    const one = new BigNumber(1)
-   let userPercent = one.dividedBy(partPercent)
+   const userPercent = one.dividedBy(partPercent)
 
-   userPercent = userPercent.toNumber()
-
-   return { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress }
+   return userPercent.toNumber()
  }
 
  getSmartTokenBalance = async (web3, user) => {
    const info = this.getInfoBySymbol()
    const smartTokenContract = info[4]
    let smartTokenBalance = await smartTokenContract.methods.balanceOf(user).call()
-   smartTokenBalance = fromWei(hexToNumberString(smartTokenBalance._hex))
+   smartTokenBalance = hexToNumberString(smartTokenBalance._hex)
    return smartTokenBalance
  }
 
@@ -305,15 +335,26 @@ class PoolModal extends Component {
                 </Alert>
 
                 <Alert variant="warning">
-                You will pay BNT: &nbsp; {fromWei(this.state.BNTAmount)}, &nbsp; {this.state.from}: &nbsp; {fromWei(this.state.connectorAmount)}
+                You will pay BNT: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.state.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}
                 </Alert>
 
                 <Alert variant="primary">
-                Current supply of {this.state.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}
+                Current supply of {this.state.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},
+                {
+                  this.props.MobXStorage.accounts
+                  ?
+                  (
+                    <React.Fragment>
+                    Your share is {this.state.currentUserPercent} %
+                    </React.Fragment>
+                  )
+                  :
+                  (null)
+                }
                 </Alert>
 
                 <Alert variant="primary">
-                Your share will be {this.state.userPercent} % of {fromWei(String(this.state.smartTokenSupply.toFixed(0)))} new supply
+                Your share will be {this.state.newUserPercent} % of  {fromWei(String(this.state.newSmartTokenSupply.toFixed(0)))} new supply
                 </Alert>
 
                 {
