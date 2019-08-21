@@ -27,6 +27,7 @@ class PoolModal extends Component {
     connectorAmount:undefined,
     BNTAmount:undefined,
     isFundAction:false,
+    tokenAddress:undefined,
     smartTokenAddress:undefined,
     smartTokenSupplyOriginal:0,
     smartTokenSupply:0,
@@ -68,11 +69,11 @@ class PoolModal extends Component {
           console.log(connectorsInfo[0], connectorsInfo[1])
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
-          const { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress } = await this.getRelayInfo()
+          const { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress } = await this.getRelayInfo()
 
-          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent })
+          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent, tokenAddress })
         }else{
-          this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, smartTokenSupply:0, userPercent:0 })
+          this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, smartTokenSupply:0, userPercent:0, tokenAddress:undefined })
       }
     }
   }
@@ -93,9 +94,10 @@ class PoolModal extends Component {
   }
 
  // return smart token supply (old and new with input) as BN,
- // and userPercent as number and relay address
+ // and userPercent as number and token and relay address
  getRelayInfo = async () => {
    const info = this.getInfoBySymbol()
+   const tokenAddress = info[2]
    const smartTokenAddress = info[3]
    const smartTokenContract = info[4]
 
@@ -113,7 +115,7 @@ class PoolModal extends Component {
 
    userPercent = userPercent.toNumber()
 
-   return { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress }
+   return { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress }
  }
 
  // return BNT and ERC20 connectors amount calculated by smart token amount
@@ -291,7 +293,7 @@ class PoolModal extends Component {
               (
                 <React.Fragment>
                 <Alert variant="info">
-                You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}BNT</a>
+                You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}BNT</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}</a> pool)
                 </Alert>
 
                 <Alert variant="warning">
