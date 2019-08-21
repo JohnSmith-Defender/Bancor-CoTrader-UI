@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Card, Badge } from "react-bootstrap"
+import { Card, Badge, Alert } from "react-bootstrap"
 import { hexToNumberString, fromWei, toWei } from 'web3-utils'
 import {
   ABISmartToken,
@@ -114,6 +114,15 @@ class DirectionInfo extends Component {
   render(){
    return(
     <React.Fragment>
+    {
+      this.props.accounts && this.props.directionAmount > this.state.userBalanceFrom
+      ?
+      (
+        <Alert variant="danger">You don't have enought balance of {this.props.from}</Alert>
+      )
+      :
+      (null)
+    }
     {
       this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0
       ?

@@ -31,6 +31,7 @@ class PoolModal extends Component {
     smartTokenAddress:undefined,
     smartTokenSupplyOriginal:0,
     smartTokenSupply:0,
+    smartTokenBalance:0,
     userPercent:0
     }
   }
@@ -66,12 +67,12 @@ class PoolModal extends Component {
       if(this.state.from)
         if(this.state.directionAmount > 0){
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
-          console.log(connectorsInfo[0], connectorsInfo[1])
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
           const { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress } = await this.getRelayInfo()
+          const smartTokenBalance = this.props.MobXStorage.accounts ? await this.getSmartTokenBalance(this.props.MobXStorage.web3, this.props.MobXStorage.accounts[0]) : 0
 
-          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent, tokenAddress })
+          this.setState({ BNTAmount, connectorAmount, smartTokenAddress, smartTokenSupplyOriginal, smartTokenSupply, userPercent, tokenAddress, smartTokenBalance })
         }else{
           this.setState({ BNTAmount:0, connectorAmount:0, smartTokenAddress:undefined, smartTokenSupplyOriginal:0, smartTokenSupply:0, userPercent:0, tokenAddress:undefined })
       }
@@ -116,6 +117,14 @@ class PoolModal extends Component {
    userPercent = userPercent.toNumber()
 
    return { smartTokenSupplyOriginal, smartTokenSupply, userPercent, smartTokenAddress, tokenAddress }
+ }
+
+ getSmartTokenBalance = async (web3, user) => {
+   const info = this.getInfoBySymbol()
+   const smartTokenContract = info[4]
+   let smartTokenBalance = await smartTokenContract.methods.balanceOf(user).call()
+   smartTokenBalance = fromWei(hexToNumberString(smartTokenBalance._hex))
+   return smartTokenBalance
  }
 
  // return BNT and ERC20 connectors amount calculated by smart token amount
@@ -216,7 +225,6 @@ class PoolModal extends Component {
 
   // TODO move this to a Presentational component
     render(){
-      console.log("this.state.smartTokenSupplyOriginal", this.state.smartTokenSupplyOriginal)
       return(
       <React.Fragment>
       {
@@ -307,6 +315,16 @@ class PoolModal extends Component {
                 <Alert variant="primary">
                 Your share will be {this.state.userPercent} % of {fromWei(String(this.state.smartTokenSupply.toFixed(0)))} new supply
                 </Alert>
+
+                {
+                  this.props.MobXStorage.accounts && this.state.directionAmount > this.state.smartTokenBalance
+                  ?
+                  (
+                    <Alert variant="danger">You don't have enought balance of {this.state.from}BNT</Alert>
+                  )
+                  :
+                  (null)
+                }
                 {/* Buttons */}
                 <br/>
                 {
