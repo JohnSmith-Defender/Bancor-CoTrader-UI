@@ -18,6 +18,7 @@ import findByProps from '../../../service/findByProps'
 import getPath from '../../../service/getPath'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
+import FakeButton from '../../templates/FakeButton'
 
 class TradeModal extends Component {
   constructor(props, context) {
@@ -373,7 +374,20 @@ class TradeModal extends Component {
               </ButtonGroup>
             )
             :
-            (null)
+            (
+              <ButtonGroup size="sm">
+              {
+                this.state.requireApprove
+                ?
+                (
+                  <FakeButton info="Please connect to web3" buttonName="Approve"/>
+                )
+                :
+                (null)
+              }
+              <FakeButton info="Please connect to web3" buttonName="Trade"/>
+              </ButtonGroup>
+            )
           }
           </div>
         )

@@ -10,7 +10,7 @@ import findByProps from '../../../service/findByProps'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import { ABIConverter, ABISmartToken, BNTToken, EtherscanLink } from '../../../config'
 import BigNumber from 'bignumber.js'
-
+import FakeButton from '../../templates/FakeButton'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
 class PoolModal extends Component {
@@ -288,7 +288,7 @@ class PoolModal extends Component {
             <br/>
             {/* Connectors info */}
             {
-              this.state.BNTAmount && this.state.connectorAmount
+              this.state.BNTAmount > 0 && this.state.connectorAmount > 0
               ?
               (
                 <React.Fragment>
@@ -307,43 +307,47 @@ class PoolModal extends Component {
                 <Alert variant="primary">
                 Your share will be {this.state.userPercent} % of {fromWei(String(this.state.smartTokenSupply.toFixed(0)))} new supply
                 </Alert>
-
-                </React.Fragment>
-              )
-              :
-              (null)
-            }
-            {/* Buttons */}
-            <br/>
-            {
-              this.state.from && this.props.MobXStorage.web3 && this.state.BNTAmount
-              ?
-              (
-              <ButtonGroup>
-              <Button variant={ this.state.isFundAction ? "primary":"outline-primary" }size="sm" name="isFundAction" onClick={e => this.change(e)}>Fund</Button>
-              <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
-              </ButtonGroup>
-              )
-              :
-              (null)
-            }
-            {
-              this.state.isFundAction && this.state.BNTAmount
-              ?
-              (
-                <React.Fragment>
+                {/* Buttons */}
                 <br/>
-                <br/>
-                <Card className="text-center">
-                <Card.Body>
-                <ButtonGroup>
-                <Button variant="outline-info" size="sm" onClick={() => this.approveBNT()}>Step 1: Approve BNT</Button>
-                <Button variant="outline-info" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve connector</Button>
-                <Button variant="outline-info" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
-                </ButtonGroup>
-                <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
-                </Card.Body>
-                </Card>
+                {
+                  this.props.MobXStorage.web3
+                  ?
+                  (
+                  <ButtonGroup>
+                  <Button variant={ this.state.isFundAction ? "primary":"outline-primary" }size="sm" name="isFundAction" onClick={e => this.change(e)}>Fund</Button>
+                  <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
+                  </ButtonGroup>
+                  )
+                  :
+                  (
+                    <ButtonGroup>
+                    <FakeButton info="Please connect to web3" buttonName="Fund"/>
+                    <FakeButton info="Please connect to web3" buttonName="Liguidate"/>
+                    </ButtonGroup>
+                  )
+                }
+                {
+                  this.state.isFundAction && this.state.BNTAmount
+                  ?
+                  (
+                    <React.Fragment>
+                    <br/>
+                    <br/>
+                    <Card className="text-center">
+                    <Card.Body>
+                    <ButtonGroup>
+                    <Button variant="outline-info" size="sm" onClick={() => this.approveBNT()}>Step 1: Approve BNT</Button>
+                    <Button variant="outline-info" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve connector</Button>
+                    <Button variant="outline-info" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
+                    </ButtonGroup>
+                    <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
+                    </Card.Body>
+                    </Card>
+                    </React.Fragment>
+                  )
+                  :
+                  (null)
+                }
                 </React.Fragment>
               )
               :
