@@ -38,7 +38,7 @@ class StepOne extends Component {
      }
      else{
        console.log("Name ", name, "Symbol ", symbol)
-       const contract =  new web3.eth.Contract(ABISmartToken, null)
+       const contract = new web3.eth.Contract(ABISmartToken, null)
 
        const stname = name + " Smart Relay Token"
        const stsymbol = symbol+"BNT"
@@ -59,11 +59,12 @@ class StepOne extends Component {
        .on('transactionHash', (hash) => {
         console.log("smart token hash ", hash)
         window.localStorage.setItem('txSmartToken', hash)
-        window.localStorage.setItem('Step', "Two")
         this.props.MobXStorage.setPending(true)
+        window.localStorage.setItem('StepNext', "Two")
+        window.localStorage.setItem('txLatest', hash)
       })
       .on('confirmation', (confirmationNumber, receipt) => {
-        this.props.MobXStorage.txFinish()
+        this.props.MobXStorage.checkTxStatus(receipt.transactionHash)
       })
      }
    }

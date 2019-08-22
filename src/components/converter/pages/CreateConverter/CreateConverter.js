@@ -26,8 +26,22 @@ class CreateConverter extends Component {
   constructor(props, context) {
   super(props, context);
   this.state = {
-    step:"One"
+    step:"One",
+    hashLatest:''
     }
+  }
+
+  // check tx status
+  componentDidMount = () => {
+    // Wait for recive props
+    setTimeout(() => {
+      const pending = window.localStorage.getItem('Pending')
+      if(pending){
+        const hash = window.localStorage.getItem('txLatest')
+        this.setState({ hashLatest:hash })
+        this.props.MobXStorage.checkTxStatus(hash)
+      }
+    }, 1000)
   }
 
   updateRenderStep = () => {
