@@ -64,7 +64,8 @@ class StepFive extends Component {
       gasPrice
     }).on('transactionHash', (hash) => {
      console.log("SetFee hash ", hash)
-     window.localStorage.setItem('Step', "Six");
+     window.localStorage.setItem('StepNext', "Six")
+     window.localStorage.setItem('txLatest', hash)
      this.props.MobXStorage.setPending(true)
     })
     .on('confirmation', (confirmationNumber, receipt) => {

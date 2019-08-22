@@ -11,6 +11,8 @@ import StepSix from "./steps/StepSix"
 import StepSeven from "./steps/StepSeven"
 import StepEighth from "./steps/StepEighth"
 
+import Pending from "../../../templates/Spiners/Pending"
+
 const componentList = {
   One: StepOne,
   Two: StepTwo,
@@ -31,11 +33,13 @@ class CreateConverter extends Component {
     }
   }
 
-  // check tx status
+  // check tx status for case is user confirm tx and then close or reload page
   componentDidMount = () => {
-    // Wait for recive props
+    // Small delay for correct recive props
     setTimeout(() => {
-      const pending = window.localStorage.getItem('Pending')
+      let pending = window.localStorage.getItem('Pending')
+      pending = JSON.parse(pending)
+
       if(pending){
         const hash = window.localStorage.getItem('txLatest')
         this.setState({ hashLatest:hash })
@@ -73,7 +77,11 @@ class CreateConverter extends Component {
               {
                 this.props.MobXStorage.pending
                 ?
-                (<Alert variant="info"><small>Transaction pending, please don't close or reload page and don't do next step, until your wallet confirms the transaction!</small></Alert>)
+                (
+                  <div>
+                  <div align="center"><small>Transaction pending</small></div>
+                  {<Pending/>}
+                  </div>)
                 :
                 (null)
               }

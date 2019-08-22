@@ -15,7 +15,8 @@ class StepSeven extends Component {
     gasPrice
   }).on('transactionHash', (hash) => {
    console.log("acceptTokenOwnership hash ", hash)
-   window.localStorage.setItem('Step', "Eighth");
+   window.localStorage.setItem('StepNext', "Eighth")
+   window.localStorage.setItem('txLatest', hash)
    this.props.MobXStorage.setPending(true)
  })
  .on('confirmation', (confirmationNumber, receipt) => {

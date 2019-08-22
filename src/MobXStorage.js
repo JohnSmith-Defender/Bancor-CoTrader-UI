@@ -3,13 +3,14 @@ import { observable, action, decorate } from 'mobx'
 class MOBXStorage {
   web3 = null
   accounts = null
-  pending = window.localStorage.getItem('Pending')
+  pending = JSON.parse(window.localStorage.getItem('Pending'))
   step = "One"
   officialSymbols = null
   unofficialSymbols = null
   officialSmartTokenSymbols = null
   unofficialSmartTokenSymbols = null
   bancorTokensStorageJson = null
+  timer = 0
 
 
   initWeb3AndAccounts = (_web3, accounts) => {
@@ -31,16 +32,19 @@ class MOBXStorage {
     window.localStorage.setItem('Pending', _bool)
   }
 
-  timer
+
   checkTxStatus = async (hash) => {
     const res = await this.web3.eth.getTransaction(hash)
+    const status = res ? res.blockNumber : null
     console.log("checkTxStatus", res.blockNumber)
-    console.log("timer", this.timer);
-    if(res.blockNumber){
+    console.log("timer", this.timer)
+
+    if(status){
+      console.log("txFinish")
       this.txFinish()
       clearTimeout(this.timer)
-      return
     }else{
+      console.log("Set new timeout")
       this.timer = setTimeout(() => this.checkTxStatus(hash), 5000)
     }
   }

@@ -22,7 +22,8 @@ class StepThree extends Component {
       gasPrice
     }).on('transactionHash', (hash) => {
      console.log("addConnector hash ", hash)
-     window.localStorage.setItem('Step', "Four");
+     window.localStorage.setItem('StepNext', "Four")
+     window.localStorage.setItem('txLatest', hash)
      this.props.MobXStorage.setPending(true)
     })
     .on('confirmation', (confirmationNumber, receipt) => {

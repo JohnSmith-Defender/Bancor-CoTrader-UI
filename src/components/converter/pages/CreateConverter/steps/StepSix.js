@@ -32,7 +32,8 @@ class StepSix extends Component {
          gas:1372732,
          gasPrice
        }).on('transactionHash', (hash) => {
-        window.localStorage.setItem('Step', "Seven");
+         window.localStorage.setItem('StepNext', "Seven")
+         window.localStorage.setItem('txLatest', hash)
         this.props.MobXStorage.setPending(true)
        })
        .on('confirmation', (confirmationNumber, receipt) => {

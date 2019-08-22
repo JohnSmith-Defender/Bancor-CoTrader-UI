@@ -38,9 +38,10 @@ class StepTwo extends Component {
     })
     .on('transactionHash', (hash) => {
      console.log("converter hash ", hash)
-     window.localStorage.setItem('txConverter', hash);
-     window.localStorage.setItem('Step', "Three");
+     window.localStorage.setItem('txConverter', hash)
      this.props.MobXStorage.setPending(true)
+     window.localStorage.setItem('StepNext', "Three")
+     window.localStorage.setItem('txLatest', hash)
     })
     .on('confirmation', (confirmationNumber, receipt) => {
       this.props.MobXStorage.txFinish()

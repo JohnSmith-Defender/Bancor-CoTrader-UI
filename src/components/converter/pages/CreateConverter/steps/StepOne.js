@@ -64,7 +64,7 @@ class StepOne extends Component {
         window.localStorage.setItem('txLatest', hash)
       })
       .on('confirmation', (confirmationNumber, receipt) => {
-        this.props.MobXStorage.checkTxStatus(receipt.transactionHash)
+        this.props.MobXStorage.txFinish()
       })
      }
    }
