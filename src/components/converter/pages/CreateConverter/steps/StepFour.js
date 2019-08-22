@@ -23,7 +23,7 @@ class StepFour extends Component {
    const converterAddress = window.localStorage.getItem('Converter')
 
    if(converterAddress !== null && converterAddress !== "undefined"){
-     const converter = web3.eth.Contract(ABIConverter, converterAddress)
+     const converter = new web3.eth.Contract(ABIConverter, converterAddress)
      console.log("PARAMS: ", this.state.fee)
 
      converter.methods.setConversionFee(this.state.fee).send({

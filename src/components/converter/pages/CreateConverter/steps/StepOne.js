@@ -23,7 +23,7 @@ class StepOne extends Component {
    if(web3.utils.isAddress(tokenAddress)){
      // Get name for smart token from input tokenAddress
      // write txs in local storage
-     let token = web3.eth.Contract(ABISmartToken, tokenAddress)
+     let token = new web3.eth.Contract(ABISmartToken, tokenAddress)
      let name = await token.methods.name().call()
      let symbol = await token.methods.symbol().call()
 

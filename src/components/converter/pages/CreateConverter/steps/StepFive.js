@@ -37,12 +37,12 @@ class StepFive extends Component {
   const smartTokenAddress = window.localStorage.getItem('smartToken')
   const connectorTokenAddress = window.localStorage.getItem('userToken')
 
-  const BNTcontract = web3.eth.Contract(ABISmartToken, BNTToken)
+  const BNTcontract = new web3.eth.Contract(ABISmartToken, BNTToken)
   let balance = await BNTcontract.methods.balanceOf(this.state.converterAddress).call()
   balance = web3.utils.hexToNumberString(balance._hex)
   balance = Number(web3.utils.fromWei(balance))
 
-  const ConnectorToken = web3.eth.Contract(ABISmartToken, connectorTokenAddress)
+  const ConnectorToken = new web3.eth.Contract(ABISmartToken, connectorTokenAddress)
   let connectorBalance = await ConnectorToken.methods.balanceOf(this.state.converterAddress).call()
   connectorBalance = web3.utils.hexToNumberString(connectorBalance._hex)
   connectorBalance  = Number(web3.utils.fromWei(connectorBalance))
@@ -54,7 +54,7 @@ class StepFive extends Component {
     balance = balance * 2
     balance = web3.utils.toWei(String(balance))
 
-    const converter = web3.eth.Contract(ABISmartToken, smartTokenAddress)
+    const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
 
     console.log("PARAMS: ", accounts[0], balance)
 

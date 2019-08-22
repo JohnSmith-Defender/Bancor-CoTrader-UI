@@ -13,7 +13,7 @@ class ChangeCommision extends Component {
       const web3 = this.props.web3
       const accounts = this.props.accounts
       const converterAddress = this.props.converterAddress
-      const converter = web3.eth.Contract(ABIConverter, converterAddress)
+      const converter = new web3.eth.Contract(ABIConverter, converterAddress)
       converter.methods.setConversionFee(this.state.fee).send({
         from:accounts[0]
       })

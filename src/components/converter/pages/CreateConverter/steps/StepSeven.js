@@ -8,7 +8,7 @@ class StepSeven extends Component {
   const web3 = this.props.MobXStorage.web3
   const accounts = this.props.MobXStorage.accounts
   const converterAddress = window.localStorage.getItem('Converter')
-  const registry = web3.eth.Contract(ABIConverter, converterAddress)
+  const registry = new web3.eth.Contract(ABIConverter, converterAddress)
 
   registry.methods.acceptTokenOwnership().send({
     from:accounts[0],

@@ -19,7 +19,7 @@ class AddConverter extends Component {
 
  AddToList = async () => {
   const web3 = this.props.MobXStorage.web3
-  const registry = web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+  const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
   console.log(this.state.converter)
 
   registry.methods.addConverter(String(this.state.converter)).send({

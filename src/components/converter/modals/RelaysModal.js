@@ -118,7 +118,7 @@ class RelaysModal extends Component {
   // View rate
   getRate = async () => {
     const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
 
     const path = getPath(
@@ -161,7 +161,7 @@ class RelaysModal extends Component {
     if(this.state.from){
       const { sendFrom } = this.overrideGetDirectionData()
 
-      const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
+      const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
       token.methods.approve(
         reciver,
         this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
@@ -193,7 +193,7 @@ class RelaysModal extends Component {
   // or COTBNT/COT or vice versa case
   claimAndConvert = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo, isRelatedDirection)
 
@@ -210,7 +210,7 @@ class RelaysModal extends Component {
   quickConvert = () => {
     const web3 = this.props.MobXStorage.web3
     const { tokenInfoFrom, objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
-    const converterContract = web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
+    const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
     converterContract.methods.quickConvert(
@@ -225,7 +225,7 @@ class RelaysModal extends Component {
   // in case if from === ETH
   convertFromETH = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const amount = web3.utils.toWei(String(this.state.directionAmount))

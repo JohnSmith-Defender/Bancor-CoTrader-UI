@@ -85,7 +85,7 @@ class TradeModal extends Component {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
     if(this.state.from !== this.state.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+      const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
       let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
@@ -121,7 +121,7 @@ class TradeModal extends Component {
   approve = () => {
     if(this.state.from){
       const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
-      const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
+      const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
       token.methods.approve(
         BancorNetwork,
         this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
@@ -136,7 +136,7 @@ class TradeModal extends Component {
   // FOR ERC20 to ERC20
   claimAndConvertFor = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
     bancorNetworkContract.methods.claimAndConvertFor(path,
@@ -150,7 +150,7 @@ class TradeModal extends Component {
   // For ETH to ERC20
   convertFor = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 

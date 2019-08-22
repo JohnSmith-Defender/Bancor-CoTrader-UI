@@ -23,7 +23,7 @@ class StepSix extends Component {
      const smartTokenInfo = await web3.eth.getTransactionReceipt(smartTokenHash)
 
      if(smartTokenInfo !== null && smartTokenInfo !== "undefined"){
-       const smartToken = web3.eth.Contract(ABISmartToken, smartTokenInfo.contractAddress)
+       const smartToken = new web3.eth.Contract(ABISmartToken, smartTokenInfo.contractAddress)
 
        this.setState({ smartToken, converter: converterAddress})
        console.log("PARAMS: ", converterAddress)

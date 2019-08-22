@@ -80,7 +80,7 @@ class TradeModal extends Component {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
     if(this.state.from !== this.state.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+      const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
       let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
@@ -115,7 +115,7 @@ class TradeModal extends Component {
   approve = () => {
     if(this.state.from){
       const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
-      const token = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
+      const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
       token.methods.approve(
         BancorNetwork,
         this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
@@ -145,7 +145,7 @@ class TradeModal extends Component {
   // for ERC20 to ERC20
   claimAndConvert = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
     bancorNetworkContract.methods.claimAndConvert(path,
@@ -161,7 +161,7 @@ class TradeModal extends Component {
     const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, this.state.from)[0]
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
-    const converterContract = web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
+    const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     converterContract.methods.quickConvert(
       path,
       web3.utils.toWei(String(this.state.directionAmount)),
@@ -173,7 +173,7 @@ class TradeModal extends Component {
   // in case if from === ETH
   convertFromETH = () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 

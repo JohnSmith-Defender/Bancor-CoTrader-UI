@@ -88,11 +88,11 @@ class PoolModal extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const tokenInfo = findByProps(this.state.bancorTokensStorageJson, 'symbol', this.state.from)[0]
       return [
-        web3.eth.Contract(ABIConverter, tokenInfo.converterAddress),
+        new web3.eth.Contract(ABIConverter, tokenInfo.converterAddress),
         tokenInfo.converterAddress,
         tokenInfo.tokenAddress,
         tokenInfo.smartTokenAddress,
-        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress),
+        new web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress),
       ]
     }
   }
@@ -196,7 +196,7 @@ class PoolModal extends Component {
    const converterAddress = tokenInfo[1]
    console.log("converterAddress", converterAddress)
 
-   const bnt = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, BNTToken)
+   const bnt = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, BNTToken)
    bnt.methods.approve(
    converterAddress,
    this.state.BNTAmount
@@ -207,7 +207,7 @@ class PoolModal extends Component {
    const tokenInfo = this.getInfoBySymbol()
    const converterAddress = tokenInfo[1]
    const connectorAddress = tokenInfo[2]
-   const connector = this.props.MobXStorage.web3.eth.Contract(ABISmartToken, connectorAddress)
+   const connector = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, connectorAddress)
    connector.methods.approve(
    converterAddress,
    this.state.connectorAmount

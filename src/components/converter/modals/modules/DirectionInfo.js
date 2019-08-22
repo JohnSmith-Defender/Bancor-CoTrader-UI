@@ -41,10 +41,10 @@ class DirectionInfo extends Component {
     let tokenTo
     let balanceOfTo
     if(this.props.from !== "ETH"){
-      token = web3.eth.Contract(ABISmartToken, sendFrom)
+      token = new web3.eth.Contract(ABISmartToken, sendFrom)
       userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
       userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
-      tokenTo = web3.eth.Contract(ABISmartToken, sendTo)
+      tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
       balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
       balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
     }else{
@@ -57,7 +57,7 @@ class DirectionInfo extends Component {
 
   // return rate from Bancor network
   getReturnByPath = async (path, amount, web3) => {
-    const bancorNetwork = web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     let amountReturn = await bancorNetwork.methods.getReturnByPath(
       path,
       toWei(String(amount))

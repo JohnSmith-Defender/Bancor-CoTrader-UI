@@ -13,7 +13,7 @@ class StepThree extends Component {
 
   if(converterInfo !== null && converterInfo !== "undefined"){
     window.localStorage.setItem('Converter', converterInfo.contractAddress)
-    const converter = web3.eth.Contract(ABIConverter, converterInfo.contractAddress)
+    const converter = new web3.eth.Contract(ABIConverter, converterInfo.contractAddress)
     console.log("PARAMS: ", window.localStorage.getItem('userToken'), 500000, false)
 
     converter.methods.addConnector(window.localStorage.getItem('userToken'), 500000, false).send({

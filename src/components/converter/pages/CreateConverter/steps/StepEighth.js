@@ -23,7 +23,7 @@ class StepEighth extends Component {
   const web3 = this.props.MobXStorage.web3
   const accounts = this.props.MobXStorage.accounts
   const converterAddress = window.localStorage.getItem('Converter')
-  const registry = web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+  const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
 
   registry.methods.addConverter(converterAddress).send({
     from:accounts[0],
