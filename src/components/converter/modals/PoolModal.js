@@ -331,21 +331,21 @@ class PoolModal extends Component {
               (
                 <React.Fragment>
                 <Alert variant="info">
-                You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}BNT</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}</a> pool)
+                <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}BNT</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.state.from}</a> pool )</small>
                 </Alert>
 
                 <Alert variant="warning">
-                You will pay BNT: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.state.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}
+                <small>You will pay BNT: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.state.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}</small>
                 </Alert>
 
                 <Alert variant="primary">
-                Current supply of {this.state.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},
+                <small>Current supply of {this.state.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},</small>
                 {
                   this.props.MobXStorage.accounts
                   ?
                   (
                     <React.Fragment>
-                    Your share is {this.state.currentUserPercent} %
+                    <small>Your share is {this.state.currentUserPercent} %</small>
                     </React.Fragment>
                   )
                   :
@@ -354,14 +354,14 @@ class PoolModal extends Component {
                 </Alert>
 
                 <Alert variant="primary">
-                Your share will be {this.state.newUserPercent} % of  {fromWei(String(this.state.newSmartTokenSupply.toFixed(0)))} new supply
+                <small>Your share will be {this.state.newUserPercent} % of  {fromWei(String(this.state.newSmartTokenSupply.toFixed(0)))} new supply</small>
                 </Alert>
 
                 {
                   this.props.MobXStorage.accounts && this.state.directionAmount > this.state.smartTokenBalance
                   ?
                   (
-                    <Alert variant="danger">You don't have enought balance of {this.state.from}BNT</Alert>
+                    <small><Alert variant="danger">You don't have enought balance of {this.state.from}BNT</Alert></small>
                   )
                   :
                   (null)
