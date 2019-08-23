@@ -21,14 +21,15 @@ class ConverterSettings extends Component {
 
 
   gasPriceToogle() {
+    console.log(this.props.MobXStorage.GasPrice, gasPrice)
     if(this.props.MobXStorage.GasPrice === gasPrice){
       this.setState({ isNotDefaultPrice: !this.state.isNotDefaultPrice })
       window.localStorage.setItem('gasPrice', 1000000000)
       this.props.MobXStorage.updateGasPrice(1000000000)
     }else{
       this.setState({ isNotDefaultPrice: !this.state.isNotDefaultPrice })
-      window.localStorage.setItem('gasPrice', 4000000000)
-      this.props.MobXStorage.updateGasPrice(4000000000)
+      window.localStorage.setItem('gasPrice', gasPrice)
+      this.props.MobXStorage.updateGasPrice(gasPrice)
     }
 
   }
