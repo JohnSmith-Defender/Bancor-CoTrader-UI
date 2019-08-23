@@ -1,3 +1,5 @@
+// this component not used for now
+
 import React, { Component } from 'react'
 import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../config'
 import { Form, Button, Card } from "react-bootstrap"
