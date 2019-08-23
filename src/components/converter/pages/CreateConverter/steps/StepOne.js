@@ -1,7 +1,8 @@
-import { ABISmartToken, BYTECODESmartToken, gasPrice } from '../../../../../config'
+import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI, gasPrice } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { inject } from 'mobx-react'
 import React, { Component } from 'react'
+import { toUtf8 } from 'web3-utils'
 
 class StepOne extends Component {
  constructor(props, context) {
@@ -24,18 +25,32 @@ class StepOne extends Component {
      // Get name for smart token from input tokenAddress
      // write txs in local storage
      let token = new web3.eth.Contract(ABISmartToken, tokenAddress)
-     let name = await token.methods.name().call()
-     let symbol = await token.methods.symbol().call()
+     let name
+     let symbol
 
-     // in case if return bytes32
-     if(typeof name !== "string" || typeof symbol !== "string"){
-       name = prompt("Enter token name");
-       symbol = prompt("Enter token symbol");
+     try{
+       name = await token.methods.name().call()
+       symbol = await token.methods.symbol().call()
+
+     }
+     // for no standard bytes32 return
+     catch(error){
+       try{
+       token = new web3.eth.Contract(ERC20Bytes32ABI, tokenAddress)
+       name = toUtf8(await token.methods.name().call())
+       symbol = toUtf8(await token.methods.symbol().call())
+     }catch(err){
+       alert("Sorry, but You have no standard token")
+     }
      }
 
-     if(name === null && symbol === null){
-       alert("Token can't be without name and symbol")
+     const decimals = await token.methods.decimals.call()
+
+     if(decimals !== 18){
+       alert("Sorry, but You have no standard token")
      }
+
+
      else{
        console.log("Name ", name, "Symbol ", symbol)
        const contract = new web3.eth.Contract(ABISmartToken, null)

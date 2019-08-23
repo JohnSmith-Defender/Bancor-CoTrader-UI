@@ -31,10 +31,8 @@ const getUnofficialData = async (_web3) => {
      })
 
      let converter
-     let tokenAddress
      let token
      let symbol
-     let smartTokenAddress
      let smartToken
      let smartTokenSymbol
      let owner
@@ -43,25 +41,35 @@ const getUnofficialData = async (_web3) => {
      for(let i = 0; i < unofficialConverters.length; i++){
        // load data expect black list
        converter = new web3.eth.Contract(ABIConverter, unofficialConverters[i])
-       tokenAddress = await converter.methods.connectorTokens(1).call()
-       token = new web3.eth.Contract(ABISmartToken, tokenAddress)
-       symbol = await token.methods.symbol.call()
-       smartTokenAddress = await converter.methods.token().call()
-       smartToken = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
-       smartTokenSymbol = await smartToken.methods.symbol.call()
+       const tokenAddress = await converter.methods.connectorTokens(1).call()
+
+       if(tokenAddress){
+         token = new web3.eth.Contract(ABISmartToken, tokenAddress)
+         symbol = await token.methods.symbol.call()
+       }
+
+       const smartTokenAddress = await converter.methods.token().call()
+
+       if(smartTokenAddress){
+         smartToken = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
+         smartTokenSymbol = await smartToken.methods.symbol.call()
+       }
+       
        owner = await converter.methods.owner().call()
 
-       relayObj = {
-         tokenAddress, symbol,
-         converterAddress:unofficialConverters[i],
-         smartTokenAddress,
-         smartTokenSymbol,
-         owner
+       if(tokenAddress && smartTokenAddress){
+        relayObj = {
+          tokenAddress, symbol,
+          converterAddress:unofficialConverters[i],
+          smartTokenAddress,
+          smartTokenSymbol,
+          owner
          }
 
-        bancorTokensStorageJson.push(relayObj)
-        unofficialSymbols.push(symbol)
-        unofficialSmartTokenSymbols.push(smartTokenSymbol)
+         bancorTokensStorageJson.push(relayObj)
+         unofficialSymbols.push(symbol)
+         unofficialSmartTokenSymbols.push(smartTokenSymbol)
+        }
      }
 
      return [unofficialSymbols, unofficialSmartTokenSymbols, bancorTokensStorageJson]
