@@ -7,7 +7,7 @@ import TradePage from "./components/converter/pages/TradePage"
 import SendPage from "./components/converter/pages/SendPage"
 import RelaysPage from "./components/converter/pages/RelaysPage"
 import PoolPage from "./components/converter/pages/PoolPage"
-import AddConverter from "./components/converter/pages/AddConverter"
+// import AddConverter from "./components/converter/pages/AddConverter"
 import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
 import ConverterSettingsPage from "./components/converter/pages/ConverterSettingsPage/ConverterSettingsPage"
 import Footer from "./components/static/Footer"
@@ -113,10 +113,12 @@ class App extends Component {
            <CreateConverter/>
            </Tab>
 
+           {/*
            <Tab eventKey="addConverter" title="Add converter">
            <AddConverter />
            </Tab>
-
+           */}
+           
            <Tab eventKey="editConverter" title="Converter settings">
            <ConverterSettingsPage />
            </Tab>
