@@ -8,6 +8,7 @@ import { inject, observer } from 'mobx-react'
 import findByProps from '../../../../service/findByProps'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
 import { ABIConverter, ABISmartToken } from '../../../../config'
+import { hexToNumberString } from 'web3-utils'
 
 import Liquidate from './Liquidate'
 import Fund from './Fund'
@@ -57,6 +58,13 @@ class PoolModal extends Component {
         bancorTokensStorageJson
       })
     }
+  }
+
+  getTokenBalance = async (web3, tokenAddress, user) => {
+    const tokenContract = new web3.eth.Contract(ABISmartToken, tokenAddress)
+    let tokenBalance = await tokenContract.methods.balanceOf(user).call()
+    tokenBalance = hexToNumberString(tokenBalance._hex)
+    return tokenBalance
   }
 
   // return converter contract, converter address, connector (ERC20) token address, smart token address and smart token contract
@@ -174,11 +182,17 @@ class PoolModal extends Component {
                 getInfoBySymbol={this.getInfoBySymbol}
                 accounts={this.props.MobXStorage.accounts}
                 bancorTokensStorageJson={this.props.MobXStorage.bancorTokensStorageJson}
+                getTokenBalance={this.getTokenBalance}
                 />
               )
               :
               (
-                <Liquidate getInfoBySymbol={this.getInfoBySymbol} accounts={this.props.MobXStorage.accounts}/>
+                <Liquidate
+                getInfoBySymbol={this.getInfoBySymbol}
+                web3={this.props.MobXStorage.web3}
+                accounts={this.props.MobXStorage.accounts}
+                getTokenBalance={this.getTokenBalance}
+                />
               )
             }
             </React.Fragment>

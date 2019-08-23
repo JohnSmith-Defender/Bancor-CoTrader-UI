@@ -1,11 +1,21 @@
 import React, { Component } from 'react'
-import { Button, Form } from "react-bootstrap"
-import { toWei } from 'web3-utils'
+import { Button, Form, Alert } from "react-bootstrap"
+import { toWei, fromWei } from 'web3-utils'
 import FakeButton from '../../../templates/FakeButton'
 
 class Liquidate extends Component {
   state = {
-    directionAmount:0
+    directionAmount:0,
+    smartTokenBalance:0
+  }
+
+  componentDidUpdate = async (prevProps, prevState) => {
+    // Update connectors info by input change
+    if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
+      const smarTokenAddress = this.props.getInfoBySymbol()[3]
+      const smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smarTokenAddress, this.props.accounts[0])
+      this.setState({ smartTokenBalance })
+    }
   }
 
   liquidate = () => {
@@ -20,7 +30,6 @@ class Liquidate extends Component {
 
 
   render() {
-    console.log(this.state.directionAmount)
     return (
       <React.Fragment>
       <Form.Group>
@@ -38,6 +47,15 @@ class Liquidate extends Component {
         )
       }
       </Form.Group>
+      {
+        this.state.smartTokenBalance > 0 && this.state.directionAmount > 0
+        ?
+        (
+          <Alert variant="info">Your balance of {this.props.from}BNT is {fromWei(String(this.state.smartTokenBalance))}</Alert>
+        )
+        :
+        (null)
+      }
       </React.Fragment>
     )
   }

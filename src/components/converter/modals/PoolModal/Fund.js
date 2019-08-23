@@ -112,15 +112,15 @@ class Fund extends Component {
 
     // if user connect to web3 take into account his balance
     if(this.props.accounts){
-      smartTokenBalance = await this.getTokenBalance(this.props.web3, smartTokenAddress, this.props.accounts[0])
+      smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smartTokenAddress, this.props.accounts[0])
       const smartTokenBalanceBN = new BigNumber(smartTokenBalance)
       // current %
       currentUserPercent = await this.calculateUserPercentFromSupply(smartTokenBalanceBN, smartTokenSupplyOriginal)
       // add to input curent user balance
       share = share.plus(smartTokenBalanceBN)
 
-      userBNTBalance = await this.getTokenBalance(this.props.web3, BNTToken, this.props.accounts[0])
-      userConnectorBalance = await this.getTokenBalance(this.props.web3, tokenAddress, this.props.accounts[0])
+      userBNTBalance = await this.props.getTokenBalance(this.props.web3, BNTToken, this.props.accounts[0])
+      userConnectorBalance = await this.props.getTokenBalance(this.props.web3, tokenAddress, this.props.accounts[0])
     }
 
     // new %
@@ -149,12 +149,6 @@ class Fund extends Component {
     return userPercent.toNumber()
   }
 
-  getTokenBalance = async (web3, tokenAddress, user) => {
-    const tokenContract = new this.props.web3.eth.Contract(ABISmartToken, tokenAddress)
-    let tokenBalance = await tokenContract.methods.balanceOf(user).call()
-    tokenBalance = hexToNumberString(tokenBalance._hex)
-    return tokenBalance
-  }
 
   // return BNT and ERC20 connectors amount calculated by smart token amount
   calculateConnectorBySmartTokenAmount = async () => {
