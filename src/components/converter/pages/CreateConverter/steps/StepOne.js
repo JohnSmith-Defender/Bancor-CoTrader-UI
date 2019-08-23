@@ -46,12 +46,14 @@ class StepOne extends Component {
 
      const decimals = await token.methods.decimals.call()
 
-     if(decimals !== 18){
+     if(!decimals){
        alert("Sorry, but You have no standard token")
      }
 
+     let conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
 
-     else{
+
+     if(conf){
        console.log("Name ", name, "Symbol ", symbol)
        const contract = new web3.eth.Contract(ABISmartToken, null)
 
@@ -60,11 +62,11 @@ class StepOne extends Component {
 
        window.localStorage.setItem('userToken', tokenAddress);
 
-       console.log("PARAMS: ", stname, stsymbol, 18)
+       console.log("PARAMS: ", stname, stsymbol, decimals)
 
        contract.deploy({
            data: BYTECODESmartToken,
-           arguments: [stname, stsymbol, 18]
+           arguments: [stname, stsymbol, decimals]
        })
        .send({
          from: accounts[0],
@@ -98,7 +100,7 @@ render() {
    <strong>This will be executed with these parameters</strong>
    <small>Name: AAA Smart Relay Token</small>
    <small>Symbol: AAABNT</small>
-   <small>Decimals: 18</small>
+   <small>Decimals: Your decimals number</small>
    <br/>
    <Form>
    <Form.Group>
