@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { ABIConverter, gasPrice } from '../../../../../config'
+import { ABIConverter } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 
 class StepSeven extends Component {
  acceptTokenOwnership = async () => {
@@ -9,7 +8,8 @@ class StepSeven extends Component {
   const accounts = this.props.MobXStorage.accounts
   const converterAddress = window.localStorage.getItem('Converter')
   const registry = new web3.eth.Contract(ABIConverter, converterAddress)
-
+  const gasPrice = this.props.MobXStorage.GasPrice
+  
   registry.methods.acceptTokenOwnership().send({
     from:accounts[0],
     gasPrice
@@ -40,4 +40,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepSeven)
+export default StepSeven

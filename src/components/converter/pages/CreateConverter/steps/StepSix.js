@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { ABISmartToken, gasPrice } from '../../../../../config'
+import { ABISmartToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 
 class StepSix extends Component {
   state = {
@@ -24,7 +23,8 @@ class StepSix extends Component {
 
      if(smartTokenInfo !== null && smartTokenInfo !== "undefined"){
        const smartToken = new web3.eth.Contract(ABISmartToken, smartTokenInfo.contractAddress)
-
+       const gasPrice = this.props.MobXStorage.GasPrice
+       
        this.setState({ smartToken, converter: converterAddress})
        console.log("PARAMS: ", converterAddress)
        smartToken.methods.transferOwnership(converterAddress).send({
@@ -67,4 +67,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepSix)
+export default StepSix

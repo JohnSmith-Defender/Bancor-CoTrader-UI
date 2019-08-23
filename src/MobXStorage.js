@@ -1,4 +1,5 @@
 import { observable, action, decorate } from 'mobx'
+import { gasPrice } from './config'
 
 class MOBXStorage {
   web3 = null
@@ -11,6 +12,7 @@ class MOBXStorage {
   unofficialSmartTokenSymbols = null
   bancorTokensStorageJson = null
   timer = 0
+  GasPrice = window.localStorage.getItem('gasPrice') ? JSON.parse(window.localStorage.getItem('gasPrice')) : gasPrice
 
 
   initWeb3AndAccounts = (_web3, accounts) => {
@@ -25,6 +27,10 @@ class MOBXStorage {
     }else{
       this.step = _step
     }
+  }
+
+  updateGasPrice = (newGasPrice) => {
+    this.GasPrice = newGasPrice
   }
 
   setPending = (_bool) => {
@@ -89,6 +95,7 @@ decorate(MOBXStorage, {
     officialSmartTokenSymbols:observable,
     unofficialSmartTokenSymbols:observable,
     bancorTokensStorageJson:observable,
+    GasPrice:observable,
 
     checkTxStatus:action,
     initWeb3AndAccounts:action,
@@ -99,7 +106,8 @@ decorate(MOBXStorage, {
     initUnofficialSymbols:action,
     initBancorStorage:action,
     initOfficialSmartTokenSymbols:action,
-    initUnofficialSmartTokenSymbols:action
+    initUnofficialSmartTokenSymbols:action,
+    updateGasPrice:action
 })
 
 const MobXStorage = new MOBXStorage()

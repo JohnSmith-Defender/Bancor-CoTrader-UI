@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI, gasPrice } from '../../../../../config'
+import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
-import { inject } from 'mobx-react'
+
 
 class StepEighth extends Component {
   state = {
@@ -24,7 +24,8 @@ class StepEighth extends Component {
   const accounts = this.props.MobXStorage.accounts
   const converterAddress = window.localStorage.getItem('Converter')
   const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
-
+  const gasPrice = this.props.MobXStorage.GasPrice
+  
   registry.methods.addConverter(converterAddress).send({
     from:accounts[0],
     gasPrice
@@ -77,4 +78,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepEighth)
+export default StepEighth

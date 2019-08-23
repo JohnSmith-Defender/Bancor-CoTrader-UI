@@ -1,6 +1,5 @@
-import { ABIConverter, gasPrice } from '../../../../../config'
+import { ABIConverter } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 
 class StepThree extends Component {
@@ -15,7 +14,8 @@ class StepThree extends Component {
     window.localStorage.setItem('Converter', converterInfo.contractAddress)
     const converter = new web3.eth.Contract(ABIConverter, converterInfo.contractAddress)
     console.log("PARAMS: ", window.localStorage.getItem('userToken'), 500000, false)
-
+    const gasPrice = this.props.MobXStorage.GasPrice
+    
     converter.methods.addConnector(window.localStorage.getItem('userToken'), 500000, false).send({
       from:accounts[0],
       gas:1372732,
@@ -51,4 +51,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepThree)
+export default StepThree

@@ -1,6 +1,5 @@
-import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken, gasPrice } from '../../../../../config'
+import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 
 class StepTwo extends Component {
@@ -27,6 +26,8 @@ class StepTwo extends Component {
     console.log("smartToken address ", smartToken)
     console.log("PARAMS: ", smartToken, BancorRegistry, 30000, BNTToken, 500000)
 
+    const gasPrice = this.props.MobXStorage.GasPrice
+    
     contract.deploy({
         data: BYTECODEConverter,
         arguments: [smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000]
@@ -78,4 +79,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepTwo)
+export default StepTwo

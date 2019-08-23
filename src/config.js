@@ -5,7 +5,7 @@ export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad
 export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
 export const EtherscanLink = "https://etherscan.io/"
-export const gasPrice = 4000000000 // 4 gwei
+export const gasPrice = 5000000000 // 4 gwei
 export const netId = 1
 
 
@@ -16,7 +16,7 @@ export const netId = 1
 // export const BancorNetwork = "0x39Dd546F2DA1f6bb0fEa7A086cE04A519fCB6A1A"
 // export const BancorETH = "0xd43391b8fa168dcb34517877334672bcc3343ca1"
 // export const EtherscanLink = "https://ropsten.etherscan.io/"
-// export const gasPrice = 4000000000 // 4 gwei
+// export const gasPrice = 5000000000 // 4 gwei
 // export const netId = 3
 
 export const ConvertersRegistryListABI = [

@@ -1,6 +1,5 @@
-import { ABISmartToken, BNTToken, gasPrice } from '../../../../../config'
+import { ABISmartToken, BNTToken } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 
 class StepFive extends Component {
@@ -57,7 +56,8 @@ class StepFive extends Component {
     const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
 
     console.log("PARAMS: ", accounts[0], balance)
-
+    const gasPrice = this.props.MobXStorage.GasPrice
+    
     converter.methods.issue(accounts[0], balance).send({
       from:accounts[0],
       gas:1372732,
@@ -103,4 +103,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepFive)
+export default StepFive

@@ -1,6 +1,5 @@
-import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI, gasPrice } from '../../../../../config'
+import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI } from '../../../../../config'
 import { Form, Button, Card } from "react-bootstrap"
-import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 import { toUtf8 } from 'web3-utils'
 
@@ -61,6 +60,7 @@ class StepOne extends Component {
          window.localStorage.setItem('userToken', tokenAddress);
 
          console.log("PARAMS: ", stname, stsymbol, decimals)
+         const gasPrice = this.props.MobXStorage.GasPrice
 
          contract.deploy({
              data: BYTECODESmartToken,
@@ -114,4 +114,4 @@ render() {
 }
 }
 
-export default inject('MobXStorage')(StepOne)
+export default StepOne

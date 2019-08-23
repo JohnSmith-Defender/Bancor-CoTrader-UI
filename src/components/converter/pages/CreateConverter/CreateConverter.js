@@ -12,6 +12,7 @@ import StepSeven from "./steps/StepSeven"
 import StepEighth from "./steps/StepEighth"
 
 import Pending from "../../../templates/Spiners/Pending"
+import ConverterSettings from "./ConverterSettings"
 
 const componentList = {
   One: StepOne,
@@ -72,7 +73,7 @@ class CreateConverter extends Component {
               <br />
               <Alert variant="primary"><small>Attention this application uses local storage for storing parameters. DO NOT delete your browser history until you have completed all steps. <p style={{"color":"red"}}>Please don't do the next step until current transaction not confirmed in Your wallet!</p></small></Alert>
               <br />
-              <StepComponent updateRenderStep={this.updateRenderStep}/>
+              <StepComponent updateRenderStep={this.updateRenderStep} MobXStorage={this.props.MobXStorage}/>
               <br />
               {
                 this.props.MobXStorage.pending
@@ -96,6 +97,7 @@ class CreateConverter extends Component {
           <Alert variant="warning">Please connect to web3</Alert>
         )
       }
+      <ConverterSettings MobXStorage={this.props.MobXStorage}/>
       </React.Fragment>
     )
   }
