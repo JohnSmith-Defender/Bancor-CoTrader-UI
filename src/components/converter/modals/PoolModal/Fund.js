@@ -266,7 +266,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.connectorAmount))) > Number(fromWei(String(this.state.userConnectorBalance)))
               ?
               (
-                <small><Alert variant="danger">You don't have enought balance of {this.props.from}, your current balance is: { fromWei(String(this.state.userConnectorBalance)) }</Alert></small>
+                <small><Alert variant="danger">Insufficient {this.props.from}, You have { fromWei(String(this.state.userConnectorBalance)) }</Alert></small>
               )
               :
               (null)
@@ -275,7 +275,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.BNTAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
               ?
               (
-                <small><Alert variant="danger">You don't have enought balance of BNT your current balance is: { fromWei(String(this.state.userBNTBalance)) }</Alert></small>
+                <small><Alert variant="danger">Insufficient BNT, You have { fromWei(String(this.state.userBNTBalance)) }</Alert></small>
               )
               :
               (null)
