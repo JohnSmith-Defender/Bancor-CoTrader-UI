@@ -15,7 +15,7 @@ import blackList from '../storage/blackList'
 const getUnofficialData = async (_web3) => {
    const web3 = getWeb3ForRead(_web3)
 
-   const registry = web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+   const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
    let total = await registry.methods.totalConverters().call()
 
    if(total){
@@ -42,12 +42,12 @@ const getUnofficialData = async (_web3) => {
 
      for(let i = 0; i < unofficialConverters.length; i++){
        // load data expect black list
-       converter = web3.eth.Contract(ABIConverter, unofficialConverters[i])
+       converter = new web3.eth.Contract(ABIConverter, unofficialConverters[i])
        tokenAddress = await converter.methods.connectorTokens(1).call()
-       token = web3.eth.Contract(ABISmartToken, tokenAddress)
+       token = new web3.eth.Contract(ABISmartToken, tokenAddress)
        symbol = await token.methods.symbol.call()
        smartTokenAddress = await converter.methods.token().call()
-       smartToken = web3.eth.Contract(ABISmartToken, smartTokenAddress)
+       smartToken = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
        smartTokenSymbol = await smartToken.methods.symbol.call()
        owner = await converter.methods.owner().call()
 

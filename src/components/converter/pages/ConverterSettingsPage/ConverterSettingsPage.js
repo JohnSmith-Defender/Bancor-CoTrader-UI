@@ -80,7 +80,7 @@ class ConverterSettingsPage extends Component {
                 )
                 :
                 (
-                  <Alert variant="warning">You not have any converter</Alert>
+                  <Alert variant="warning">You do not have any converter</Alert>
                 )
               }
               {
