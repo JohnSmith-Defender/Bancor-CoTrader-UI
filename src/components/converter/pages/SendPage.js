@@ -11,10 +11,10 @@ function SendPage() {
     <Card.Header>Trade and send via Bancor</Card.Header>
     <Card.Body>
     <Card.Text>
-    This page allow You exchange tokens and send for any ETH address
+    This page allows trade and send to any ETH address.
     </Card.Text>
     <Card.Text>
-    Please be careful when you choosing unofficial tokens.
+    Please be careful when choosing unverified tokens.
     </Card.Text>
     <Card.Text>
     More updates coming soon.

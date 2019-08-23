@@ -49,40 +49,39 @@ class StepOne extends Component {
      if(!decimals){
        alert("Sorry, but You have no standard token")
      }
+     else{
+       const conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
+       if(conf){
+         console.log("Name ", name, "Symbol ", symbol)
+         const contract = new web3.eth.Contract(ABISmartToken, null)
 
-     let conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
+         const stname = name + " Smart Relay Token"
+         const stsymbol = symbol+"BNT"
 
+         window.localStorage.setItem('userToken', tokenAddress);
 
-     if(conf){
-       console.log("Name ", name, "Symbol ", symbol)
-       const contract = new web3.eth.Contract(ABISmartToken, null)
+         console.log("PARAMS: ", stname, stsymbol, decimals)
 
-       const stname = name + " Smart Relay Token"
-       const stsymbol = symbol+"BNT"
-
-       window.localStorage.setItem('userToken', tokenAddress);
-
-       console.log("PARAMS: ", stname, stsymbol, decimals)
-
-       contract.deploy({
-           data: BYTECODESmartToken,
-           arguments: [stname, stsymbol, decimals]
-       })
-       .send({
-         from: accounts[0],
-         gas:2372732,
-         gasPrice
-       })
-       .on('transactionHash', (hash) => {
-        console.log("smart token hash ", hash)
-        window.localStorage.setItem('txSmartToken', hash)
-        this.props.MobXStorage.setPending(true)
-        window.localStorage.setItem('StepNext', "Two")
-        window.localStorage.setItem('txLatest', hash)
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        this.props.MobXStorage.txFinish()
-      })
+         contract.deploy({
+             data: BYTECODESmartToken,
+             arguments: [stname, stsymbol, decimals]
+         })
+         .send({
+           from: accounts[0],
+           gas:2372732,
+           gasPrice
+         })
+         .on('transactionHash', (hash) => {
+          console.log("smart token hash ", hash)
+          window.localStorage.setItem('txSmartToken', hash)
+          this.props.MobXStorage.setPending(true)
+          window.localStorage.setItem('StepNext', "Two")
+          window.localStorage.setItem('txLatest', hash)
+        })
+        .on('confirmation', (confirmationNumber, receipt) => {
+          this.props.MobXStorage.txFinish()
+        })
+       }
      }
    }
    else{

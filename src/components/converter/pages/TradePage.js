@@ -11,13 +11,19 @@ function TradePage() {
     <Card.Header>Trade via Bancor</Card.Header>
     <Card.Body>
     <Card.Text>
-    This opensource dapp allows you to convert both official and unofficial tokens in the Bancor Network.
+    This opensource dapp allows you to add and trade tokens in the Bancor Network.
     </Card.Text>
     <Card.Text>
-    Please be careful when you choosing unofficial tokens.
+    Our default lists include both Bancor official and CoTrader verified tokens.
     </Card.Text>
     <Card.Text>
-    You can also add your own tokens to the unofficial list in the "add converter" tab.
+    You can add a new token in the "add converter" tab.
+    </Card.Text>
+    <Card.Text>
+    You can ask us to verify the token in "Chat & Support" below.
+    </Card.Text>
+    <Card.Text>
+    Please be careful when you choosing unverified tokens.
     </Card.Text>
     <Card.Text>
     More updates coming soon.
