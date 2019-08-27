@@ -9,7 +9,7 @@ import Send from '@material-ui/icons/Send';
 import Pool from '@material-ui/icons/Pool';
 import Timeline from '@material-ui/icons/Timeline';
 import Create from '@material-ui/icons/Create';
-import Add from '@material-ui/icons/Add';
+// import Add from '@material-ui/icons/Add';
 import Settings from '@material-ui/icons/Settings';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -19,7 +19,7 @@ import TradePage from "../converter/pages/TradePage"
 import SendPage from "../converter/pages/SendPage"
 import RelaysPage from "../converter/pages/RelaysPage"
 import PoolPage from "../converter/pages/PoolPage"
-import AddConverter from "../converter/pages/AddConverter"
+// import AddConverter from "../converter/pages/AddConverter"
 import CreateConverter from "../converter/pages/CreateConverter/CreateConverter"
 import ConverterSettingsPage from "../converter/pages/ConverterSettingsPage/ConverterSettingsPage"
 
@@ -90,7 +90,7 @@ export default function TabsBar() {
           <Tab className={classes.tab_item} label="Pool" icon={<Pool />} {...a11yProps(2)} />
           <Tab className={classes.tab_item} label="Relays" icon={<Timeline />} {...a11yProps(3)} />
           <Tab className={classes.tab_item} label="Create Converter" icon={<Create />} {...a11yProps(4)} />
-          <Tab className={classes.tab_item} label="Add Converter" icon={<Add />} {...a11yProps(5)} />
+          {/*<Tab className={classes.tab_item} label="Add Converter" icon={<Add />} {...a11yProps(5)} />*/}
           <Tab className={classes.tab_item} label="Converter Settings" icon={<Settings />} {...a11yProps(6)} />
         </Tabs>
       </AppBar>
@@ -110,11 +110,11 @@ export default function TabsBar() {
         <CreateConverter/>
       </TabPanel>
       <TabPanel value={value} index={5}>
-        <AddConverter />
-      </TabPanel>
-      <TabPanel value={value} index={6}>
         <ConverterSettingsPage />
       </TabPanel>
+      {/*<TabPanel value={value} index={6}>
+        <AddConverter />
+      </TabPanel>*/}
     </div>
   );
 }
