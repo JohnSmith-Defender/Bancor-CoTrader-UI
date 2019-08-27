@@ -41,12 +41,12 @@ class StepThree extends Component {
  }
  }
 
-render() {
-  return(
+ render() {
+   return(
     <Card>
     <CardContent>
     <Typography variant="h4" gutterBottom component="h4">
-    <h3>Step 3</h3>
+    Step 3
     </Typography>
     <Typography variant="body1" className={'mb-2'} component="p">
     <strong>Add connector</strong>

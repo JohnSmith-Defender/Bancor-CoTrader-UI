@@ -65,7 +65,8 @@ class StepOne extends Component {
          const stname = name + " Smart Relay Token"
          const stsymbol = symbol+"BNT"
 
-         window.localStorage.setItem('userToken', tokenAddress);
+         window.localStorage.setItem('userToken', tokenAddress)
+         window.localStorage.setItem('tokenSymbol', symbol)
 
          console.log("PARAMS: ", stname, stsymbol, decimals)
          const gasPrice = this.props.MobXStorage.GasPrice
