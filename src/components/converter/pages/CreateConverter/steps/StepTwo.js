@@ -8,6 +8,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+import UserInfo from '../../../../templates/UserInfo'
+
 class StepTwo extends Component {
  state = {
    maxFee:200000
@@ -74,22 +76,7 @@ render() {
         converter handle the actual conversions
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          <strong>This will be executed with these parameters</strong>
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Smart token address from previos step
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Bancor registry contract address
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Max Fee: {this.state.maxFee}
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Connector: BNT token address
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Weight: 500,000 (50%)
+          This <UserInfo label="Bancor documentation" info={`Smart token address from previos step, Bancor registry contract address, Max Fee:  ${this.state.maxFee}, Weight: 500,000 (50%`}/> step will be done
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>

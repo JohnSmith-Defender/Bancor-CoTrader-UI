@@ -11,7 +11,7 @@ const UserInfo = (props) => {
       </Tooltip>
       }
       >
-      <Badge variant="info">info</Badge>
+      <Badge variant="info">{props.label ? props.label : "info"}</Badge>
       </OverlayTrigger>
     )
 }

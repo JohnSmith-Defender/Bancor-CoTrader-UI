@@ -98,6 +98,10 @@ class CreateConverter extends Component {
         )
       }
       <ConverterSettings MobXStorage={this.props.MobXStorage}/>
+
+      <div className="container-fluid" align="center">
+      <small><a style={{color: '#3f51b5'}} href="https://drive.google.com/open?id=1y5jJz8B4fpub-skJCun3FmYAMUMVnUUN" target="_blank" rel="noopener noreferrer">Bancor Documentation</a></small>
+      </div>
       </React.Fragment>
     )
   }

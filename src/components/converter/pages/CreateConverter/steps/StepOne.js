@@ -9,6 +9,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+import UserInfo from '../../../../templates/UserInfo'
+
 class StepOne extends Component {
  constructor(props, context) {
  super(props, context)
@@ -112,16 +114,7 @@ render() {
           Relay tokens are a bridge between your token and the Bancor BNT trade network.
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          <strong>This will be executed with these parameters</strong>
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Name: AAA Smart Relay Token
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Symbol: AAABNT
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Decimals: Your decimals number
+          This <UserInfo label="Bancor documentation" info="Name: AAA Smart Relay Token, Symbol: AAABNT, Decimals: Your decimals number"/> step will be done
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
@@ -129,7 +122,6 @@ render() {
         <Form.Group>
          <Form.Label>Enter Token Address:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
-         <Form.Text>Note: your token must have 18 decimals.</Form.Text>
         </Form.Group>
         <Button variant="contained" color="primary" size="medium" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
         </Form>

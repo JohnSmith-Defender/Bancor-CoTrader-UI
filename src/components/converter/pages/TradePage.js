@@ -49,7 +49,7 @@ function TradePage() {
           Trade via Bancor
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} This opensource dapp allows you to add and trade tokens in the Bancor Network.
+          {bull} This dapp allows you to add and trade tokens in the Bancor Network.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
           {bull} Our default lists include both Bancor official and CoTrader verified tokens.
