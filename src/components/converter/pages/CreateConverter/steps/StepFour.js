@@ -1,6 +1,11 @@
 import { ABIConverter } from '../../../../../config'
-import { Form, Button, Card } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 import React, { Component } from 'react'
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 
 class StepFour extends Component {
  constructor(props, context) {
@@ -25,7 +30,7 @@ class StepFour extends Component {
      const converter = new web3.eth.Contract(ABIConverter, converterAddress)
      console.log("PARAMS: ", this.state.fee)
      const gasPrice = this.props.MobXStorage.GasPrice
-     
+
      converter.methods.setConversionFee(this.state.fee).send({
        from:accounts[0],
        gas:1372732,
@@ -46,16 +51,27 @@ class StepFour extends Component {
 
 render() {
   return(
-    <Card className="text-center">
-    <h3>Step 4</h3>
+    <Card>
+    <CardContent>
+    <Typography variant="h4" gutterBottom component="h4">
+    Step 4
+    </Typography>
+    <Typography variant="body1" className={'mb-2'} component="p">
     <strong>Set conversion fee</strong>
+    </Typography>
+    <Typography variant="body1" className={'mb-2'} component="p">
     <small>Fee: 1,000 (0.1%) by default</small>
-    <Form>
+    </Typography>
+    <Typography className={'mt-2 mb-2'} component="div">
+    <hr/>
+    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
     <Form.Group>
     <Form.Control name="fee" onChange={e => this.change(e)} type="number" min="1000"/>
     </Form.Group>
-    <Button size="sm" onClick={() => this.setFee()}>set conversion fee</Button>
+    <Button variant="contained" color="primary" size="medium" onClick={() => this.setFee()}>set conversion fee</Button>
     </Form>
+    </Typography>
+    </CardContent>
     </Card>
   )
 }
