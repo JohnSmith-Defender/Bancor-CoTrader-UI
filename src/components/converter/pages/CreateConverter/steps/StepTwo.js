@@ -1,6 +1,12 @@
 import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../../../config'
-import { Form, Button, Card } from "react-bootstrap"
+import { Form } from "react-bootstrap"
+//import { inject } from 'mobx-react'
 import React, { Component } from 'react'
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 class StepTwo extends Component {
  state = {
@@ -27,7 +33,7 @@ class StepTwo extends Component {
     console.log("PARAMS: ", smartToken, BancorRegistry, 30000, BNTToken, 500000)
 
     const gasPrice = this.props.MobXStorage.GasPrice
-    
+
     contract.deploy({
         data: BYTECODEConverter,
         arguments: [smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000]
@@ -54,26 +60,48 @@ class StepTwo extends Component {
 
 
  }
-
 render() {
   return(
-    <Card className="text-center">
-    <h3>Step 2</h3>
-    <strong>Create Converter</strong>
-    <p>converter handle the actual conversions</p>
-    <strong>This will be executed with these parameters</strong>
-    <small>Smart token address from previos step</small>
-    <small>Bancor registry contract address</small>
-    <small>Max Fee: {this.state.maxFee}</small>
-    <small>Connector: BNT token address</small>
-    <small>Weight: 500,000 (50%)</small>
-    <Form>
-    <Form.Control name="fee" onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
-    <Form.Text className="text-muted">
-    Min fee 1000 (0.1%) max fee 1000000 (100%)
-    </Form.Text>
-    <Button size="sm" onClick={() => this.createConverter()}>create converter</Button>
-    </Form>
+    <Card>
+      <CardContent>
+        <Typography variant="h4" gutterBottom component="h4">
+          Step 2
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        <strong>Create Converter</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        converter handle the actual conversions
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          <strong>This will be executed with these parameters</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Smart token address from previos step
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Bancor registry contract address
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Max Fee: {this.state.maxFee}
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Connector: BNT token address
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Weight: 500,000 (50%)
+        </Typography>
+        <Typography className={'mt-2 mb-2'} component="div">
+        <hr/>
+        <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+        <Form.Control name="fee" onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
+        <Form.Text className="text-muted">
+        Min fee 1000 (0.1%) max fee 1000000 (100%)
+        </Form.Text>
+          <Button variant="contained" color="primary" size="medium" onClick={() => this.createConverter()}>create converter</Button>
+        </Form>
+        </Typography>
+      </CardContent>
     </Card>
   )
 }

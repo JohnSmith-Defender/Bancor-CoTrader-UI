@@ -3,20 +3,16 @@ import getWeb3 from "./utils/getWeb3"
 import { inject, observer } from 'mobx-react'
 import { netId } from './config'
 
-import TradePage from "./components/converter/pages/TradePage"
-import SendPage from "./components/converter/pages/SendPage"
-import RelaysPage from "./components/converter/pages/RelaysPage"
-import PoolPage from "./components/converter/pages/PoolPage"
-// import AddConverter from "./components/converter/pages/AddConverter"
-import CreateConverter from "./components/converter/pages/CreateConverter/CreateConverter"
-import ConverterSettingsPage from "./components/converter/pages/ConverterSettingsPage/ConverterSettingsPage"
 import Footer from "./components/static/Footer"
 import Web3Info from "./components/static/Web3Info"
+import Navbar from './components/static/Navbar';
+import TabsBar from './components/static/TabsBar';
 
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
 
-import { Tabs, Tab, Alert } from "react-bootstrap"
+import { Alert } from "react-bootstrap"
+import Container from '@material-ui/core/Container';
 
 class App extends Component {
   constructor(props, context) {
@@ -81,6 +77,9 @@ class App extends Component {
   render() {
     return(
       <React.Fragment>
+
+      <Navbar />
+      <Container maxWidth="xl">
        <Web3Info isDataLoad={this.state.isDataLoad} web3={this.state.web3}/>
        {
          this.state.netId && this.state.netId !== netId
@@ -90,44 +89,11 @@ class App extends Component {
          )
          :
          (
-           <div className="container-fluid">
-           <Tabs defaultActiveKey="trade" id="create">
-
-           <Tab eventKey="trade" title="Trade">
-           <TradePage/>
-           </Tab>
-
-           <Tab eventKey="send" title="Send">
-           <SendPage/>
-           </Tab>
-
-           <Tab eventKey="pool" title="Pool">
-           <PoolPage/>
-           </Tab>
-
-           <Tab eventKey="relays" title="Relays">
-           <RelaysPage/>
-           </Tab>
-
-           <Tab eventKey="create" title="Create converter">
-           <CreateConverter/>
-           </Tab>
-
-           {/*
-           <Tab eventKey="addConverter" title="Add converter">
-           <AddConverter />
-           </Tab>
-           */}
-           
-           <Tab eventKey="editConverter" title="Converter settings">
-           <ConverterSettingsPage />
-           </Tab>
-
-           </Tabs>
-           </div>
+           <TabsBar />
          )
        }
        <Footer/>
+       </Container>
       </React.Fragment>
     )
   }

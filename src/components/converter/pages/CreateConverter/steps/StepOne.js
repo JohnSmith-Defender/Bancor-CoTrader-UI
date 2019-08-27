@@ -1,7 +1,13 @@
 import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI } from '../../../../../config'
-import { Form, Button, Card } from "react-bootstrap"
+import { Form } from "react-bootstrap"
+//import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 import { toUtf8 } from 'web3-utils'
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 class StepOne extends Component {
  constructor(props, context) {
@@ -91,24 +97,44 @@ class StepOne extends Component {
 
 render() {
   return(
-    <Card className="text-center">
-   <h3>Step 1</h3>
-   <strong>Create Relay Token (aka SmartToken)</strong>
-   <p>If your token is called AAA, a relay token called AAABNT will be created.</p>
-   <p>Relay tokens are a bridge between your token and the Bancor BNT trade network.</p>
-   <strong>This will be executed with these parameters</strong>
-   <small>Name: AAA Smart Relay Token</small>
-   <small>Symbol: AAABNT</small>
-   <small>Decimals: Your decimals number</small>
-   <br/>
-   <Form>
-   <Form.Group>
-    <Form.Label>Enter Token Address:</Form.Label>
-    <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
-    <Form.Text>Note: your token must have 18 decimals.</Form.Text>
-   </Form.Group>
-   <Button size="sm" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
-   </Form>
+    <Card>
+      <CardContent>
+        <Typography variant="h4" gutterBottom component="h4">
+          Step 1
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          <strong>Create Relay Token (aka SmartToken)</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          If your token is called AAA, a relay token called AAABNT will be created.
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Relay tokens are a bridge between your token and the Bancor BNT trade network.
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          <strong>This will be executed with these parameters</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Name: AAA Smart Relay Token
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Symbol: AAABNT
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+          Decimals: Your decimals number
+        </Typography>
+        <Typography className={'mt-2 mb-2'} component="div">
+        <hr/>
+        <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+        <Form.Group>
+         <Form.Label>Enter Token Address:</Form.Label>
+         <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
+         <Form.Text>Note: your token must have 18 decimals.</Form.Text>
+        </Form.Group>
+        <Button variant="contained" color="primary" size="medium" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
+        </Form>
+        </Typography>
+      </CardContent>
     </Card>
   )
 }

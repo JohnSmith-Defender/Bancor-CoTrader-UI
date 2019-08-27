@@ -4,7 +4,7 @@ import { OverlayTrigger, Tooltip, Badge } from "react-bootstrap"
 const UserInfo = (props) => {
   return(
       <OverlayTrigger
-      placement="bottom"
+      placement="top"
       overlay={
       <Tooltip id="tooltip">
       { props.info }

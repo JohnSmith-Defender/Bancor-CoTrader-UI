@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { Form, Alert, Badge, Card, ButtonGroup } from 'react-bootstrap'
+import { Form, Alert, Badge, ButtonGroup } from 'react-bootstrap'
 import { EtherscanLink } from '../../../../config'
 import ChangeCommision from './actions/ChangeCommision'
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 class ConverterSettingsPage extends Component {
   constructor(props, context) {
@@ -45,16 +49,27 @@ class ConverterSettingsPage extends Component {
         ?
         (
           <React.Fragment>
-          <br/>
-          <Card className="text-center">
-          <Card.Header>
-           Manage your converter
-          </Card.Header>
-          <Card.Text>Set converter settings such as conversion fee %.</Card.Text>
-          <Card.Text>The conversion fee % is used to buy relay tokens.</Card.Text>
-          <Card.Text>For example, whenever DAI tokens are traded, a small % of the conversion buys DAIBNT relay tokens.</Card.Text>
-          <Card.Text>This benefits those who added to the DAI liquidity pool in the “Pool” tab, or got the DAIBNT relay token in the “Relays’ tab.</Card.Text>
-          <Card.Text>More contract methods will be added soon.</Card.Text>
+          <Card style={{margin: '16px 0px'}}>
+          <CardContent>
+
+          <Typography variant="h4" style={{fontSize: 22}} gutterBottom component="h4">
+            Manage your converter
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+            Set converter settings such as conversion fee %.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+            The conversion fee % is used to buy relay tokens.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+            For example, whenever DAI tokens are traded, a small % of the conversion buys DAIBNT relay tokens.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+            This benefits those who added to the DAI liquidity pool in the “Pool” tab, or got the DAIBNT relay token in the “Relays’ tab.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+          More contract methods will be added soon.
+          </Typography>
           {
             this.props.MobXStorage.bancorTokensStorageJson&&this.state.symbols
             ?
@@ -80,7 +95,7 @@ class ConverterSettingsPage extends Component {
                 )
                 :
                 (
-                  <Alert variant="warning">You do not have any converter</Alert>
+                  <Alert variant="warning">You don't have any converter</Alert>
                 )
               }
               {
@@ -120,7 +135,7 @@ class ConverterSettingsPage extends Component {
               </Form.Group>
             )
           }
-          <Card.Footer className="text-muted">DEX is free trade; let freedom ring</Card.Footer>
+          </CardContent>
           </Card>
           </React.Fragment>
         )
