@@ -17,14 +17,12 @@ class StepFive extends Component {
   converterAddress:null,
   web3:null,
   symbol:undefined,
-  BNTAmount:0,
+  USDAmount:0,
+  totalAmount:0,
   connectorAmount:0,
-  rateAmount:0,
-  rateInDAI:0
+  BNTAmount:0
   }
  }
-
- _isMounted = false
 
  componentDidMount () {
    // in case to recive props
@@ -32,7 +30,7 @@ class StepFive extends Component {
  }
 
  componentDidUpdate(prevProps, prevState) {
-   if(prevState.BNTAmount !== this.state.BNTAmount || prevState.connectorAmount !== this.state.connectorAmount){
+   if(prevState.USDAmount !== this.state.USDAmount || prevState.totalAmount !== this.state.totalAmount){
      this.calculateRate()
    }
  }
@@ -50,21 +48,27 @@ class StepFive extends Component {
   }
  }
 
+ // Calculate rate for BNT and connector depending of user rate connector to USD (DAI)
  calculateRate = async () => {
-   let rateAmount
-   let rateInDAI
-   if(this.state.BNTAmount > 0 && this.state.connectorAmount > 0){
-     rateAmount = this.state.BNTAmount / this.state.connectorAmount
-     rateInDAI = await this.convertBNTToDAI(rateAmount)
+   let connectorAmount
+   let BNTAmount
+   if(this.state.USDAmount > 0 && this.state.totalAmount){
+     // DAI, DAI Smart Token, BNT
+     const path = ["0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359","0xee01b3AB5F6728adc137Be101d99c678938E6E72", "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"]
+
+     const half = this.state.totalAmount / 2
+     // get BNT rate
+     BNTAmount = await this.getRate(half, path)
+     // get connector rate
+     connectorAmount = half / this.state.USDAmount
    }
-   this.setState({ rateAmount, rateInDAI })
+   this.setState({ BNTAmount, connectorAmount })
  }
 
- convertBNTToDAI = async (amount) => {
+ // Get rate from Bancor contract
+ getRate = async (amount, path) => {
    const web3 = this.props.MobXStorage.web3
    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-   // BNT, DAI Smart Token, DAI
-   const path = ["0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C", "0xee01b3AB5F6728adc137Be101d99c678938E6E72", "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359"]
 
    let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
      path,
@@ -81,6 +85,7 @@ class StepFive extends Component {
    return amountReturn
  }
 
+ // Issue new smart tokens
  issue = async () => {
   const web3 = this.props.MobXStorage.web3
   const accounts = this.props.MobXStorage.accounts
@@ -131,6 +136,7 @@ class StepFive extends Component {
 
 
 render() {
+  console.log(this.state.symbol)
   return(
     <Card>
     <CardContent>
@@ -155,12 +161,7 @@ render() {
     <Typography variant="body1" className={'mb-2'} component="p">
     The RATIO of your token to BNT determines its starting price
     </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    The ratio you’ve set is 1 {this.state.symbol} per X BNT (1 BNT per Y {this.state.symbol})
-    </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    The current USD price would be roughly 1 {this.state.symbol} per X USD (1 USD per Y {this.state.symbol})
-    </Typography>
+
     <Typography variant="body1" className={'mb-2'} component="p">
     <strong style={{color: 'red'}}>Make sure that your contract received tokens, only then press button issue</strong>
     </Typography>
@@ -171,16 +172,16 @@ render() {
     <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
     <Form.Label>Calculate rate</Form.Label>
     <br/>
-    <Form.Control onChange={e => this.setState({BNTAmount:e.target.value})} type="number" placeholder="Enter BNT amount"/>
+    <Form.Control onChange={e => this.setState({USDAmount:e.target.value})} type="number" placeholder={`Enter USD rate for 1 ${this.state.symbol}`}/>
     <hr/>
-    <Form.Control onChange={e => this.setState({connectorAmount:e.target.value})} type="number" placeholder={`Enter ${this.state.symbol} amount`}/>
+    <Form.Control onChange={e => this.setState({totalAmount:e.target.value})} type="number" placeholder={`Enter total USD amount`}/>
     <br/>
     {
-      this.state.rateAmount > 0
+      this.state.BNTAmount > 0 && this.state.connectorAmount > 0
       ?
       (
         <Typography variant="body1" className={'mb-2'} component="p">
-        The price of 1 {this.state.symbol} will be {this.state.rateAmount} BNT ({this.state.rateInDAI.toFixed(2)} $)
+        You need pay {this.state.BNTAmount} BNT and {this.state.connectorAmount} {this.state.symbol}
         </Typography>
       )
       :
