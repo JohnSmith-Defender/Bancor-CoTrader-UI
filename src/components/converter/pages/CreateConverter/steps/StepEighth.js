@@ -17,7 +17,7 @@ class StepEighth extends Component {
   }
 
  reset = () => {
-   let conf = window.confirm(`Are sure do You want start from scratch?`)
+   let conf = window.confirm(`Are you sure you want to start from scratch?`)
    if(conf){
      window.localStorage.clear()
      this.props.MobXStorage.updateStep()

@@ -171,9 +171,9 @@ render() {
     <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
     <Form.Label>Calculate rate</Form.Label>
     <br/>
-    <Form.Control name="fee" onChange={e => this.setState({BNTAmount:e.target.value})} type="number" placeholder="Enter BNT amount"/>
+    <Form.Control onChange={e => this.setState({BNTAmount:e.target.value})} type="number" placeholder="Enter BNT amount"/>
     <hr/>
-    <Form.Control name="fee" onChange={e => this.setState({connectorAmount:e.target.value})} type="number" placeholder={`Enter ${this.state.symbol} amount`}/>
+    <Form.Control onChange={e => this.setState({connectorAmount:e.target.value})} type="number" placeholder={`Enter ${this.state.symbol} amount`}/>
     <br/>
     {
       this.state.rateAmount > 0
