@@ -173,14 +173,14 @@ render() {
     <br/>
     <Form.Control name="fee" onChange={e => this.setState({BNTAmount:e.target.value})} type="number" placeholder="Enter BNT amount"/>
     <hr/>
-    <Form.Control name="fee" onChange={e => this.setState({connectorAmount:e.target.value})} type="number" placeholder={`Enter email ${this.state.symbol}`}/>
+    <Form.Control name="fee" onChange={e => this.setState({connectorAmount:e.target.value})} type="number" placeholder={`Enter ${this.state.symbol} amount`}/>
     <br/>
     {
       this.state.rateAmount > 0
       ?
       (
         <Typography variant="body1" className={'mb-2'} component="p">
-        The price of {this.state.connectorAmount} {this.state.symbol} will be {this.state.rateAmount} BNT ({this.state.rateInDAI.toFixed(2)} $)
+        The price of 1 {this.state.symbol} will be {this.state.rateAmount} BNT ({this.state.rateInDAI.toFixed(2)} $)
         </Typography>
       )
       :

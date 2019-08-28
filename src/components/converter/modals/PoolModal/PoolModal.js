@@ -190,6 +190,7 @@ class PoolModal extends Component {
               :
               (
                 <Liquidate
+                from={this.state.from}
                 getInfoBySymbol={this.getInfoBySymbol}
                 web3={this.props.MobXStorage.web3}
                 accounts={this.props.MobXStorage.accounts}

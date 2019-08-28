@@ -121,7 +121,7 @@ setTokensData = async () => {
       this.props.accounts && this.props.directionAmount > this.state.userBalanceFrom
       ?
       (
-        <Alert variant="danger">You don't have enought balance of {this.props.from}</Alert>
+        <Alert variant="danger">You don't have enough {this.props.from}</Alert>
       )
       :
       (null)

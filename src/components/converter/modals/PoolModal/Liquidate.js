@@ -12,9 +12,11 @@ class Liquidate extends Component {
   componentDidUpdate = async (prevProps, prevState) => {
     // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
+      if(this.props.from){
       const smarTokenAddress = this.props.getInfoBySymbol()[3]
       const smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smarTokenAddress, this.props.accounts[0])
       this.setState({ smartTokenBalance })
+      }
     }
   }
 
@@ -48,7 +50,7 @@ class Liquidate extends Component {
       }
       </Form.Group>
       {
-        this.state.smartTokenBalance > 0 && this.state.directionAmount > 0
+        this.state.directionAmount > 0 && this.props.from
         ?
         (
           <Alert variant="info">Your balance of {this.props.from}BNT is {fromWei(String(this.state.smartTokenBalance))}</Alert>
