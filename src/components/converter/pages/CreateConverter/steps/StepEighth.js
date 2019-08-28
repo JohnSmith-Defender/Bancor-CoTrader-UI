@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../../../config'
-import { Form, Button, Card } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 
 
 class StepEighth extends Component {
@@ -25,7 +30,7 @@ class StepEighth extends Component {
   const converterAddress = window.localStorage.getItem('Converter')
   const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
   const gasPrice = this.props.MobXStorage.GasPrice
-  
+
   registry.methods.addConverter(converterAddress).send({
     from:accounts[0],
     gasPrice
@@ -39,17 +44,22 @@ render() {
   const converterTx = window.localStorage.getItem('txConverter')
   return(
     <React.Fragment>
-    <Card className="text-center">
-    <h3>Step 8 (Final step)</h3>
+    <Card>
+    <CardContent>
+    <Typography variant="h4" gutterBottom component="h4">
+    Step 8 (Final step)
+    </Typography>
+    <Typography variant="body1" className={'mb-2'} component="p">
     <strong>Add to list</strong>
-    <p>To add your token to an unofficial list that will enable anyone to trade it, add it to this registry.</p>
-    <Form>
-    <Button variant="primary" size="sm" onClick={() => this.AddToList()}>add to list</Button>
+    </Typography>
+    <Typography variant="body1" className={'mb-2'} component="p">
+    To add your token to an unofficial list that will enable anyone to trade it, add it to this registry.
+    </Typography>
+    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Button variant="contained" color="primary" size="medium" onClick={() => this.AddToList()}>add to list</Button>
+    <Button variant="contained" color="secondary" size="medium" onClick={() => this.reset()}>back to step "One"</Button>
     </Form>
-    <br/>
-    <Form>
-    <Button variant="danger" size="sm" onClick={() => this.reset()}>back to step "One"</Button>
-    </Form>
+    </CardContent>
     </Card>
     <br />
     {

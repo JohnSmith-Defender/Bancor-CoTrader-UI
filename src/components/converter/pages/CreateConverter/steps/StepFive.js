@@ -54,7 +54,7 @@ class StepFive extends Component {
    let rateAmount
    let rateInDAI
    if(this.state.BNTAmount > 0 && this.state.connectorAmount > 0){
-     rateAmount = this.state.connectorAmount / this.state.BNTAmount
+     rateAmount = this.state.BNTAmount / this.state.connectorAmount
      rateInDAI = await this.convertBNTToDAI(rateAmount)
    }
    this.setState({ rateAmount, rateInDAI })
