@@ -1,4 +1,4 @@
-import { ABISmartToken, BNTToken, ABIBancorNetwork, BancorNetwork } from '../../../../../config'
+import { ABISmartToken, BNTToken, ABIBancorNetwork, BancorNetwork, EtherscanLink } from '../../../../../config'
 import { Form } from "react-bootstrap"
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
@@ -152,25 +152,13 @@ render() {
     <Typography variant="body1" className={'mb-2'} component="p">
     Great! Now define the starting price of your token!
     </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    Send some Your token amount here: <strong>{this.state.converterAddress}</strong>
-    </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    Send some BNT amount here: <strong>{this.state.converterAddress}</strong>
-    </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    The RATIO of your token to BNT determines its starting price
-    </Typography>
 
     <Typography variant="body1" className={'mb-2'} component="p">
-    <strong style={{color: 'red'}}>Make sure that your contract received tokens, only then press button issue</strong>
-    </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
+    Fill these in so we can calculate things for you:
     </Typography>
 
     <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
-    <Form.Label>Calculate rate</Form.Label>
+    <Form.Label>Calculate how many tokens to send</Form.Label>
     <br/>
     <Form.Control onChange={e => this.setState({USDAmount:e.target.value})} type="number" placeholder={`Enter USD rate for 1 ${this.state.symbol}`}/>
     <hr/>
@@ -180,9 +168,23 @@ render() {
       this.state.BNTAmount > 0 && this.state.connectorAmount > 0
       ?
       (
+        <React.Fragment>
         <Typography variant="body1" className={'mb-2'} component="p">
-        You need pay {this.state.BNTAmount} BNT and {this.state.connectorAmount} {this.state.symbol}
+        Send {this.state.connectorAmount} {this.state.symbol} here: <strong>{this.state.converterAddress}</strong>
         </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        Send {this.state.BNTAmount} BNT here: <strong>{this.state.converterAddress}</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        Note: you can send in different amounts if you like
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        <strong style={{color: 'red'}}>Make sure that your <a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">contract</a> received BOTH tokens, only then press "issue"</strong>
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
+        </Typography>
+        </React.Fragment>
       )
       :
       (null)
