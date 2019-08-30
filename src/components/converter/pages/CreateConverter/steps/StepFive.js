@@ -36,16 +36,9 @@ class StepFive extends Component {
  }
 
  init = async () => {
-  if(this.props.MobXStorage.web3){
     const converterAddress = window.localStorage.getItem('Converter')
-    const symbol = window.localStorage.getItem('tokenSymbol')
-
-    if(converterAddress && symbol){
-      this.setState({ converterAddress, symbol })
-    }else{
-      alert("Need create converter contract")
-    }
-  }
+    const symbol = window.localStorage.getItem('tokenSymbol') ? window.localStorage.getItem('tokenSymbol') : "Your token"
+    this.setState({ converterAddress, symbol})
  }
 
  // Calculate rate for BNT and connector depending of user rate connector to USD (DAI)
@@ -75,8 +68,6 @@ class StepFive extends Component {
      toWei(String(amount))
    ).call()
 
-   console.log(amountReturn)
-
    if(amountReturn){
      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
    }else{
@@ -102,8 +93,6 @@ class StepFive extends Component {
   let connectorBalance = await ConnectorToken.methods.balanceOf(this.state.converterAddress).call()
   connectorBalance = web3.utils.hexToNumberString(connectorBalance._hex)
   connectorBalance  = Number(web3.utils.fromWei(connectorBalance))
-
-  console.log(connectorBalance, balance)
 
   if(balance > 0 && connectorBalance > 0){
     // Balance 2x for BNT rate
@@ -136,7 +125,6 @@ class StepFive extends Component {
 
 
 render() {
-  console.log(this.state.symbol)
   return(
     <Card>
     <CardContent>
