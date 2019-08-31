@@ -21,18 +21,23 @@ class DirectionInfo extends Component {
     this.state = {
       sendFrom:undefined,
       sendTo:undefined,
-      userBalanceFrom:undefined,
-      balanceOfTo:undefined,
-      amountReturnFrom:undefined,
-      amountReturnTo:undefined,
-      amountReturnFromTo:undefined,
-      totalTradeValue:undefined
+      userBalanceFrom:0,
+      balanceOfTo:0,
+      amountReturnFrom:0,
+      amountReturnTo:0,
+      amountReturnFromTo:0,
+      totalTradeValue:0,
+      inputFromInUSD:0,
+      totalFromPerTo:0,
+      slippage:0,
+      toAfterSlippage:0,
+      fromAfterSlippage:0
   }
   }
 
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
-    if(prevProps.from !== this.props.from || prevProps.to !== this.props.to || prevProps.directionAmount !== this.props.directionAmount){
+    if(prevProps.from !== this.props.from || prevProps.to !== this.props.to || prevProps.directionAmount !== this.props.directionAmount || prevProps.amountReturn !== this.props.amountReturn){
       this.setTokensData()
     }
   }
@@ -43,16 +48,22 @@ getTokensBalance = async (sendFrom, sendTo, web3) => {
   let token
   let tokenTo
   let balanceOfTo
+
   if(this.props.from !== "ETH"){
     token = new web3.eth.Contract(ABISmartToken, sendFrom)
     userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
     userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
+  }else{
+    userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
+    userBalanceFrom = fromWei(String(userBalanceFrom))
+  }
+  if(this.props.to !== "ETH"){
     tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
     balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
     balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
   }else{
-    userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
-    userBalanceFrom = fromWei(String(userBalanceFrom))
+    balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
+    balanceOfTo = fromWei(String(userBalanceFrom))
   }
 
   return { userBalanceFrom, balanceOfTo }
@@ -63,11 +74,11 @@ getReturnByPath = async (path, amount, web3) => {
   const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
   let amountReturn = await bancorNetwork.methods.getReturnByPath(
     path,
-    toWei(String(amount.toFixed(6)))
+    toWei(String(parseFloat(amount).toFixed(6)))
   ).call()
 
   if(amountReturn){
-    amountReturn = fromWei(hexToNumberString(amountReturn[0]._hex))
+    amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
   }else{
     amountReturn = 0
   }
@@ -88,12 +99,25 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
   // get rate from/to 1 token
   const amountReturnFromTo = await this.getReturnByPath(pathFromTo, 1, web3)
 
-  // get Total trade value
-  let totalTradeValue
-  if(this.props.amountReturn > 0)
-    totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
+  // input value in USD
+  const inputFromInUSD = amountReturnFrom * this.props.directionAmount
 
-  return { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue }
+
+  // get values wich dependce of this.props.amountReturn
+  let totalFromPerTo
+  let totalTradeValue
+  let slippage
+  let toAfterSlippage
+  let fromAfterSlippage
+
+  if(this.props.amountReturn > 0){
+    totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
+    totalFromPerTo = (1 / this.props.directionAmount) * this.props.amountReturn
+    slippage = (inputFromInUSD / totalTradeValue) - 1
+    toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
+    fromAfterSlippage = amountReturnFrom + ((amountReturnFrom / 100) * slippage)
+  }
+  return { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue, inputFromInUSD, totalFromPerTo, slippage, toAfterSlippage, fromAfterSlippage }
 }
 
 // set state addreses to and from and user balance, and direction rate data
@@ -108,9 +132,23 @@ setTokensData = async () => {
     )
     const web3 = getWeb3ForRead(this.props.web3)
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
-    const { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
+    const { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue, inputFromInUSD, totalFromPerTo, slippage, toAfterSlippage, fromAfterSlippage } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
 
-    this.setState({ sendFrom, sendTo, userBalanceFrom, balanceOfTo, amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue })
+    this.setState({
+      sendFrom,
+      sendTo,
+      userBalanceFrom,
+      balanceOfTo,
+      amountReturnFrom,
+      amountReturnTo,
+      amountReturnFromTo,
+      totalTradeValue,
+      inputFromInUSD,
+      totalFromPerTo,
+      slippage,
+      toAfterSlippage,
+      fromAfterSlippage
+     })
   }
 }
 
@@ -118,7 +156,7 @@ setTokensData = async () => {
    return(
     <React.Fragment>
     {
-      this.props.accounts && this.props.directionAmount > this.state.userBalanceFrom
+      this.props.accounts && this.props.directionAmount > Number(this.state.userBalanceFrom)
       ?
       (
         <Alert variant="danger">You don't have enough {this.props.from}</Alert>
@@ -153,15 +191,34 @@ setTokensData = async () => {
         (null)
       }
 
+       <Typography component="div">
+        <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
+       </Typography>
+       <Typography component="div">
+         <small>Total value of {this.props.from} in: <strong style={{color: '#3f51b5'}}>{this.state.inputFromInUSD} $</strong></small>
+       </Typography>
+       <Typography component="div">
+         <small>{this.props.from} per {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.totalFromPerTo}</strong></small>
+       </Typography>
+
         <Typography component="div">
           <small>Total trade value $: <strong style={{color: '#3f51b5'}}>{this.state.totalTradeValue}</strong></small>
         </Typography>
+
         <Typography component="div">
-          <small>1 {this.props.from} per $: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFrom}</strong></small>
+          <small>1 {this.props.from} per $ before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFrom}</strong></small>
         </Typography>
         <Typography component="div">
-          <small>1 {this.props.to} per $: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnTo}</strong></small>
+          <small>1 {this.props.from} per $ after slippage: <strong style={{color: '#3f51b5'}}>{this.state.fromAfterSlippage}</strong></small>
         </Typography>
+
+        <Typography component="div">
+          <small>1 {this.props.to} per $ before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnTo}</strong></small>
+        </Typography>
+        <Typography component="div">
+          <small>1 {this.props.to} per $ after slippage: <strong style={{color: '#3f51b5'}}>{this.state.toAfterSlippage}</strong></small>
+        </Typography>
+
         <Typography component="div">
           <small>1 {this.props.from} per {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromTo}</strong></small>
         </Typography>
