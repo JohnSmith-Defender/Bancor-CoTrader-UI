@@ -63,11 +63,11 @@ getReturnByPath = async (path, amount, web3) => {
   const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
   let amountReturn = await bancorNetwork.methods.getReturnByPath(
     path,
-    toWei(String(amount))
+    toWei(String(amount.toFixed(6)))
   ).call()
 
   if(amountReturn){
-    amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
+    amountReturn = fromWei(hexToNumberString(amountReturn[0]._hex))
   }else{
     amountReturn = 0
   }
