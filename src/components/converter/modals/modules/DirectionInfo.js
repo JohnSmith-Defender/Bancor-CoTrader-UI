@@ -28,10 +28,9 @@ class DirectionInfo extends Component {
       amountReturnFromTo:0,
       totalTradeValue:0,
       inputFromInUSD:0,
-      totalFromPerTo:0,
       slippage:0,
       toAfterSlippage:0,
-      fromAfterSlippage:0
+      amountReturnFromToAfterSlippage:0
   }
   }
 
@@ -104,20 +103,28 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
 
 
   // get values wich dependce of this.props.amountReturn
-  let totalFromPerTo
   let totalTradeValue
   let slippage
   let toAfterSlippage
-  let fromAfterSlippage
+  let amountReturnFromToAfterSlippage
 
   if(this.props.amountReturn > 0){
     totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
-    totalFromPerTo = (1 / this.props.directionAmount) * this.props.amountReturn
     slippage = (inputFromInUSD / totalTradeValue) - 1
     toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
-    fromAfterSlippage = amountReturnFrom + ((amountReturnFrom / 100) * slippage)
+    amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
   }
-  return { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue, inputFromInUSD, totalFromPerTo, slippage, toAfterSlippage, fromAfterSlippage }
+
+  return {
+    amountReturnFrom,
+    amountReturnTo,
+    amountReturnFromTo,
+    totalTradeValue,
+    inputFromInUSD,
+    slippage,
+    toAfterSlippage,
+    amountReturnFromToAfterSlippage
+   }
 }
 
 // set state addreses to and from and user balance, and direction rate data
@@ -132,7 +139,16 @@ setTokensData = async () => {
     )
     const web3 = getWeb3ForRead(this.props.web3)
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
-    const { amountReturnFrom, amountReturnTo, amountReturnFromTo, totalTradeValue, inputFromInUSD, totalFromPerTo, slippage, toAfterSlippage, fromAfterSlippage } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
+    const {
+      amountReturnFrom,
+      amountReturnTo,
+      amountReturnFromTo,
+      totalTradeValue,
+      inputFromInUSD,
+      slippage,
+      toAfterSlippage,
+      amountReturnFromToAfterSlippage
+     } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
 
     this.setState({
       sendFrom,
@@ -144,10 +160,9 @@ setTokensData = async () => {
       amountReturnFromTo,
       totalTradeValue,
       inputFromInUSD,
-      totalFromPerTo,
       slippage,
       toAfterSlippage,
-      fromAfterSlippage
+      amountReturnFromToAfterSlippage
      })
   }
 }
@@ -171,7 +186,10 @@ setTokensData = async () => {
       <Paper style={{padding: '15px'}}>
       <Chip label="Additional info" style={{marginBottom: '15px'}} variant="outlined" color="primary"/>
         <Typography component="div">
-          <small>Etherscan: <strong>{ <a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }</strong></small>
+          <small>Etherscan:
+          <strong>{ <a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }</strong>,
+          <strong>{ <a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.sendFrom} target="_blank" rel="noopener noreferrer"> {this.props.from}</a> }</strong>
+          </small>
         </Typography>
 
         {
@@ -192,25 +210,20 @@ setTokensData = async () => {
       }
 
        <Typography component="div">
+        <small>1 {this.props.from} per $: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFrom}</strong></small>
+       </Typography>
+
+       <Typography component="div">
         <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
        </Typography>
+
        <Typography component="div">
-         <small>Total value of {this.props.from} in: <strong style={{color: '#3f51b5'}}>{this.state.inputFromInUSD} $</strong></small>
-       </Typography>
-       <Typography component="div">
-         <small>{this.props.from} per {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.totalFromPerTo}</strong></small>
+         <small>Total value of {this.props.from}: <strong style={{color: '#3f51b5'}}>{this.state.inputFromInUSD} $</strong></small>
        </Typography>
 
-        <Typography component="div">
-          <small>Total trade value $: <strong style={{color: '#3f51b5'}}>{this.state.totalTradeValue}</strong></small>
-        </Typography>
-
-        <Typography component="div">
-          <small>1 {this.props.from} per $ before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFrom}</strong></small>
-        </Typography>
-        <Typography component="div">
-          <small>1 {this.props.from} per $ after slippage: <strong style={{color: '#3f51b5'}}>{this.state.fromAfterSlippage}</strong></small>
-        </Typography>
+       <Typography component="div">
+         <small>Total value of {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.totalTradeValue} $</strong></small>
+       </Typography>
 
         <Typography component="div">
           <small>1 {this.props.to} per $ before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnTo}</strong></small>
@@ -220,7 +233,10 @@ setTokensData = async () => {
         </Typography>
 
         <Typography component="div">
-          <small>1 {this.props.from} per {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromTo}</strong></small>
+          <small>1 {this.props.from} per {this.props.to} before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromTo}</strong></small>
+        </Typography>
+        <Typography component="div">
+          <small>1 {this.props.from} per {this.props.to} after slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromToAfterSlippage}</strong></small>
         </Typography>
       </Paper>
 
