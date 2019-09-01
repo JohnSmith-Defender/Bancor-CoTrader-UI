@@ -37,7 +37,6 @@ class DirectionInfo extends Component {
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
     if(prevProps.from !== this.props.from || prevProps.to !== this.props.to || prevProps.directionAmount !== this.props.directionAmount || prevProps.amountReturn !== this.props.amountReturn){
-      if(this.props.from !== this.props.to)
       this.setTokensData()
     }
   }
@@ -87,30 +86,31 @@ getReturnByPath = async (path, amount, web3) => {
   return amountReturn
 }
 
-// return from 1 in dai, to 1 in dai, from/to 1, total trade value in DAI, slippage
-getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
+// return rate in DAI (USD) total trade value, slippage, ect
+getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, web3) => {
   const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
   const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
   const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
-  // get rate from in DAI for 1 token
-  const amountReturnFrom = await this.getReturnByPath(pathFrom, 1, web3)
-  // get rate from in DAI for 1 token
-  const amountReturnTo = await this.getReturnByPath(pathTo, 1, web3)
-  // get rate from/to 1 token
-  const amountReturnFromTo = await this.getReturnByPath(pathFromTo, 1, web3)
+  // get rate for from input in DAI
+  const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
+  // get rate for from/to input
+  const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
   // get rate in DAI for from input
-  const inputFromInUSD = await this.getReturnByPath(pathFrom, this.props.directionAmount, web3)
+  const inputFromInUSD = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
   // get values wich dependce of this.props.amountReturn
   let totalTradeValue
   let slippage
   let toAfterSlippage
   let amountReturnFromToAfterSlippage
+  let amountReturnTo
 
-  if(this.props.amountReturn > 0){
-    totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
-    slippage = await this.calculateSlippage(pathFromTo, this.props.directionAmount, web3)
+  if(amountReturn > 0){
+    totalTradeValue = await this.getReturnByPath(pathTo, amountReturn, web3)
+    // get rate in DAI for to converted
+    amountReturnTo = await this.getReturnByPath(pathTo, amountReturn, web3)
+    slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
     toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
     amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
   }
@@ -129,9 +129,11 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
 
 
 calculateSlippage = async (pathFromTo, directionAmount, web3) => {
+
+  const tinyDiv = directionAmount < 0.001 ? 10 : 1000
   // formula
-  // tinyTrade = userInputFromAmount  / 1M
-  const tinyTrade = Number(directionAmount) / 1000000
+  // tinyTrade = userInputFromAmount  / tinyDiv
+  const tinyTrade = Number(directionAmount) / tinyDiv
   // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
   const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
   const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
@@ -148,7 +150,7 @@ calculateSlippage = async (pathFromTo, directionAmount, web3) => {
 
 // set state addreses to and from and user balance, and direction rate data
 setTokensData = async () => {
-  if(this.props.to && this.props.from){
+  if(this.props.to && this.props.from && this.props.from !== this.props.to && this.props.directionAmount > 0 && this.props.amountReturn > 0){
     const { objPropsFrom, objPropsTo, sendFrom, sendTo } = getDirectionData(
       this.props.from,
       this.props.to,
@@ -167,7 +169,7 @@ setTokensData = async () => {
       slippage,
       toAfterSlippage,
       amountReturnFromToAfterSlippage
-     } = await this.getRateInfo(objPropsFrom, objPropsTo, web3)
+    } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
 
     this.setState({
       sendFrom,
@@ -245,17 +247,17 @@ setTokensData = async () => {
        </Typography>
 
         <Typography component="div">
-          <small>{this.props.to}/USD before slippage: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
+          <small>{this.props.to}/USD before trade: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
         </Typography>
         <Typography component="div">
-          <small>{this.props.to}/USD after slippage: <strong style={{color: '#3f51b5'}}>${this.state.toAfterSlippage}</strong></small>
+          <small>{this.props.to}/USD after trade: <strong style={{color: '#3f51b5'}}>${this.state.toAfterSlippage}</strong></small>
         </Typography>
 
         <Typography component="div">
-          <small>{this.props.from}/{this.props.to} before slippage: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
+          <small>{this.props.from}/{this.props.to} before trade: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
         <Typography component="div">
-          <small>{this.props.from}/{this.props.to} after slippage: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromToAfterSlippage).toFixed(6)} {this.props.to}</strong></small>
+          <small>{this.props.from}/{this.props.to} after trade: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromToAfterSlippage).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
       </Paper>
 
