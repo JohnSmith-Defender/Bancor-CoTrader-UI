@@ -113,10 +113,12 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
   if(this.props.amountReturn > 0){
     totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
     slippage = (inputFromInUSD / totalTradeValue) - 1
+    slippage = slippage * 100
+    slippage = parseFloat(slippage).toFixed(6)
+
     toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
     amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
-    slippage = slippage * 100
-    slippage = parseFloat(slippage).toFixed()
+
   }
 
   return {
@@ -202,10 +204,10 @@ setTokensData = async () => {
         (
           <React.Fragment>
           <Typography component="div">
-          <small>Your balance of {this.props.from}: <strong style={{color: '#3f51b5'}}>{this.state.userBalanceFrom}</strong></small>
+          <small>Your balance of {this.props.from}: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.userBalanceFrom).toFixed(6)}</strong></small>
           </Typography>
           <Typography component="div">
-          <small>Your balance of {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.balanceOfTo}</strong></small>
+          <small>Your balance of {this.props.to}: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.balanceOfTo).toFixed(6)}</strong></small>
           </Typography>
           </React.Fragment>
         )
@@ -214,7 +216,7 @@ setTokensData = async () => {
       }
 
        <Typography component="div">
-        <small>1 {this.props.from} per $: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFrom}</strong></small>
+        <small>{this.props.from}/USD: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.amountReturnFrom).toFixed(6)}</strong></small>
        </Typography>
 
        <Typography component="div">
@@ -222,25 +224,25 @@ setTokensData = async () => {
        </Typography>
 
        <Typography component="div">
-         <small>Total value of {this.props.from}: <strong style={{color: '#3f51b5'}}>{this.state.inputFromInUSD} $</strong></small>
+         <small>Total value of {this.props.from}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.inputFromInUSD).toFixed(6)}</strong></small>
        </Typography>
 
        <Typography component="div">
-         <small>Total value of {this.props.to}: <strong style={{color: '#3f51b5'}}>{this.state.totalTradeValue} $</strong></small>
+         <small>Total value of {this.props.to}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 
         <Typography component="div">
-          <small>1 {this.props.to} per $ before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnTo}</strong></small>
+          <small>{this.props.to}/USD before slippage: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
         </Typography>
         <Typography component="div">
-          <small>1 {this.props.to} per $ after slippage: <strong style={{color: '#3f51b5'}}>{this.state.toAfterSlippage}</strong></small>
+          <small>{this.props.to}/USD after slippage: <strong style={{color: '#3f51b5'}}>${this.state.toAfterSlippage}</strong></small>
         </Typography>
 
         <Typography component="div">
-          <small>1 {this.props.from} per {this.props.to} before slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromTo}</strong></small>
+          <small>{this.props.from}/{this.props.to} before slippage: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
         <Typography component="div">
-          <small>1 {this.props.from} per {this.props.to} after slippage: <strong style={{color: '#3f51b5'}}>{this.state.amountReturnFromToAfterSlippage}</strong></small>
+          <small>{this.props.from}/{this.props.to} after slippage: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromToAfterSlippage).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
       </Paper>
 
