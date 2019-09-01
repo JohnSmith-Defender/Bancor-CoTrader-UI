@@ -37,6 +37,7 @@ class DirectionInfo extends Component {
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
     if(prevProps.from !== this.props.from || prevProps.to !== this.props.to || prevProps.directionAmount !== this.props.directionAmount || prevProps.amountReturn !== this.props.amountReturn){
+      if(this.props.from !== this.props.to)
       this.setTokensData()
     }
   }
@@ -54,15 +55,16 @@ getTokensBalance = async (sendFrom, sendTo, web3) => {
     userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
   }else{
     userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
-    userBalanceFrom = fromWei(String(userBalanceFrom))
+    userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
   }
+
   if(this.props.to !== "ETH"){
     tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
     balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
     balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
   }else{
     balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
-    balanceOfTo = fromWei(String(userBalanceFrom))
+    balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
   }
 
   return { userBalanceFrom, balanceOfTo }
@@ -113,6 +115,8 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
     slippage = (inputFromInUSD / totalTradeValue) - 1
     toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
     amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
+    slippage = slippage * 100
+    slippage = parseFloat(slippage).toFixed()
   }
 
   return {
@@ -180,7 +184,7 @@ setTokensData = async () => {
       (null)
     }
     {
-      this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0
+      this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0 && this.props.from !== this.props.to
       ?
       (
       <Paper style={{padding: '15px'}}>
