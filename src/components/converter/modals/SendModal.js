@@ -327,7 +327,7 @@ class TradeModal extends Component {
         this.state.directionAmount > 0
         ?
         ( <div>
-          <Alert variant="primary">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
+          <Alert variant="success">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
           <br/>
           {
             this.props.MobXStorage.web3

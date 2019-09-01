@@ -10,10 +10,10 @@ import {
 import getDirectionData from '../../../../service/getDirectionData'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
-
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Chip from '@material-ui/core/Chip';
+// import Pending from '../../../templates/Spiners/Pending'
+import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
+import Chip from '@material-ui/core/Chip'
 
 class DirectionInfo extends Component {
   constructor(props, context) {
@@ -27,7 +27,7 @@ class DirectionInfo extends Component {
       amountReturnTo:0,
       amountReturnFromTo:0,
       totalTradeValue:0,
-      inputFromInUSD:0,
+      oneFromInUSD:0,
       slippage:0,
       toAfterSlippage:0,
       amountReturnFromToAfterSlippage:0
@@ -92,22 +92,22 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
   const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
   const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
-  // get rate for from input in DAI
+  // get rate for from oneFromInUSD in DAI
   const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
-  // get rate for from/to input
+  // get rate for from/to oneFromInUSD
   const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
-  // get rate in DAI for from input
-  const inputFromInUSD = await this.getReturnByPath(pathFrom, directionAmount, web3)
+  // get rate in DAI for from 1 token
+  const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
+
+  const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
   // get values wich dependce of this.props.amountReturn
-  let totalTradeValue
   let slippage
   let toAfterSlippage
   let amountReturnFromToAfterSlippage
   let amountReturnTo
 
   if(amountReturn > 0){
-    totalTradeValue = await this.getReturnByPath(pathTo, amountReturn, web3)
     // get rate in DAI for to converted
     amountReturnTo = await this.getReturnByPath(pathTo, amountReturn, web3)
     slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
@@ -120,7 +120,7 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
     amountReturnTo,
     amountReturnFromTo,
     totalTradeValue,
-    inputFromInUSD,
+    oneFromInUSD,
     slippage,
     toAfterSlippage,
     amountReturnFromToAfterSlippage
@@ -132,12 +132,12 @@ calculateSlippage = async (pathFromTo, directionAmount, web3) => {
 
   const tinyDiv = directionAmount < 0.001 ? 10 : 1000
   // formula
-  // tinyTrade = userInputFromAmount  / tinyDiv
+  // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
   const tinyTrade = Number(directionAmount) / tinyDiv
   // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
   const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
   const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
-  // realTradeRate = userInputFromAmount / userOuputAmountFromRealTrade
+  // realTradeRate = useroneFromInUSDFromAmount / userOuputAmountFromRealTrade
   const ouputAmountFromRealTrade = await this.getReturnByPath(pathFromTo, directionAmount, web3)
   const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
   // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
@@ -165,7 +165,7 @@ setTokensData = async () => {
       amountReturnTo,
       amountReturnFromTo,
       totalTradeValue,
-      inputFromInUSD,
+      oneFromInUSD,
       slippage,
       toAfterSlippage,
       amountReturnFromToAfterSlippage
@@ -180,7 +180,7 @@ setTokensData = async () => {
       amountReturnTo,
       amountReturnFromTo,
       totalTradeValue,
-      inputFromInUSD,
+      oneFromInUSD,
       slippage,
       toAfterSlippage,
       amountReturnFromToAfterSlippage
@@ -192,18 +192,21 @@ setTokensData = async () => {
    return(
     <React.Fragment>
     {
-      this.props.accounts && this.props.directionAmount > Number(this.state.userBalanceFrom)
-      ?
-      (
-        <Alert variant="danger">You don't have enough {this.props.from}</Alert>
-      )
-      :
-      (null)
-    }
-    {
       this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0 && this.props.from !== this.props.to
       ?
       (
+      <React.Fragment>
+
+      {
+        this.props.accounts && this.props.directionAmount > Number(this.state.userBalanceFrom)
+        ?
+        (
+          <Alert variant="danger">You don't have enough {this.props.from}</Alert>
+        )
+        :
+        (null)
+      }
+
       <Paper style={{padding: '15px'}}>
       <Chip label="Additional info" style={{marginBottom: '15px'}} variant="outlined" color="primary"/>
         <Typography component="div">
@@ -231,7 +234,7 @@ setTokensData = async () => {
       }
 
        <Typography component="div">
-        <small>{this.props.from}/USD: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.amountReturnFrom).toFixed(6)}</strong></small>
+        <small>{this.props.from}/USD: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
        </Typography>
 
        <Typography component="div">
@@ -239,11 +242,7 @@ setTokensData = async () => {
        </Typography>
 
        <Typography component="div">
-         <small>Total value of {this.props.from}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.inputFromInUSD).toFixed(6)}</strong></small>
-       </Typography>
-
-       <Typography component="div">
-         <small>Total value of {this.props.to}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
+         <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 
         <Typography component="div">
@@ -260,7 +259,7 @@ setTokensData = async () => {
           <small>{this.props.from}/{this.props.to} after trade: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromToAfterSlippage).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
       </Paper>
-
+      </React.Fragment>
       )
       :
       (null)
