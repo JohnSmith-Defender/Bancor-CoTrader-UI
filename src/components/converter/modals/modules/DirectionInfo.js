@@ -10,7 +10,7 @@ import {
 import getDirectionData from '../../../../service/getDirectionData'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
-// import Pending from '../../../templates/Spiners/Pending'
+import Pending from '../../../templates/Spiners/Pending'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Chip from '@material-ui/core/Chip'
@@ -30,7 +30,8 @@ class DirectionInfo extends Component {
       oneFromInUSD:0,
       slippage:0,
       toAfterSlippage:0,
-      amountReturnFromToAfterSlippage:0
+      amountReturnFromToAfterSlippage:0,
+      loadData:false
   }
   }
 
@@ -42,32 +43,32 @@ class DirectionInfo extends Component {
   }
 
   // get user balance
-getTokensBalance = async (sendFrom, sendTo, web3) => {
-  let userBalanceFrom
-  let token
-  let tokenTo
-  let balanceOfTo
+  getTokensBalance = async (sendFrom, sendTo, web3) => {
+    let userBalanceFrom
+    let token
+    let tokenTo
+    let balanceOfTo
 
-  if(this.props.from !== "ETH"){
-    token = new web3.eth.Contract(ABISmartToken, sendFrom)
-    userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
-    userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
-  }else{
-    userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
-    userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
+    if(this.props.from !== "ETH"){
+      token = new web3.eth.Contract(ABISmartToken, sendFrom)
+      userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
+      userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
+    }else{
+      userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
+      userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
+    }
+
+    if(this.props.to !== "ETH"){
+      tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
+      balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
+      balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
+    }else{
+      balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
+      balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
+    }
+
+    return { userBalanceFrom, balanceOfTo }
   }
-
-  if(this.props.to !== "ETH"){
-    tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
-    balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
-    balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
-  }else{
-    balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
-    balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
-  }
-
-  return { userBalanceFrom, balanceOfTo }
-}
 
 // return rate from Bancor network
 getReturnByPath = async (path, amount, web3) => {
@@ -129,7 +130,6 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
 
 
 calculateSlippage = async (pathFromTo, directionAmount, web3) => {
-
   const tinyDiv = directionAmount < 0.001 ? 10 : 1000
   // formula
   // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
@@ -148,9 +148,11 @@ calculateSlippage = async (pathFromTo, directionAmount, web3) => {
 }
 
 
-// set state addreses to and from and user balance, and direction rate data
+
+// update states
 setTokensData = async () => {
   if(this.props.to && this.props.from && this.props.from !== this.props.to && this.props.directionAmount > 0 && this.props.amountReturn > 0){
+    this.setState({ loadData:true })
     const { objPropsFrom, objPropsTo, sendFrom, sendTo } = getDirectionData(
       this.props.from,
       this.props.to,
@@ -183,7 +185,8 @@ setTokensData = async () => {
       oneFromInUSD,
       slippage,
       toAfterSlippage,
-      amountReturnFromToAfterSlippage
+      amountReturnFromToAfterSlippage,
+      loadData:false
      })
   }
 }
@@ -192,11 +195,18 @@ setTokensData = async () => {
    return(
     <React.Fragment>
     {
+      this.state.loadData
+      ?
+      (<Pending/>)
+      :
+      (null)
+    }
+
+    {
       this.state.sendTo && this.state.sendFrom && this.props.directionAmount > 0 && this.props.from !== this.props.to
       ?
       (
       <React.Fragment>
-
       {
         this.props.accounts && this.props.directionAmount > Number(this.state.userBalanceFrom)
         ?
