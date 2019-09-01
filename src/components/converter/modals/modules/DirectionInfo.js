@@ -87,7 +87,7 @@ getReturnByPath = async (path, amount, web3) => {
   return amountReturn
 }
 
-// return from 1 in dai, to 1 in dai, from/to 1, and total trade value in DAI
+// return from 1 in dai, to 1 in dai, from/to 1, total trade value in DAI, slippage
 getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
   const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
   const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
@@ -99,10 +99,8 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
   const amountReturnTo = await this.getReturnByPath(pathTo, 1, web3)
   // get rate from/to 1 token
   const amountReturnFromTo = await this.getReturnByPath(pathFromTo, 1, web3)
-
-  // input value in USD
-  const inputFromInUSD = amountReturnFrom * this.props.directionAmount
-
+  // get rate in DAI for from input
+  const inputFromInUSD = await this.getReturnByPath(pathFrom, this.props.directionAmount, web3)
 
   // get values wich dependce of this.props.amountReturn
   let totalTradeValue
@@ -112,13 +110,9 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
 
   if(this.props.amountReturn > 0){
     totalTradeValue = await this.getReturnByPath(pathTo, this.props.amountReturn, web3)
-    slippage = (inputFromInUSD / totalTradeValue) - 1
-    slippage = slippage * 100
-    slippage = parseFloat(slippage).toFixed(6)
-
+    slippage = await this.calculateSlippage(pathFromTo, this.props.directionAmount, web3)
     toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
     amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
-
   }
 
   return {
@@ -132,6 +126,25 @@ getRateInfo = async (objPropsFrom, objPropsTo, web3) => {
     amountReturnFromToAfterSlippage
    }
 }
+
+
+calculateSlippage = async (pathFromTo, directionAmount, web3) => {
+  // formula
+  // tinyTrade = userInputFromAmount  / 1M
+  const tinyTrade = Number(directionAmount) / 1000000
+  // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
+  const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
+  const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
+  // realTradeRate = userInputFromAmount / userOuputAmountFromRealTrade
+  const ouputAmountFromRealTrade = await this.getReturnByPath(pathFromTo, directionAmount, web3)
+  const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
+  // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
+  let slippage = (1 - realTradeRate / tinyTradeRate) * 100
+  slippage = parseFloat(slippage).toFixed(6)
+
+  return Math.abs(slippage)
+}
+
 
 // set state addreses to and from and user balance, and direction rate data
 setTokensData = async () => {
