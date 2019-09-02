@@ -29,9 +29,8 @@ class DirectionInfo extends Component {
       totalTradeValue:0,
       oneFromInUSD:0,
       slippage:0,
-      toAfterSlippage:0,
-      amountReturnFromToAfterSlippage:0,
-      loadData:false
+      loadData:false,
+      fromToTinyRate:0
   }
   }
 
@@ -102,18 +101,15 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
+  const fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
+
   // get values wich dependce of this.props.amountReturn
-  let slippage
-  let toAfterSlippage
-  let amountReturnFromToAfterSlippage
-  let amountReturnTo
+  let amountReturnTo, slippage
 
   if(amountReturn > 0){
     // get rate in DAI for to converted
     amountReturnTo = await this.getReturnByPath(pathTo, amountReturn, web3)
     slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
-    toAfterSlippage = amountReturnTo + ((amountReturnTo) / 100) * slippage
-    amountReturnFromToAfterSlippage = amountReturnFromTo + ((amountReturnFromTo) / 100) * slippage
   }
 
   return {
@@ -123,8 +119,7 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
     totalTradeValue,
     oneFromInUSD,
     slippage,
-    toAfterSlippage,
-    amountReturnFromToAfterSlippage
+    fromToTinyRate
    }
 }
 
@@ -142,9 +137,9 @@ calculateSlippage = async (pathFromTo, directionAmount, web3) => {
   const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
   // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
   let slippage = (1 - realTradeRate / tinyTradeRate) * 100
-  slippage = parseFloat(slippage).toFixed(6)
+  slippage = Math.abs(parseFloat(slippage).toFixed(6))
 
-  return Math.abs(slippage)
+  return slippage
 }
 
 
@@ -169,8 +164,7 @@ setTokensData = async () => {
       totalTradeValue,
       oneFromInUSD,
       slippage,
-      toAfterSlippage,
-      amountReturnFromToAfterSlippage
+      fromToTinyRate
     } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
 
     this.setState({
@@ -184,8 +178,7 @@ setTokensData = async () => {
       totalTradeValue,
       oneFromInUSD,
       slippage,
-      toAfterSlippage,
-      amountReturnFromToAfterSlippage,
+      fromToTinyRate,
       loadData:false
      })
   }
@@ -244,7 +237,7 @@ setTokensData = async () => {
       }
 
        <Typography component="div">
-        <small>{this.props.from}/USD: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
+        <small>USD/{this.props.from}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
        </Typography>
 
        <Typography component="div">
@@ -256,18 +249,17 @@ setTokensData = async () => {
        </Typography>
 
         <Typography component="div">
-          <small>{this.props.to}/USD before trade: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
-        </Typography>
-        <Typography component="div">
-          <small>{this.props.to}/USD after trade: <strong style={{color: '#3f51b5'}}>${this.state.toAfterSlippage}</strong></small>
+          <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
         </Typography>
 
         <Typography component="div">
-          <small>{this.props.from}/{this.props.to} before trade: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
+          <small>{this.props.to}/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
+
         <Typography component="div">
-          <small>{this.props.from}/{this.props.to} after trade: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromToAfterSlippage).toFixed(6)} {this.props.to}</strong></small>
+          <small>{this.props.to}/{this.props.from} before trade: <strong style={{color: '#3f51b5'}}>{this.state.fromToTinyRate}</strong></small>
         </Typography>
+
       </Paper>
       </React.Fragment>
       )
