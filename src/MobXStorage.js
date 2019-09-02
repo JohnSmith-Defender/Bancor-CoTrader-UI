@@ -13,6 +13,11 @@ class MOBXStorage {
   bancorTokensStorageJson = null
   timer = 0
   GasPrice = window.localStorage.getItem('gasPrice') ? JSON.parse(window.localStorage.getItem('gasPrice')) : gasPrice
+  minReturn = "1"
+
+  changeMinReturn = (_minReturn) => {
+    this.minReturn = _minReturn
+  }
 
 
   initWeb3AndAccounts = (_web3, accounts) => {
@@ -96,7 +101,9 @@ decorate(MOBXStorage, {
     unofficialSmartTokenSymbols:observable,
     bancorTokensStorageJson:observable,
     GasPrice:observable,
+    minReturn:observable,
 
+    changeMinReturn:action,
     checkTxStatus:action,
     initWeb3AndAccounts:action,
     setPending:action,

@@ -19,7 +19,7 @@ import getPath from '../../../service/getPath'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
 import FakeButton from '../../templates/FakeButton'
-
+import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -146,7 +146,7 @@ class TradeModal extends Component {
 
     bancorNetworkContract.methods.claimAndConvertFor(path,
       toWei(this.state.directionAmount),
-      1,
+      this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount)),
       this.state.receiverAddress
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
@@ -370,6 +370,12 @@ class TradeModal extends Component {
         (null)
       }
       <br/>
+      <SetMinReturn
+      amountReturn={this.state.amountReturn}
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      />
       <br/>
       <DirectionInfo
       from={this.state.from}

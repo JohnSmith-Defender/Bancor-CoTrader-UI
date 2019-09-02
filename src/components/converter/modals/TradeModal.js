@@ -24,6 +24,7 @@ import findByProps from '../../../service/findByProps'
 import getPath from '../../../service/getPath'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
+import SetMinReturn from './modules/SetMinReturn'
 import FakeButton from '../../templates/FakeButton'
 
 class TradeModal extends Component {
@@ -156,7 +157,7 @@ class TradeModal extends Component {
 
     bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
-      1
+      String(this.props.MobXStorage.minReturn)
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
   }
@@ -171,7 +172,7 @@ class TradeModal extends Component {
     converterContract.methods.quickConvert(
       path,
       web3.utils.toWei(String(this.state.directionAmount)),
-      1
+      this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
   }
@@ -399,6 +400,13 @@ class TradeModal extends Component {
         :
         (null)
       }
+      <br/>
+      <SetMinReturn
+      amountReturn={this.state.amountReturn}
+      from={this.state.from}
+      to={this.state.to}
+      directionAmount={this.state.directionAmount}
+      />
       <br/>
       <DirectionInfo
       from={this.state.from}
