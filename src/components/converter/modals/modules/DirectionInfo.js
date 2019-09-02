@@ -100,16 +100,16 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
   const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
-
+  
   const fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
 
-  // get values wich dependce of this.props.amountReturn
-  let amountReturnTo, slippage
+  const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
 
+  // get values wich dependce of this.props.amountReturn
+  let amountReturnTo
   if(amountReturn > 0){
     // get rate in DAI for to converted
     amountReturnTo = await this.getReturnByPath(pathTo, amountReturn, web3)
-    slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
   }
 
   return {
