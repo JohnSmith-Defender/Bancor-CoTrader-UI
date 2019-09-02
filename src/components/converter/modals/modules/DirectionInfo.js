@@ -100,8 +100,10 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
   const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
-  
-  const fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
+
+  // calculate tiny 
+  let fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
+  fromToTinyRate = fromToTinyRate * (1 / 0.00001)
 
   const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
 
