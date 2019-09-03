@@ -1,5 +1,7 @@
 import React from 'react'
-import { OverlayTrigger, Tooltip, Button } from "react-bootstrap"
+import { OverlayTrigger, Tooltip } from "react-bootstrap"
+
+import Button from '@material-ui/core/Button'
 
 const FakeButton = (props) => (
   <OverlayTrigger
@@ -10,7 +12,7 @@ const FakeButton = (props) => (
      </Tooltip>
      }
      >
-     <Button className="buttonsAdditional" size={props.size ? props.size:"sm"} variant="outline-primary">{ props.buttonName }</Button>
+     <Button variant="contained" color="primary">{ props.buttonName }</Button>
      </OverlayTrigger>
 )
 

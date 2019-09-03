@@ -16,12 +16,12 @@ class SetMinReturn extends Component {
     setTimeout(() => {
       // reset previos min rate
       this.props.MobXStorage.changeMinReturn("1")
-    })
+    }, 1000)
   }
 
   componentDidUpdate(prevProps, prevState) {
     if(prevState.percent !== this.state.percent){
-      if(this.props.amountReturn > 0 && this.state.percent > 0 && this.state.percent <= 100){
+      if(this.props.amountReturn > 0 && this.state.percent > 0 && this.state.percent <= 99){
         const newMinReturn = this.calculateMinReturnByPercent(this.state.percent)
         this.props.MobXStorage.changeMinReturn(newMinReturn)
       }
@@ -37,7 +37,7 @@ class SetMinReturn extends Component {
   calculateMinReturnByPercent(percent){
     const amount = new BigNumber(toWei(String(this.props.amountReturn)))
     const amountPercent = amount.dividedBy(100).multipliedBy(percent)
-    return amount.plus(amountPercent).toFixed()
+    return amount.minus(amountPercent).toFixed()
   }
 
   render() {
