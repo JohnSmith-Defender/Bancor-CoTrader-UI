@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Accordion, Form, Button } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import BigNumber from 'bignumber.js'
-import { toWei, fromWei, toBN } from 'web3-utils'
+import { toWei } from 'web3-utils'
 import UserInfo from '../../../templates/UserInfo'
 
 class SetMinReturn extends Component {
@@ -13,6 +13,7 @@ class SetMinReturn extends Component {
   }
 
   componentDidMount(){
+    console.log("Tets version")
     // Small delay for correct recive props
     setTimeout(() => {
       // reset previos min rate
@@ -76,7 +77,7 @@ class SetMinReturn extends Component {
             ?
             (
               <Form.Text className="text-muted">
-                Your min return: {fromWei(toBN(this.props.MobXStorage.minReturn))}
+                Your min return: {this.props.MobXStorage.minReturn} in decimals
               </Form.Text>
             )
             :
