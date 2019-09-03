@@ -47,15 +47,12 @@ class MOBXStorage {
   checkTxStatus = async (hash) => {
     const res = await this.web3.eth.getTransaction(hash)
     const status = res ? res.blockNumber : null
-    console.log("checkTxStatus", res.blockNumber)
-    console.log("timer", this.timer)
-
     if(status){
       console.log("txFinish")
       this.txFinish()
       clearTimeout(this.timer)
     }else{
-      console.log("Set new timeout")
+      console.log("Set new timeout for check tx")
       this.timer = setTimeout(() => this.checkTxStatus(hash), 5000)
     }
   }
