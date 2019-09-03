@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Accordion, Form, Button } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import BigNumber from 'bignumber.js'
-import { toWei, fromWei } from 'web3-utils'
+import { toWei, fromWei, toBN } from 'web3-utils'
 import UserInfo from '../../../templates/UserInfo'
 
 class SetMinReturn extends Component {
@@ -45,7 +45,7 @@ class SetMinReturn extends Component {
   calculateMinReturnByPercent(percent){
     const amount = new BigNumber(toWei(String(this.props.amountReturn)))
     const amountPercent = amount.dividedBy(100).multipliedBy(percent)
-    return String(Math.round(amount.minus(amountPercent).toFixed()))
+    return String(amount.minus(amountPercent).toFixed())
   }
 
   render() {
@@ -63,7 +63,7 @@ class SetMinReturn extends Component {
           <Accordion.Collapse eventKey="1">
           <Form.Group>
           <Form.Label>
-          <UserInfo info="Set the maximim extra slippage beyond which the trade will be cancelled. This is helpful in preventing or limiting front running attacks. 1% by default"/>
+          <UserInfo info="Set the maximum extra slippage beyond which the trade will be cancelled. This is helpful in limiting any front running attacks. 1% by default"/>
           </Form.Label>
           <Form.Control
           type="string"
@@ -76,7 +76,7 @@ class SetMinReturn extends Component {
             ?
             (
               <Form.Text className="text-muted">
-                Your min return: {fromWei(this.props.MobXStorage.minReturn)}
+                Your min return: {fromWei(toBN(this.props.MobXStorage.minReturn))}
               </Form.Text>
             )
             :
