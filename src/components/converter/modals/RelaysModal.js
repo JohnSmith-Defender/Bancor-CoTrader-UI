@@ -204,7 +204,7 @@ class RelaysModal extends Component {
 
     bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
-      this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
+      this.props.MobXStorage.minReturn
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
   }
@@ -221,7 +221,7 @@ class RelaysModal extends Component {
     converterContract.methods.quickConvert(
       path,
       web3.utils.toWei(String(this.state.directionAmount)),
-      this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
+      this.props.MobXStorage.minReturn
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
   }
@@ -235,7 +235,7 @@ class RelaysModal extends Component {
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 
-    bancorNetworkContract.methods.convert(path, amount, 1)
+    bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
     .send({from: this.props.MobXStorage.accounts[0], value:amount })
     this.closeModal()
   }

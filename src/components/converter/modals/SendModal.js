@@ -146,7 +146,7 @@ class TradeModal extends Component {
 
     bancorNetworkContract.methods.claimAndConvertFor(path,
       toWei(this.state.directionAmount),
-      this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount)),
+      this.props.MobXStorage.minReturn,
       this.state.receiverAddress
     ).send({from: this.props.MobXStorage.accounts[0]})
     this.closeModal()
@@ -159,7 +159,7 @@ class TradeModal extends Component {
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 
-    bancorNetworkContract.methods.convertFor(path, amount, 1, this.state.receiverAddress)
+    bancorNetworkContract.methods.convertFor(path, amount, this.props.MobXStorage.minReturn, this.state.receiverAddress)
     .send({from: this.props.MobXStorage.accounts[0], value:amount })
     this.closeModal()
   }

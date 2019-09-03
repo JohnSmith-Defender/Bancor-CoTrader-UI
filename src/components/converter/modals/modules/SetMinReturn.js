@@ -4,6 +4,7 @@ import { Accordion, Form, Button } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import BigNumber from 'bignumber.js'
 import { toWei, fromWei } from 'web3-utils'
+import UserInfo from '../../../templates/UserInfo'
 
 class SetMinReturn extends Component {
   state = {
@@ -20,15 +21,22 @@ class SetMinReturn extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.percent !== this.state.percent){
-      if(this.props.amountReturn > 0 && this.state.percent > 0 && this.state.percent <= 99){
-        const newMinReturn = this.calculateMinReturnByPercent(this.state.percent)
-        this.props.MobXStorage.changeMinReturn(newMinReturn)
+    // Set min return
+    if(prevState.percent !== this.state.percent || prevProps.amountReturn !== this.props.amountReturn){
+      if(this.props.amountReturn > 0){
+        if(this.state.percent > 0 && this.state.percent <= 99){
+          const newMinReturn = this.calculateMinReturnByPercent(this.state.percent)
+          console.log(newMinReturn, "newMinReturn")
+          this.props.MobXStorage.changeMinReturn(newMinReturn)
+        }else{
+          // set default 1%
+          const newMinReturn = this.calculateMinReturnByPercent(1)
+          this.props.MobXStorage.changeMinReturn(newMinReturn)
+        }
       }
     }
-    // Bug can be hear
+    // reset previos min rate
     if(prevProps.from !== this.props.from || prevProps.to !== this.props.to || prevProps.directionAmount !== this.props.directionAmount){
-      // reset previos min rate
       this.props.MobXStorage.changeMinReturn("1")
       this.setState({ percent:'' })
     }
@@ -37,7 +45,7 @@ class SetMinReturn extends Component {
   calculateMinReturnByPercent(percent){
     const amount = new BigNumber(toWei(String(this.props.amountReturn)))
     const amountPercent = amount.dividedBy(100).multipliedBy(percent)
-    return amount.minus(amountPercent).toFixed()
+    return String(Math.round(amount.minus(amountPercent).toFixed()))
   }
 
   render() {
@@ -54,6 +62,9 @@ class SetMinReturn extends Component {
 
           <Accordion.Collapse eventKey="1">
           <Form.Group>
+          <Form.Label>
+          <UserInfo info="Set the maximim extra slippage beyond which the trade will be cancelled. This is helpful in preventing or limiting front running attacks. 1% by default"/>
+          </Form.Label>
           <Form.Control
           type="string"
           placeholder="Enter min return %"
@@ -65,7 +76,7 @@ class SetMinReturn extends Component {
             ?
             (
               <Form.Text className="text-muted">
-                Your min return: {fromWei(parseFloat(this.props.MobXStorage.minReturn).toFixed())}
+                Your min return: {fromWei(this.props.MobXStorage.minReturn)}
               </Form.Text>
             )
             :
