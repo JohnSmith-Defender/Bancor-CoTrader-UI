@@ -67,7 +67,9 @@ class RelaysModal extends Component {
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
-      this.checkRateAndApprove()
+      if(this.state.directionAmount > 0){
+        this.checkRateAndApprove()
+      }
     }
 
     // Update state with tokens data

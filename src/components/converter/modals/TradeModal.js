@@ -65,8 +65,10 @@ class TradeModal extends Component {
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
-      this.getRate()
-      this.checkRequireApprove()
+      if(this.state.directionAmount > 0){
+        this.getRate()
+        this.checkRequireApprove()
+      }
     }
 
     // Update state with tokens data

@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { Accordion, Form, Button } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import BigNumber from 'bignumber.js'
-import { toWei } from 'web3-utils'
 import UserInfo from '../../../templates/UserInfo'
 
 class SetMinReturn extends Component {
@@ -44,7 +43,7 @@ class SetMinReturn extends Component {
   }
 
   calculateMinReturnByPercent(percent){
-    const amount = new BigNumber(toWei(String(this.props.amountReturn)))
+    const amount = new BigNumber(this.props.amountReturn)
     const amountPercent = amount.dividedBy(100).multipliedBy(percent)
     return String(amount.minus(amountPercent).toFixed())
   }
@@ -77,7 +76,7 @@ class SetMinReturn extends Component {
             ?
             (
               <Form.Text className="text-muted">
-                Your min return: {this.props.MobXStorage.minReturn} in decimals
+                Your min return: {this.props.MobXStorage.minReturn}
               </Form.Text>
             )
             :

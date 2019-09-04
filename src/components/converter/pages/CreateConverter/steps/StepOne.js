@@ -53,7 +53,7 @@ class StepOne extends Component {
 
      const decimals = await token.methods.decimals.call()
 
-     if(!decimals){
+     if(decimals < 0){
        alert("Sorry, but You have no standard token")
      }
      else{
