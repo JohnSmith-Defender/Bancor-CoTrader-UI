@@ -121,7 +121,7 @@ render() {
         <hr/>
         <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
         <Form.Group>
-         <Form.Label>Enter Token Address:</Form.Label>
+         <Form.Label>Enter Address of the Token You'd Like to Create a Relay For:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
         </Form.Group>
         <Button variant="contained" color="primary" size="medium" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>

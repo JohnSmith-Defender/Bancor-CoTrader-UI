@@ -71,7 +71,7 @@ class CreateConverter extends Component {
             (
               <div className="container-fluid">
               <br />
-              <Alert variant="primary"><small>Attention this application uses local storage for storing parameters. DO NOT delete your browser history until you have completed all steps. <p style={{"color":"red"}}>Please don't do the next step until current transaction not confirmed in Your wallet!</p></small></Alert>
+              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong style={{"color":"red"}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{"color":"red"}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{"color":"red"}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
               <br />
               <StepComponent updateRenderStep={this.updateRenderStep} MobXStorage={this.props.MobXStorage}/>
               <br />
