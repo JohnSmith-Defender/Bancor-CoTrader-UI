@@ -16,9 +16,13 @@ class MOBXStorage {
   minReturn = "1"
 
   changeMinReturn = (_minReturn) => {
-    this.minReturn = _minReturn
+    const min = Math.round(parseFloat(_minReturn))
+    if(min > 0){
+      this.minReturn = String(min)
+    }else{
+      this.minReturn = "1"
+    }
   }
-
 
   initWeb3AndAccounts = (_web3, accounts) => {
     this.web3 = _web3
