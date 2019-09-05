@@ -186,7 +186,7 @@ class TradeModal extends Component {
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
 
-    bancorNetworkContract.methods.convert(path, amount, 1)
+    bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
     .send({from: this.props.MobXStorage.accounts[0], value:amount })
     this.closeModal()
   }
