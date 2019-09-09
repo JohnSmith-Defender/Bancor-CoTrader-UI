@@ -12,7 +12,7 @@ import UserInfo from '../../../../templates/UserInfo'
 
 class StepTwo extends Component {
  state = {
-   maxFee:200000
+   maxFee:1000000
  }
 
  createConverter = async (tokenAddress) => {
@@ -32,7 +32,7 @@ class StepTwo extends Component {
     const contract =  new web3.eth.Contract(ABIConverter, null)
 
     console.log("smartToken address ", smartToken)
-    console.log("PARAMS: ", smartToken, BancorRegistry, 30000, BNTToken, 500000)
+    console.log("PARAMS: ", smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000)
 
     const gasPrice = this.props.MobXStorage.GasPrice
 
@@ -73,15 +73,12 @@ render() {
         <strong>Create Converter</strong>
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-        converter handle the actual conversions
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
           This <UserInfo label="Bancor documentation" info={`Smart token address from previos step, Bancor registry contract address, Max Fee:  ${this.state.maxFee}, Weight: 500,000 (50%`}/> step will be done
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
         <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
-        <Form.Control name="fee" onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
+        <Form.Control name="fee" value={this.state.maxFee} onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
         <Form.Text className="text-muted">
         Min fee 1000 (0.1%) max fee 1000000 (100%)
         </Form.Text>

@@ -41,7 +41,7 @@ class ConverterSettings extends Component {
         <Form.Group>
         <Form.Check
         type="checkbox"
-        label="Set gas price to 5 wei"
+        label="Set gas price to 5 gwei"
         checked={this.state.isNotDefaultPrice}
         onChange={() => this.gasPriceToogle()}
         />
