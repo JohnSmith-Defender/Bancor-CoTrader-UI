@@ -12,7 +12,7 @@ class MOBXStorage {
   unofficialSmartTokenSymbols = null
   bancorTokensStorageJson = null
   timer = 0
-  GasPrice = window.localStorage.getItem('gasPrice') ? JSON.parse(window.localStorage.getItem('gasPrice')) : gasPrice
+  GasPrice = gasPrice
   minReturn = "1"
 
   changeMinReturn = (_minReturn) => {
