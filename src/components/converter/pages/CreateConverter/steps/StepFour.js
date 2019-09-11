@@ -26,6 +26,10 @@ class StepFour extends Component {
    const accounts = this.props.MobXStorage.accounts
    const converterAddress = window.localStorage.getItem('Converter')
 
+   if(this.state.fee < 1000 || this.state.fee > 1000000){
+     alert('Incorrect fee number, min should be 1000, max 1000000')
+   }
+   else{
    if(converterAddress !== null && converterAddress !== "undefined"){
      const converter = new web3.eth.Contract(ABIConverter, converterAddress)
      console.log("PARAMS: ", this.state.fee)
@@ -44,9 +48,11 @@ class StepFour extends Component {
     .on('confirmation', (confirmationNumber, receipt) => {
       this.props.MobXStorage.txFinish()
     })
-  }else{
+  }
+  else{
     alert("Need create converter contract")
   }
+ }
  }
 
 render() {
@@ -66,7 +72,7 @@ render() {
     <hr/>
     <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
     <Form.Group>
-    <Form.Control name="fee" onChange={e => this.change(e)} type="number" min="1000"/>
+    <Form.Control name="fee" value={this.state.fee} onChange={e => this.change(e)} type="number" min="1000"/>
     </Form.Group>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.setFee()}>set conversion fee</Button>
     </Form>
