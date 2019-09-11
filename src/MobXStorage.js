@@ -39,7 +39,7 @@ class MOBXStorage {
   }
 
   updateGasPrice = (newGasPrice) => {
-    this.GasPrice = newGasPrice
+    this.GasPrice = String(Math.round(newGasPrice))
   }
 
   setPending = (_bool) => {
