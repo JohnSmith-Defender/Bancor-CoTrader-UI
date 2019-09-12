@@ -45,14 +45,14 @@ const getUnofficialData = async (_web3) => {
 
        if(tokenAddress){
          token = new web3.eth.Contract(ABISmartToken, tokenAddress)
-         symbol = await token.methods.symbol.call()
+         symbol = await token.methods.symbol().call()
        }
 
        const smartTokenAddress = await converter.methods.token().call()
 
        if(smartTokenAddress){
          smartToken = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
-         smartTokenSymbol = await smartToken.methods.symbol.call()
+         smartTokenSymbol = await smartToken.methods.symbol().call()
        }
 
        owner = await converter.methods.owner().call()
