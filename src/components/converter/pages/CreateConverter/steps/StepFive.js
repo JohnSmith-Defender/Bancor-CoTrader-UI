@@ -144,12 +144,14 @@ render() {
     <Typography variant="body1" className={'mb-2'} component="p">
     Fill these in so we can calculate things for you:
     </Typography>
-
+    <br/>
+    <hr/>
     <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
-    <Form.Label>Calculate how many tokens to send</Form.Label>
+    <Form.Label>What starting USD price do you want for your token?</Form.Label>
     <br/>
     <Form.Control onChange={e => this.setState({USDAmount:e.target.value})} type="number" placeholder={`Enter USD rate for 1 ${this.state.symbol}`}/>
-    <hr/>
+    <Form.Label>What USD amount of BNT do you want to put in the reserves?</Form.Label>
+    <br/>
     <Form.Control onChange={e => this.setState({totalAmount:e.target.value})} type="number" placeholder={`Enter total USD amount`}/>
     <br/>
     {

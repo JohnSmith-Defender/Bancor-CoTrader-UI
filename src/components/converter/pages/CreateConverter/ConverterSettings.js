@@ -13,7 +13,7 @@ class ConverterSettings extends Component {
   componentDidMount = async () => {
     let currentGasStatus = window.localStorage.getItem('gasPriceState')
     if(!currentGasStatus)
-       currentGasStatus = "averageGasPrice"
+       currentGasStatus = "highGasPrice"
     await this.setGasPrice(currentGasStatus)
     this.setState({ currentGasStatus })
   }
