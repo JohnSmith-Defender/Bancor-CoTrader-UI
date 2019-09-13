@@ -167,7 +167,7 @@ class TradeModal extends Component {
   // for BNT to ERC20 or vice versa
   quickConvert = () => {
     const web3 = this.props.MobXStorage.web3
-    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, this.state.from)[0]
+    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
 
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)

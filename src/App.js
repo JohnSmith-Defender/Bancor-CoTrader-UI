@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import getWeb3 from "./utils/getWeb3"
 import { inject, observer } from 'mobx-react'
-import { netId } from './config'
+import { netId, API_endpoint } from './config'
+import axios from 'axios'
 
 import Footer from "./components/static/Footer"
 import Web3Info from "./components/static/Web3Info"
@@ -12,7 +13,7 @@ import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
 
 import { Alert } from "react-bootstrap"
-import Container from '@material-ui/core/Container';
+import Container from '@material-ui/core/Container'
 
 class App extends Component {
   constructor(props, context) {
@@ -61,7 +62,45 @@ class App extends Component {
 
   initData = async () => {
     this.setState({ isDataLoad:true })
-    // init converters data
+    // try get data form server
+    try{
+      await this.getDataFromServer()
+      console.log("Load data from server")
+    }
+    // if server not work get data form file and blockchain
+    catch(e){
+      await this.getDataFromBlockchain()
+      console.log("Load data from blockchain and file")
+    }
+  }
+
+  // The main function for loading data
+  getDataFromServer = async () => {
+    let official = await axios.get(API_endpoint + '/official')
+    official = official.data.result
+    let officialSymbols = official.map(item => item.symbol)
+    officialSymbols = officialSymbols.concat("ETH")
+
+    const officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
+
+    let unofficial = await axios.get(API_endpoint + '/unofficial')
+    unofficial = unofficial.data.result
+    const unofficialSymbols = unofficial.map(item => item.symbol)
+    const unofficialSmartTokenSymbols = unofficial.map(item => item.smartTokenSymbol)
+
+
+    this.props.MobXStorage.initOfficialSymbols(officialSymbols)
+    this.props.MobXStorage.initOfficialSmartTokenSymbols(officialSmartTokenSymbols)
+
+    this.props.MobXStorage.initUnofficialSymbols(unofficialSymbols)
+    this.props.MobXStorage.initUnofficialSmartTokenSymbols(unofficialSmartTokenSymbols)
+
+    this.props.MobXStorage.initBancorStorage(official, unofficial)
+  }
+
+  // A second function for loading data in case the server does not respond,
+  // app get data from contracts and file
+  getDataFromBlockchain = async () => {
     const officialData = getOfficialData()
     const unoficialData = await getUnofficialData(null)
 
@@ -73,6 +112,7 @@ class App extends Component {
 
     this.props.MobXStorage.initBancorStorage(officialData[2], unoficialData[2])
   }
+
 
   render() {
     return(

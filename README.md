@@ -2,6 +2,7 @@
 ```
 create .env
 REACT_APP_INFURA=YOUR_INFURA_MAINNET_ENDPOINT
+REACT_APP_API=COTRADER_API_ENDPOINT
 
 yarn install
 yarn start

@@ -1,3 +1,5 @@
+export const API_endpoint = "https://api-bancor.cotrader.com"
+
 // MAINNET
 export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
