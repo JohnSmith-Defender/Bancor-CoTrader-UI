@@ -1,6 +1,7 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import Panel from '../admin/Panel/Panel'
 
 const useStyles = makeStyles(theme => ({
   footer:{
@@ -25,6 +26,9 @@ function Footer() {
     <Typography className={classes.footertext} color="textSecondary">
       <a style={{color: '#3f51b5'}} href="https://t.me/cotrader" target="_blank" rel="noopener noreferrer"> Chat and Support</a>
     </Typography>
+    <div align="center">
+    <Panel/>
+    </div>
     </div>
   )
 }
