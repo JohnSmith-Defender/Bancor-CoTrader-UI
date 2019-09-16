@@ -7,6 +7,8 @@ import {
   EtherscanLink
 } from '../../../../config'
 
+import getBancorGasLimit from '../../../../service/getBancorGasLimit'
+
 import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
 //import getWeb3ForRead from '../../../../service/getWeb3ForRead'
@@ -187,13 +189,13 @@ class Fund extends Component {
   approveBNT = async () => {
     const tokenInfo = this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
-    console.log("converterAddress", converterAddress)
-
+    const gasPrice = await getBancorGasLimit()
     const bnt = new this.props.web3.eth.Contract(ABISmartToken, BNTToken)
+
     bnt.methods.approve(
     converterAddress,
     this.state.BNTAmount
-  ).send({from: this.props.accounts[0]})
+  ).send({from: this.props.accounts[0], gasPrice})
   }
 
   approveConnector = async () => {
@@ -201,19 +203,22 @@ class Fund extends Component {
     const converterAddress = tokenInfo[1]
     const connectorAddress = tokenInfo[2]
     const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
+    const gasPrice = await getBancorGasLimit()
+
     connector.methods.approve(
     converterAddress,
     this.state.connectorAmount
-    ).send({from: this.props.accounts[0]})
+    ).send({from: this.props.accounts[0], gasPrice})
    }
 
-   fund = () => {
+   fund = async () => {
      if(this.state.directionAmount > 0){
        const info = this.props.getInfoBySymbol()
        const converter = info[0]
-       const reciver = info[1]
-       console.log(reciver)
-       converter.methods.fund(toWei(String(this.state.directionAmount))).send({ from:this.props.accounts[0] })
+       const gasPrice = await getBancorGasLimit()
+
+       converter.methods.fund(toWei(String(this.state.directionAmount)))
+       .send({ from:this.props.accounts[0], gasPrice})
      }
      else {
        alert("Please input amount")

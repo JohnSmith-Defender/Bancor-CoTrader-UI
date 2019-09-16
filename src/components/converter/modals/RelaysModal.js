@@ -22,6 +22,8 @@ import {
 import getDirectionData from '../../../service/getDirectionData'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
+import getBancorGasLimit from '../../../service/getBancorGasLimit'
+
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
 import FakeButton from '../../templates/FakeButton'
@@ -164,15 +166,16 @@ class RelaysModal extends Component {
 
    // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // approve ERC20 standard
-  approve = (reciver) => {
+  approve = async (reciver) => {
     if(this.state.from){
       const { sendFrom } = this.overrideGetDirectionData()
+      const gasPrice = await getBancorGasLimit()
 
       const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
       token.methods.approve(
         reciver,
         this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
-      ).send({from: this.props.MobXStorage.accounts[0]})
+      ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     }
     else{
       alert('Not correct input data')
@@ -198,47 +201,50 @@ class RelaysModal extends Component {
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // trade between source and source
   // or COTBNT/COT or vice versa case
-  claimAndConvert = () => {
+  claimAndConvert = async () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo, isRelatedDirection)
+    const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
       this.props.MobXStorage.minReturn
-    ).send({from: this.props.MobXStorage.accounts[0]})
+    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
   }
 
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // trade between source and BNT
   // or if from === smart token
-  quickConvert = () => {
+  quickConvert = async () => {
     const web3 = this.props.MobXStorage.web3
     const { tokenInfoFrom, objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+    const gasPrice = await getBancorGasLimit()
 
     converterContract.methods.quickConvert(
       path,
       web3.utils.toWei(String(this.state.directionAmount)),
       this.props.MobXStorage.minReturn
-    ).send({from: this.props.MobXStorage.accounts[0]})
+    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
   }
 
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // in case if from === ETH
-  convertFromETH = () => {
+  convertFromETH = async () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
+    const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
-    .send({from: this.props.MobXStorage.accounts[0], value:amount })
+    .send({from: this.props.MobXStorage.accounts[0], gasPrice, value:amount })
     this.closeModal()
   }
 

@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Button, Form, Alert } from "react-bootstrap"
 import { toWei, fromWei } from 'web3-utils'
 import FakeButton from '../../../templates/FakeButton'
+import getBancorGasLimit from '../../../../service/getBancorGasLimit'
+
 
 class Liquidate extends Component {
   state = {
@@ -20,10 +22,13 @@ class Liquidate extends Component {
     }
   }
 
-  liquidate = () => {
+  liquidate = async() => {
     if(this.state.directionAmount > 0){
       const converter = this.props.getInfoBySymbol()[0]
-      converter.methods.liquidate(toWei(String(this.state.directionAmount))).send({ from:this.props.accounts[0] })
+      const gasPrice = await getBancorGasLimit()
+
+      converter.methods.liquidate(toWei(String(this.state.directionAmount)))
+      .send({ from:this.props.accounts[0], gasPrice})
     }
     else {
       alert("Please input amount")

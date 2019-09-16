@@ -22,6 +22,8 @@ import {
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import findByProps from '../../../service/findByProps'
 import getPath from '../../../service/getPath'
+import getBancorGasLimit from '../../../service/getBancorGasLimit'
+
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
 import SetMinReturn from './modules/SetMinReturn'
@@ -121,14 +123,16 @@ class TradeModal extends Component {
   }
 
   // approve ERC20 standard
-  approve = () => {
+  approve = async () => {
     if(this.state.from){
       const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
       const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
+      const gasPrice = await getBancorGasLimit()
+
       token.methods.approve(
         BancorNetwork,
         this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
-      ).send({from: this.props.MobXStorage.accounts[0]})
+      ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     }
     else{
       console.log(this.state.to, this.state.from, this.state.directionAmount)
@@ -152,42 +156,45 @@ class TradeModal extends Component {
   }
 
   // for ERC20 to ERC20
-  claimAndConvert = () => {
+  claimAndConvert = async () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+    const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
       this.props.MobXStorage.minReturn
-    ).send({from: this.props.MobXStorage.accounts[0]})
+    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
   }
 
   // for BNT to ERC20 or vice versa
-  quickConvert = () => {
+  quickConvert = async () => {
     const web3 = this.props.MobXStorage.web3
     const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
-
+    const gasPrice = await getBancorGasLimit()
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
+
     converterContract.methods.quickConvert(
       path,
       web3.utils.toWei(String(this.state.directionAmount)),
       this.props.MobXStorage.minReturn
-    ).send({from: this.props.MobXStorage.accounts[0]})
+    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
   }
 
   // in case if from === ETH
-  convertFromETH = () => {
+  convertFromETH = async () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const amount = web3.utils.toWei(String(this.state.directionAmount))
+    const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
-    .send({from: this.props.MobXStorage.accounts[0], value:amount })
+    .send({from: this.props.MobXStorage.accounts[0], gasPrice, value:amount })
     this.closeModal()
   }
 
