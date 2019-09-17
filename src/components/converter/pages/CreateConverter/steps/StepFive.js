@@ -1,5 +1,5 @@
 import { ABISmartToken, BNTToken, ABIBancorNetwork, BancorNetwork, EtherscanLink } from '../../../../../config'
-import { Form } from "react-bootstrap"
+import { Form, Alert } from "react-bootstrap"
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 
@@ -38,7 +38,8 @@ class StepFive extends Component {
  init = async () => {
     const converterAddress = window.localStorage.getItem('Converter')
     const symbol = window.localStorage.getItem('tokenSymbol') ? window.localStorage.getItem('tokenSymbol') : "Your token"
-    this.setState({ converterAddress, symbol})
+    const userAddress = window.localStorage.getItem('userAddress')
+    this.setState({ converterAddress, symbol, userAddress})
  }
 
  // Calculate rate for BNT and connector depending of user rate connector to USD (DAI)
@@ -159,6 +160,14 @@ render() {
       ?
       (
         <React.Fragment>
+        {
+          this.state.userAddress
+          ?
+          (
+            <Alert variant="warning"> <small>Please do deposit from the same wallet address you started with: <strong> {this.state.userAddress} </strong></small></Alert>
+          )
+          :(null)
+        }
         <Typography variant="body1" className={'mb-2'} component="p">
         Send {this.state.connectorAmount} {this.state.symbol} here: <strong>{this.state.converterAddress}</strong>
         </Typography>

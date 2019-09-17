@@ -30,7 +30,8 @@ class CreateConverter extends Component {
   super(props, context);
   this.state = {
     step:"One",
-    hashLatest:''
+    hashLatest:'',
+    userAddress:null
     }
   }
 
@@ -40,11 +41,14 @@ class CreateConverter extends Component {
     setTimeout(() => {
       let pending = window.localStorage.getItem('Pending')
       pending = JSON.parse(pending)
+      const userAddress = window.localStorage.getItem('userAddress')
+      console.log("userAddress", userAddress)
+      this.setState({ userAddress })
 
       if(pending){
-        const hash = window.localStorage.getItem('txLatest')
-        this.setState({ hashLatest:hash })
-        this.props.MobXStorage.checkTxStatus(hash)
+        const hashLatest = window.localStorage.getItem('txLatest')
+        this.setState({ hashLatest })
+        this.props.MobXStorage.checkTxStatus(hashLatest)
       }
     }, 1000)
   }
@@ -72,7 +76,14 @@ class CreateConverter extends Component {
               <div className="container-fluid">
               <br />
               <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong style={{"color":"red"}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{"color":"red"}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{"color":"red"}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
-              <br />
+              {
+                this.state.userAddress && this.state.userAddress !== this.props.MobXStorage.accounts[0]
+                ?
+                (
+                  <Alert variant="danger"> <small>Please execute all next transactions from the same wallet address you started with: <strong> {this.state.userAddress} </strong></small></Alert>
+                )
+                :(null)
+              }
               <StepComponent updateRenderStep={this.updateRenderStep} MobXStorage={this.props.MobXStorage}/>
               <br />
               {

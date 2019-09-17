@@ -86,6 +86,7 @@ class StepOne extends Component {
           this.props.MobXStorage.setPending(true)
           window.localStorage.setItem('StepNext', "Two")
           window.localStorage.setItem('txLatest', hash)
+          window.localStorage.setItem('userAddress', this.props.MobXStorage.accounts[0])
         })
         .on('confirmation', (confirmationNumber, receipt) => {
           this.props.MobXStorage.txFinish()
