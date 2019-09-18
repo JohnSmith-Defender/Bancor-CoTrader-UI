@@ -11,7 +11,7 @@ const getBancorGasLimit = async () => {
     return res
   }else{
     //for Ropsten
-    return "15000000000"
+    return "1000000000"
   }
 }
 
