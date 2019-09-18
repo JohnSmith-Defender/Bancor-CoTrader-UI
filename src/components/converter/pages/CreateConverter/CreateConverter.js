@@ -45,7 +45,7 @@ class CreateConverter extends Component {
       console.log("userAddress", userAddress)
       this.setState({ userAddress })
 
-      if(pending){
+      if(pending && this.props.MobXStorage.web3){
         const hashLatest = window.localStorage.getItem('txLatest')
         this.setState({ hashLatest })
         this.props.MobXStorage.checkTxStatus(hashLatest)
