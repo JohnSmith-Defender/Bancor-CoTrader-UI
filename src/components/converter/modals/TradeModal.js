@@ -3,7 +3,7 @@
 // TODO DRY
 
 import React, { Component } from 'react'
-import { ButtonGroup, Alert, Form,  Modal } from "react-bootstrap"
+import { Alert, Form,  Modal } from "react-bootstrap"
 
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -28,6 +28,8 @@ import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
 import SetMinReturn from './modules/SetMinReturn'
 import FakeButton from '../../templates/FakeButton'
+
+import MMBatchManual from '../../static/MMBatchManual'
 
 class TradeModal extends Component {
   constructor(props, context) {
@@ -361,16 +363,17 @@ class TradeModal extends Component {
             ?
             (
               /*If connect to web3 */
-              <ButtonGroup size="sm">
+              <React.Fragment>
               <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
-              </ButtonGroup>
+              <hr/>
+              <MMBatchManual/>
+              <hr/>
+              </React.Fragment>
             )
             :
             (
               /*If NO connect to web3 */
-              <ButtonGroup size="sm">
               <FakeButton info="Please connect to web3" buttonName="Trade"/>
-              </ButtonGroup>
             )
           }
           </div>
