@@ -46,6 +46,7 @@ class TradeModal extends Component {
     selectFromOficial:true,
     web3:null,
     receiverAddress: null,
+    requireApprove:false,
     sendFrom:undefined,
     sendTo:undefined,
     userBalanceFrom:undefined
@@ -71,6 +72,7 @@ class TradeModal extends Component {
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
       if(this.state.directionAmount > 0){
        this.getRate()
+       this.checkRequireApprove()
       }
     }
 
@@ -114,53 +116,46 @@ class TradeModal extends Component {
   }
   }
 
-  // Batch requset for case when from === ERC20
-  approveAndTradeFor = async () => {
-    const web3 = this.props.MobXStorage.web3
-    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
-    const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
-    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const gasPrice = await getBancorGasLimit()
-    let batch = new web3.BatchRequest()
-
-    // approve tx
-    const approveData = token.methods.approve(
-    BancorNetwork,
-    web3.utils.toWei(String(this.state.directionAmount))
-    ).encodeABI({from: this.props.MobXStorage.accounts[0]})
-
-    // approve gas should be more than in trade
-    const approveGasPrice = Number(gasPrice) + 2000000000
-
-    const approve = {
-      "from": this.props.MobXStorage.accounts[0],
-      "to": tokenInfoFrom.tokenAddress,
-      "value": "0x0",
-      "data": approveData,
-      "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-      "gas": web3.eth.utils.toHex(85000),
+  // in this case we need aprove for BNT but not need for ETH
+  checkRequireApprove = () => {
+    if(this.state.from === "ETH"){
+      this.setState({ requireApprove: false})
+    }else{
+      this.setState({ requireApprove: true})
     }
+  }
 
-    // trade tx
+
+  // approve ERC20 standard
+  approve = async () => {
+    if(this.state.from){
+      const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
+      const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
+      const gasPrice = await getBancorGasLimit()
+
+      token.methods.approve(
+        BancorNetwork,
+        this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
+      ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
+    }
+    else{
+      console.log(this.state.to, this.state.from, this.state.directionAmount)
+      alert('Not correct input data')
+    }
+  }
+
+  // FOR ERC20 to ERC20
+  claimAndConvertFor = async () => {
+    const web3 = this.props.MobXStorage.web3
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
-    const tradeData = bancorNetworkContract.methods.claimAndConvertFor(path,
+    const gasPrice = await getBancorGasLimit()
+
+    bancorNetworkContract.methods.claimAndConvertFor(path,
       toWei(this.state.directionAmount),
       this.props.MobXStorage.minReturn,
       this.state.receiverAddress
-    ).encodeABI({from: this.props.MobXStorage.accounts[0]})
-
-    const trade = {
-      "from": this.props.MobXStorage.accounts[0],
-      "to": BancorNetwork,
-      "value": "0x0",
-      "data": tradeData,
-      "gasPrice": web3.eth.utils.toHex(gasPrice),
-      "gas": web3.eth.utils.toHex(600000),
-    }
-
-    batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Approve")))
-    batch.add(web3.eth.sendTransaction.request(trade, () => console.log("Trade")))
-    batch.execute()
+    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
   }
 
@@ -185,7 +180,7 @@ class TradeModal extends Component {
     if(this.state.from === "ETH"){
       this.convertFor()
     }else{
-      this.approveAndTradeFor()
+      this.claimAndConvertFor()
     }
   }
   else{
@@ -348,6 +343,15 @@ class TradeModal extends Component {
             (
               /*If connect to web3 */
               <ButtonGroup size="sm">
+              {
+                this.state.requireApprove
+                ?
+                (
+                  <Button variant="contained" style={{marginRight: '10px'}} color="primary" onClick={() => this.approve()}>Approve</Button>
+                )
+                :
+                (null)
+              }
               <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
               </ButtonGroup>
             )
@@ -355,6 +359,15 @@ class TradeModal extends Component {
             (
               /*If NO connect to web3 */
               <ButtonGroup size="sm">
+              {
+                this.state.requireApprove
+                ?
+                (
+                  <FakeButton info="Please connect to web3" buttonName="Approve"/>
+                )
+                :
+                (null)
+              }
               <FakeButton info="Please connect to web3" buttonName="Trade"/>
               </ButtonGroup>
             )
