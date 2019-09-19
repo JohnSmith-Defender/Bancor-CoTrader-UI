@@ -23,6 +23,7 @@ import getDirectionData from '../../../service/getDirectionData'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
+import findByProps from '../../../service/findByProps'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
@@ -42,13 +43,11 @@ class RelaysModal extends Component {
     officialSmartTokenSymbols:null,
     unofficialSmartTokenSymbols:null,
     bancorTokensStorageJson:null,
-    bancorNetworkContract: null,
     selectToOficial:true,
     selectFromOficial:true,
     web3:null,
     useERC20AsSelectFrom:true,
-    useERC20AsSelectTo:false,
-    requireApprove:false
+    useERC20AsSelectTo:false
     }
   }
 
@@ -70,7 +69,7 @@ class RelaysModal extends Component {
     // Update rate by onChange
     if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
       if(this.state.directionAmount > 0){
-        this.checkRateAndApprove()
+        this.checkRate()
       }
     }
 
@@ -96,7 +95,6 @@ class RelaysModal extends Component {
   }
 
 
-
   // override for case not input the same parameters each time
   overrideGetDirectionData = () => {
     return getDirectionData(
@@ -106,21 +104,6 @@ class RelaysModal extends Component {
       this.state.useERC20AsSelectFrom,
       this.state.useERC20AsSelectTo
     )
-  }
-
-  // not need approve for ETH, BNT, smart token
-  checkRequireApprove = () => {
-    const { isRelatedDirection } = this.overrideGetDirectionData()
-
-    if(isRelatedDirection){
-      this.setState({ requireApprove: true})
-    }
-    else if(!this.state.useERC20AsSelectFrom || this.state.from === "ETH" || this.state.from === "BNT"){
-      this.setState({ requireApprove: false})
-    }
-    else{
-      this.setState({ requireApprove: true})
-    }
   }
 
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
@@ -157,65 +140,70 @@ class RelaysModal extends Component {
   }
 
   // not need call this functions if user not select to and from
-  checkRateAndApprove = () => {
+  checkRate = () => {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
       this.getRate()
-      this.checkRequireApprove()
     }
   }
 
-   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
-  // approve ERC20 standard
-  approve = async (reciver) => {
-    if(this.state.from){
-      const { sendFrom } = this.overrideGetDirectionData()
-      const gasPrice = await getBancorGasLimit()
-
-      const token = new this.props.MobXStorage.web3.eth.Contract(ABISmartToken, sendFrom)
-      token.methods.approve(
-        reciver,
-        this.props.MobXStorage.web3.utils.toWei(String(this.state.directionAmount))
-      ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
-    }
-    else{
-      alert('Not correct input data')
-    }
-  }
-
-
-  // choose an receiver (Converter or Bancor Network)
-  // depending on the type of exchange (external or internal)
-  wrapperApprove = async () => {
-    if(this.state.to === "BNT" || this.state.from === "BNT"){
-      console.log("Approve to converter")
-      const { tokenInfoFrom } = this.overrideGetDirectionData()
-
-      const converterAddress = tokenInfoFrom.converterAddress
-      this.approve(converterAddress)
-    }else{
-      console.log("Approve to BancorNetwork")
-      this.approve(BancorNetwork)
-    }
-  }
-
-  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
-  // trade between source and source
-  // or COTBNT/COT or vice versa case
-  claimAndConvert = async () => {
+  // Batch requset for case when from === ERC20
+  approveAndTradeRelay = async () => {
     const web3 = this.props.MobXStorage.web3
-    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
-    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo, isRelatedDirection)
+    const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
+
+    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, objPropsFrom, this.state.from)[0]
+    const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
     const gasPrice = await getBancorGasLimit()
 
-    bancorNetworkContract.methods.claimAndConvert(path,
+    const path = getPath(
+      this.state.from,
+      this.state.to,
+      this.state.bancorTokensStorageJson,
+      objPropsFrom,
+      objPropsTo
+    )
+
+    let batch = new web3.BatchRequest()
+
+    // approve tx
+    const approveData = token.methods.approve(
+    BancorNetwork,
+    web3.utils.toWei(String(this.state.directionAmount))
+    ).encodeABI({from: this.props.MobXStorage.accounts[0]})
+
+    // approve gas should be more than in trade
+    const approveGasPrice = Number(gasPrice) + 2000000000
+    const approve = {
+      "from": this.props.MobXStorage.accounts[0],
+      "to": tokenInfoFrom.tokenAddress,
+      "value": "0x0",
+      "data": approveData,
+      "gasPrice": web3.eth.utils.toHex(approveGasPrice),
+      "gas": web3.eth.utils.toHex(85000),
+    }
+
+    // trade tx
+    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+    const tradeData = bancorNetworkContract.methods.claimAndConvert(path,
       toWei(this.state.directionAmount),
       this.props.MobXStorage.minReturn
-    ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
+    ).encodeABI({from: this.props.MobXStorage.accounts[0]})
+
+    const trade = {
+      "from": this.props.MobXStorage.accounts[0],
+      "to": BancorNetwork,
+      "value": "0x0",
+      "data": tradeData,
+      "gasPrice": web3.eth.utils.toHex(gasPrice),
+      "gas": web3.eth.utils.toHex(600000),
+    }
+
+    batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Approve")))
+    batch.add(web3.eth.sendTransaction.request(trade, () => console.log("Trade")))
+    batch.execute()
     this.closeModal()
   }
 
-  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // trade between source and BNT
   // or if from === smart token
   quickConvert = async () => {
@@ -233,7 +221,6 @@ class RelaysModal extends Component {
     this.closeModal()
   }
 
-  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // in case if from === ETH
   convertFromETH = async () => {
     const web3 = this.props.MobXStorage.web3
@@ -248,24 +235,18 @@ class RelaysModal extends Component {
     this.closeModal()
   }
 
-  // internal and extarnal trade
+
   trade = () => {
   if(this.state.to && this.state.from && this.state.directionAmount > 0){
     if(this.state.to !== this.state.from){
-      const { isRelatedDirection } = this.overrideGetDirectionData()
       if(this.state.from === "ETH"){
         this.convertFromETH()
       }
-      else if (isRelatedDirection){
-        this.claimAndConvert()
-      }
       else if(this.state.from === "BNT" || !this.state.useERC20AsSelectFrom){
-        this.quickConvert()
-      }else if(this.state.to === "BNT" && this.state.from !== "ETH"){
         this.quickConvert()
       }
       else{
-        this.claimAndConvert()
+        this.approveAndTradeRelay()
       }
     }
   }
@@ -437,30 +418,12 @@ class RelaysModal extends Component {
             ?
             (
               <ButtonGroup size="sm">
-              {
-                this.state.requireApprove
-                ?
-                (
-                  <Button variant="contained" style={{marginRight: '10px'}} color="primary" onClick={() => this.wrapperApprove()}>Approve</Button>
-                )
-                :
-                (null)
-              }
               <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
               </ButtonGroup>
             )
             :
             (
               <ButtonGroup size="sm">
-              {
-                this.state.requireApprove
-                ?
-                (
-                  <FakeButton info="Please connect to web3" buttonName="Approve"/>
-                )
-                :
-                (null)
-              }
               <FakeButton info="Please connect to web3" buttonName="Trade"/>
               </ButtonGroup>
             )
