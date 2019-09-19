@@ -154,8 +154,8 @@ class TradeModal extends Component {
       "gas": web3.eth.utils.toHex(600000),
     }
 
-    batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Test Approve")))
-    batch.add(web3.eth.sendTransaction.request(trade, () => console.log("Test Trade")))
+    batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Approve")))
+    batch.add(web3.eth.sendTransaction.request(trade, () => console.log("Trade")))
     batch.execute()
     this.closeModal()
   }
@@ -196,7 +196,7 @@ class TradeModal extends Component {
       if(this.state.from === "ETH"){
         this.convertFromETH()
       }
-      else if(this.state.from === "BNT" && this.state.to !== "ETH"){
+      else if(this.state.from === "BNT"){
         this.quickConvert()
       }
       else{
