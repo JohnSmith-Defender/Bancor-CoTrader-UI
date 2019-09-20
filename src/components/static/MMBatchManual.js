@@ -49,7 +49,7 @@ function MMBatchManual(props) {
         <br/>
         <hr/>
         <h4>How to fix</h4>
-        <p>Just use the switches to set the correct order. if you see incorect order.</p>
+        <p>Just use the switches to set the correct order, if it's incorrect</p>
         <Image src="img/manuals/batch-order/switch-tx.png" fluid />
         <br/>
         <hr/>
