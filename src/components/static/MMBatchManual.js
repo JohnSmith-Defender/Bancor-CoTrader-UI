@@ -36,7 +36,7 @@ function MMBatchManual(props) {
           <Modal.Title>Batch manual</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <p>If you see more then 1 transaction for confirm and switches, make sure "Approve" happens before "Convert"</p>
+        <p>If you see arrows like those circled in red below, use them to set "Approve" before "Convert".</p>
         <Image src="img/manuals/batch-order/two-tx.png" fluid />
         <br/>
         <hr/>
