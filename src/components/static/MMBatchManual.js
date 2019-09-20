@@ -36,11 +36,8 @@ function MMBatchManual(props) {
           <Modal.Title>Batch manual</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <p>If You see more then 1 transaction for confirm and switches, this means we use batch requests for ERC20 transfers</p>
+        <p>If You see more then 1 transaction for confirm and switches, make sure Metamask shows “Approve” before “Convert”</p>
         <Image src="img/manuals/batch-order/two-transaction.png" fluid />
-        <p>In this case transaction should start from Approve. Approve allow contract transfer your ERC20 tokens.</p>
-        <p>For ERC20 standard approve should always be sent first</p>
-        <p>But unfortunately metamask has problems with transactions order, and sometimes the order may be confused and this will lead to an error</p>
         <br/>
         <hr/>
         <h3 style={{color:"red"}}>This is not correct order</h3>
@@ -52,7 +49,7 @@ function MMBatchManual(props) {
         <br/>
         <hr/>
         <h4>How to fix</h4>
-        <p>Just use the switches to set the correct order, if you see incorect order.</p>
+        <p>Just use the switches to set the correct order. if you see incorect order.</p>
         <Image src="img/manuals/batch-order/switch.png" fluid />
         <br/>
         <hr/>
@@ -64,8 +61,6 @@ function MMBatchManual(props) {
           Show video
         </Button>
         <hr/>
-        <h5>Notice</h5>
-        <p>You don't need approve, when you trade from ETH, BNT and Relay tokens.</p>
         <br/>
         <Button variant="contained" color="primary" onClick={handleClose}>
           I got it

@@ -3,7 +3,7 @@
 // TODO DRY
 
 import React, { Component } from 'react'
-import { ButtonGroup, Alert, Form,  Modal } from "react-bootstrap"
+import { Alert, Form,  Modal } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import SetMinReturn from './modules/SetMinReturn'
@@ -24,6 +24,7 @@ import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 import findByProps from '../../../service/findByProps'
+import MMBatchManual from '../../static/MMBatchManual'
 
 import { Typeahead } from 'react-bootstrap-typeahead'
 import DirectionInfo from './modules/DirectionInfo'
@@ -417,15 +418,16 @@ class RelaysModal extends Component {
             this.props.MobXStorage.web3
             ?
             (
-              <ButtonGroup size="sm">
+              <React.Fragment>
               <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
-              </ButtonGroup>
+              <hr/>
+              <MMBatchManual/>
+              <hr/>
+              </React.Fragment>
             )
             :
             (
-              <ButtonGroup size="sm">
               <FakeButton info="Please connect to web3" buttonName="Trade"/>
-              </ButtonGroup>
             )
           }
           </div>
