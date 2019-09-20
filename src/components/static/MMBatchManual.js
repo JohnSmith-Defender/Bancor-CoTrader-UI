@@ -14,7 +14,7 @@ function MMBatchManual(props) {
   return (
     <>
       <small>
-      If you use <strong style={{color:'red'}}>MetaMask</strong> please read this small &nbsp;
+      If you use <strong style={{color:'red'}}>MetaMask</strong>, please read this small &nbsp;
 
       <button style={{
         backgroundColor:"#3f51b5",
@@ -28,7 +28,7 @@ function MMBatchManual(props) {
         Manual
       </button>
 
-      &nbsp; before execude transaction. Otherwise you may get an error.
+      &nbsp; before executing transactions. Otherwise you may sometimes get an error.
       </small>
 
       <Modal show={show} size="lg" onHide={handleClose}>
@@ -36,21 +36,21 @@ function MMBatchManual(props) {
           <Modal.Title>Batch manual</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <p>If You see more then 1 transaction for confirm and switches, make sure Metamask shows “Approve” before “Convert”</p>
+        <p>If You see more then 1 transaction for confirm and switches, make sure "Approve" happens before "Convert"</p>
         <Image src="img/manuals/batch-order/two-transaction.png" fluid />
         <br/>
         <hr/>
-        <h3 style={{color:"red"}}>This is not correct order</h3>
-        <Image src="img/manuals/batch-order/wrong-order.png" fluid />
+        <h3 style={{color:"green"}}>This order is correct</h3>
+        <Image src="img/manuals/batch-order/correct-order-tx.png" fluid />
         <br/>
         <hr/>
-        <h3 style={{color:"green"}}>This is correct order:</h3>
-        <Image src="img/manuals/batch-order/correct-order.png" fluid />
+        <h3 style={{color:"red"}}>This order is incorrect</h3>
+        <Image src="img/manuals/batch-order/wrong-order-tx.png" fluid />
         <br/>
         <hr/>
         <h4>How to fix</h4>
         <p>Just use the switches to set the correct order. if you see incorect order.</p>
-        <Image src="img/manuals/batch-order/switch.png" fluid />
+        <Image src="img/manuals/batch-order/switch-tx.png" fluid />
         <br/>
         <hr/>
         <h4>Example</h4>
