@@ -1,18 +1,16 @@
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
-
 import {
   ABISmartToken,
   BNTToken,
+  USDBToken,
   EtherscanLink
 } from '../../../../config'
-
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
-
 import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
-//import getWeb3ForRead from '../../../../service/getWeb3ForRead'
 import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
+
 
 class Fund extends Component {
   constructor(props, context) {
@@ -29,7 +27,8 @@ class Fund extends Component {
     currentUserPercent:0,
     smartTokenBalance:0,
     userBNTBalance:0,
-    userConnectorBalance:0
+    userConnectorBalance:0,
+    BancorConnectorType:null
     }
   }
 
@@ -49,7 +48,8 @@ class Fund extends Component {
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
-
+          const BancorConnectorType = await this.getBancorConnectorType()
+          console.log("BancorConnectorType", BancorConnectorType)
           const {
             smartTokenSupplyOriginal,
             newSmartTokenSupply,
@@ -73,7 +73,8 @@ class Fund extends Component {
             currentUserPercent,
             smartTokenBalance,
             userBNTBalance,
-            userConnectorBalance
+            userConnectorBalance,
+            BancorConnectorType
           })
         }else{
           this.setState({
@@ -152,7 +153,18 @@ class Fund extends Component {
   }
 
 
-  // return BNT and ERC20 connectors amount calculated by smart token amount
+  // Return Bancor connector symbol (BNT or USDB)
+  getBancorConnectorType = async () => {
+    const converterInfo = this.props.getInfoBySymbol()
+    const converter = converterInfo[0]
+    const connectorAddress = await converter.methods.connectorTokens(0).call()
+    const contract = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
+    const symbol = await contract.methods.symbol().call()
+    return symbol
+  }
+
+
+  // return BNT(or USDB) and ERC20 connectors amount calculated by smart token amount
   calculateConnectorBySmartTokenAmount = async () => {
     const amount = toWei(String(this.state.directionAmount))
     const converterInfo = this.props.getInfoBySymbol()
@@ -185,12 +197,14 @@ class Fund extends Component {
     return connectorsAmount
   }
 
+
   // TEMPORARY SOLUTION UNTIL ISSUE WITH BATCHREQUEST
-  approveBNT = async () => {
+  approveBancorCoonector = async () => {
     const tokenInfo = this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
     const gasPrice = await getBancorGasLimit()
-    const bnt = new this.props.web3.eth.Contract(ABISmartToken, BNTToken)
+    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+    const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
 
     bnt.methods.approve(
     converterAddress,
@@ -240,7 +254,7 @@ class Fund extends Component {
         </Alert>
 
         <Alert variant="warning">
-        <small>You will pay BNT: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}</small>
+        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}</small>
         </Alert>
 
         <Alert variant="primary">
@@ -299,8 +313,8 @@ class Fund extends Component {
             <Card className="text-center">
             <Card.Body>
             <ButtonGroup>
-            <Button variant="outline-primary" size="sm" onClick={() => this.approveBNT()}>Step 1: Approve BNT</Button>
-            <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve connector</Button>
+            <Button variant="outline-primary" size="sm" onClick={() => this.approveBancorCoonector()}>Step 1: Approve {this.state.BancorConnectorType}</Button>
+            <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve {this.props.from}</Button>
             <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
             </ButtonGroup>
             <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
