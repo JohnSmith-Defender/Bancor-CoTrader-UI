@@ -4,6 +4,7 @@ export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 // MAINNET
 export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
+export const USDBToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
 export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
 export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
@@ -15,6 +16,7 @@ export const netId = 1
 // ROPSTEN
 // export const BancorRegistry = "0xacbd1c5e8efae0387835841694f1c9e515052e54"
 // export const BNTToken = "0x68b71E7F2b5fd0b19E61c9f2b642c9C4015D3dd3"
+// export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
 // export const ConvertersRegistryList = "0xb858d5a0e682a3fd441964a3c6e47db90c79fd91"
 // export const BancorNetwork = "0x39Dd546F2DA1f6bb0fEa7A086cE04A519fCB6A1A"
 // export const BancorETH = "0xd43391b8fa168dcb34517877334672bcc3343ca1"

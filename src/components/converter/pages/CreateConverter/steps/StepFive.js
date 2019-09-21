@@ -1,13 +1,21 @@
-import { ABISmartToken, BNTToken, ABIBancorNetwork, BancorNetwork, EtherscanLink } from '../../../../../config'
+import {
+  ABISmartToken,
+  BNTToken,
+  ABIBancorNetwork,
+  BancorNetwork,
+  EtherscanLink,
+  USDBToken
+} from '../../../../../config'
+
 import { Form, Alert } from "react-bootstrap"
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 
-import Card from '@material-ui/core/Card';
+import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-
+import StepFiveBNT from './modules/StepFiveBNT'
 import UserInfo from '../../../../templates/UserInfo'
 
 class StepFive extends Component {
@@ -18,9 +26,7 @@ class StepFive extends Component {
   web3:null,
   symbol:undefined,
   USDAmount:0,
-  totalAmount:0,
-  connectorAmount:0,
-  BNTAmount:0
+  totalAmount:0
   }
  }
 
@@ -29,34 +35,11 @@ class StepFive extends Component {
    setTimeout(() => this.init(), 1000)
  }
 
- componentDidUpdate(prevProps, prevState) {
-   if(prevState.USDAmount !== this.state.USDAmount || prevState.totalAmount !== this.state.totalAmount){
-     this.calculateRate()
-   }
- }
-
  init = async () => {
     const converterAddress = window.localStorage.getItem('Converter')
     const symbol = window.localStorage.getItem('tokenSymbol') ? window.localStorage.getItem('tokenSymbol') : "Your token"
     const userAddress = window.localStorage.getItem('userAddress')
     this.setState({ converterAddress, symbol, userAddress})
- }
-
- // Calculate rate for BNT and connector depending of user rate connector to USD (DAI)
- calculateRate = async () => {
-   let connectorAmount
-   let BNTAmount
-   if(this.state.USDAmount > 0 && this.state.totalAmount){
-     // DAI, DAI Smart Token, BNT
-     const path = ["0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359","0xee01b3AB5F6728adc137Be101d99c678938E6E72", "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"]
-
-     const half = this.state.totalAmount / 2
-     // get BNT rate
-     BNTAmount = await this.getRate(half, path)
-     // get connector rate
-     connectorAmount = half / this.state.USDAmount
-   }
-   this.setState({ BNTAmount, connectorAmount })
  }
 
  // Get rate from Bancor contract
@@ -127,6 +110,16 @@ class StepFive extends Component {
 
 render() {
   return(
+    <React.Fragment>
+    {
+      this.state.userAddress
+      ?
+      (
+        <Alert variant="warning"> <small>Please do deposit from the same wallet address you started with: <strong> {this.state.userAddress} </strong></small></Alert>
+      )
+      :(null)
+    }
+
     <Card>
     <CardContent>
     <Typography variant="h4" gutterBottom component="h4">
@@ -138,60 +131,24 @@ render() {
     <Typography variant="h6" gutterBottom component="h6">
     ACTIONS
     </Typography>
-    <Typography variant="body1" className={'mb-2'} component="p">
-    Great! Now define the starting price of your token!
-    </Typography>
 
-    <Typography variant="body1" className={'mb-2'} component="p">
-    Fill these in so we can calculate things for you:
-    </Typography>
     <br/>
     <hr/>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
-    <Form.Label>What starting USD price do you want for your token?</Form.Label>
-    <br/>
-    <Form.Control onChange={e => this.setState({USDAmount:e.target.value})} type="number" placeholder={`Enter USD rate for 1 ${this.state.symbol}`}/>
-    <Form.Label>What USD amount of BNT do you want to put in the reserves?</Form.Label>
-    <br/>
-    <Form.Control onChange={e => this.setState({totalAmount:e.target.value})} type="number" placeholder={`Enter total USD amount`}/>
-    <br/>
-    {
-      this.state.BNTAmount > 0 && this.state.connectorAmount > 0
-      ?
-      (
-        <React.Fragment>
-        {
-          this.state.userAddress
-          ?
-          (
-            <Alert variant="warning"> <small>Please do deposit from the same wallet address you started with: <strong> {this.state.userAddress} </strong></small></Alert>
-          )
-          :(null)
-        }
-        <Typography variant="body1" className={'mb-2'} component="p">
-        Send {this.state.connectorAmount} {this.state.symbol} here: <strong>{this.state.converterAddress}</strong>
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        Send {this.state.BNTAmount} BNT here: <strong>{this.state.converterAddress}</strong>
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        Note: you can send in different amounts if you like
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        <strong style={{color: 'red'}}>Make sure that your <a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">contract</a> received BOTH tokens, only then press "issue"</strong>
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
-        </Typography>
-        <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
-        </React.Fragment>
-      )
-      :
-      (null)
-    }
-    </Form>
+    <StepFiveBNT
+     userAddress={this.state.userAddress}
+     symbol={this.state.symbol}
+     converterAddress={this.state.converterAddress}
+     getRate={this.getRate}
+    />
+
+    <Typography variant="body1" className={'mb-2'} component="p">
+    This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
+    </Typography>
+
+    <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
     </CardContent>
     </Card>
+    </React.Fragment>
   )
 }
 }
