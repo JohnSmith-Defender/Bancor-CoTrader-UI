@@ -26,7 +26,8 @@ class StepFive extends Component {
   web3:null,
   symbol:undefined,
   USDAmount:0,
-  totalAmount:0
+  totalAmount:0,
+  connectorType:null
   }
  }
 
@@ -35,11 +36,28 @@ class StepFive extends Component {
    setTimeout(() => this.init(), 1000)
  }
 
+ componentDidUpdate(prevProps, prevState) {
+   // Update Bancor connector type by select
+   if(this.state.connectorType && prevState.connectorType !== this.state.connectorType){
+     window.localStorage.setItem('connectorType', this.state.connectorType)
+     if(this.state.connectorType === "USDB" || this.state.connectorType === "BNT"){
+       const bancorConncectorAddress = this.state.connectorType === "USDB" ? USDBToken : BNTToken
+       this.setState({ bancorConncectorAddress })
+     }
+   }
+ }
+
  init = async () => {
     const converterAddress = window.localStorage.getItem('Converter')
     const symbol = window.localStorage.getItem('tokenSymbol') ? window.localStorage.getItem('tokenSymbol') : "Your token"
     const userAddress = window.localStorage.getItem('userAddress')
-    this.setState({ converterAddress, symbol, userAddress})
+    const connectorType = window.localStorage.getItem('connectorType')
+    let bancorConncectorAddress
+
+    if(connectorType === "USDB" || connectorType === "BNT")
+       bancorConncectorAddress = this.state.connectorType === "USDB" ? USDBToken : BNTToken
+
+    this.setState({ converterAddress, symbol, userAddress, connectorType, bancorConncectorAddress})
  }
 
  // Get rate from Bancor contract
@@ -68,11 +86,13 @@ class StepFive extends Component {
   const smartTokenAddress = window.localStorage.getItem('smartToken')
   const connectorTokenAddress = window.localStorage.getItem('userToken')
 
-  const BNTcontract = new web3.eth.Contract(ABISmartToken, BNTToken)
-  let balance = await BNTcontract.methods.balanceOf(this.state.converterAddress).call()
+  // Conector 1
+  const bancorConnectorContract = new web3.eth.Contract(ABISmartToken, this.state.bancorConncectorAddress)
+  let balance = await bancorConnectorContract.methods.balanceOf(this.state.converterAddress).call()
   balance = web3.utils.hexToNumberString(balance._hex)
   balance = Number(web3.utils.fromWei(balance))
 
+  // Connector 2
   const ConnectorToken = new web3.eth.Contract(ABISmartToken, connectorTokenAddress)
   let connectorBalance = await ConnectorToken.methods.balanceOf(this.state.converterAddress).call()
   connectorBalance = web3.utils.hexToNumberString(connectorBalance._hex)
@@ -84,7 +104,6 @@ class StepFive extends Component {
     balance = web3.utils.toWei(String(balance))
 
     const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
-
     console.log("PARAMS: ", accounts[0], balance)
     const gasPrice = this.props.MobXStorage.GasPrice
 
@@ -125,6 +144,7 @@ render() {
     <Typography variant="h4" gutterBottom component="h4">
     Step 5
     </Typography>
+
     <Typography variant="body1" className={'mb-2'} component="p">
     <strong>Funding & Initial Supply</strong>
     </Typography>
@@ -132,20 +152,58 @@ render() {
     ACTIONS
     </Typography>
 
-    <br/>
     <hr/>
-    <StepFiveBNT
-     userAddress={this.state.userAddress}
-     symbol={this.state.symbol}
-     converterAddress={this.state.converterAddress}
-     getRate={this.getRate}
-    />
-
-    <Typography variant="body1" className={'mb-2'} component="p">
-    This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
-    </Typography>
-
-    <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
+    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form.Group controlId="exampleForm.ControlSelect1">
+    <Form.Label>Select connector type</Form.Label>
+    <Form.Control as="select" onChange={(e) => this.setState({ connectorType:e.target.value })}>
+      <option>...</option>
+      <option>BNT</option>
+      <option>USDB</option>
+    </Form.Control>
+    </Form.Group>
+    </Form>
+    <hr/>
+    {
+      this.state.connectorType === "BNT"
+      ?
+      (
+        <StepFiveBNT
+         userAddress={this.state.userAddress}
+         symbol={this.state.symbol}
+         converterAddress={this.state.converterAddress}
+         getRate={this.getRate}
+        />
+      )
+      :(null)
+    }
+    {
+      this.state.connectorType === "USDB"
+      ?
+      (
+        <Typography variant="body1" className={'mb-2'} component="p">
+        Please deposit your token and USDB according to USD rate
+        </Typography>
+      )
+      :(null)
+    }
+    <hr/>
+    {
+      this.state.connectorType === "BNT" || this.state.connectorType === "USDB"
+      ?
+      (
+        <React.Fragment>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        You selected {<a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.bancorConncectorAddress} target="_blank" rel="noopener noreferrer">{this.state.connectorType}</a>} connector type
+        </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
+        </Typography>
+        <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
+        </React.Fragment>
+      )
+      :(null)
+    }
     </CardContent>
     </Card>
     </React.Fragment>
