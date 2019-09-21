@@ -93,7 +93,7 @@ class TradeModal extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
-
+  
       let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
         path,
         toWei(this.state.directionAmount)

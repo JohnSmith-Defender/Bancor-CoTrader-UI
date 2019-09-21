@@ -4,7 +4,8 @@ import {
   ABIBancorNetwork,
   BancorNetwork,
   EtherscanLink,
-  USDBToken
+  USDBToken,
+  netId
 } from '../../../../../config'
 
 import { Form, Alert } from "react-bootstrap"
@@ -64,11 +65,13 @@ class StepFive extends Component {
  getRate = async (amount, path) => {
    const web3 = this.props.MobXStorage.web3
    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-
+   console.log("path", path, typeof path, "amount", amount)
    let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
      path,
      toWei(String(amount))
    ).call()
+
+   console.log("amountReturn", amountReturn)
 
    if(amountReturn){
      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
@@ -76,6 +79,18 @@ class StepFive extends Component {
      amountReturn = 0
    }
    return amountReturn
+ }
+
+ // (formula 2x BNT balance)
+ calculateRelayAmount = async (balance) => {
+   if(this.state.connectorType === "USDB"){
+     const path = [USDBToken, USDBToken, BNTToken]
+     const BNTinUSDB = await this.getRate(balance, path)
+     balance = BNTinUSDB * 2
+   }else{
+     balance = balance * 2
+   }
+   return Math.round(balance)
  }
 
  // Issue new smart tokens
@@ -99,12 +114,13 @@ class StepFive extends Component {
   connectorBalance  = Number(web3.utils.fromWei(connectorBalance))
 
   if(balance > 0 && connectorBalance > 0){
-    // Balance 2x for BNT rate
-    balance = balance * 2
-    balance = web3.utils.toWei(String(balance))
+    // Calculate relay amount (No need for ROPSTEN)
+    balance = netId === 1 ? await this.calculateRelayAmount(balance) : balance * 2
 
+    balance = web3.utils.toWei(String(balance))
     const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
     console.log("PARAMS: ", accounts[0], balance)
+
     const gasPrice = this.props.MobXStorage.GasPrice
 
     converter.methods.issue(accounts[0], balance).send({
@@ -182,7 +198,8 @@ render() {
       ?
       (
         <Typography variant="body1" className={'mb-2'} component="p">
-        Please deposit your token and USDB according to USD rate
+        Please deposit {this.state.symbol} and USDB according to USD rate
+        Here: <strong><a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">{this.state.converterAddress}</a></strong>
         </Typography>
       )
       :(null)
