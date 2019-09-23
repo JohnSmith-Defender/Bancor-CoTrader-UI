@@ -169,10 +169,15 @@ render() {
       this.state.connectorType === "USDB"
       ?
       (
+        <React.Fragment>
         <Typography variant="body1" className={'mb-2'} component="p">
         Please deposit {this.state.symbol} and USDB according to USD rate
-        Here: <strong><a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">{this.state.converterAddress}</a></strong>
+        Here: <strong>{this.state.converterAddress}</strong>
         </Typography>
+        <Typography variant="body1" className={'mb-2'} component="p">
+        <strong style={{color: 'red'}}>Make sure that your <a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">contract</a> received BOTH tokens, only then press "issue"</strong>
+        </Typography>
+        </React.Fragment>
       )
       :(null)
     }
@@ -188,7 +193,7 @@ render() {
         <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
         </React.Fragment>
       )
-      :(null)
+      :(<p style={{color: 'red'}}>Not correct connector type, local storage was damaged</p>)
     }
     </CardContent>
     </Card>
