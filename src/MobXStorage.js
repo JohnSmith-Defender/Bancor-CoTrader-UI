@@ -5,7 +5,7 @@ class MOBXStorage {
   web3 = null
   accounts = null
   pending = JSON.parse(window.localStorage.getItem('Pending'))
-  step = "One"
+  step = "Zero"
   officialSymbols = null
   unofficialSymbols = null
   officialSmartTokenSymbols = null
@@ -32,7 +32,7 @@ class MOBXStorage {
   updateStep = () => {
     const _step = window.localStorage.getItem('Step')
     if(_step === null || _step === "undefined"){
-      this.step = "One"
+      this.step = "Zero"
     }else{
       this.step = _step
     }

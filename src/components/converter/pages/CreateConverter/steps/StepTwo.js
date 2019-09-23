@@ -1,6 +1,11 @@
-import { ABIConverter, BYTECODEConverter, BancorRegistry, BNTToken } from '../../../../../config'
+import {
+  ABIConverter,
+  BYTECODEConverter,
+  BancorRegistry,
+  BNTToken,
+  USDBToken
+} from '../../../../../config'
 import { Form } from "react-bootstrap"
-//import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 
 import Card from '@material-ui/core/Card';
@@ -12,7 +17,20 @@ import UserInfo from '../../../../templates/UserInfo'
 
 class StepTwo extends Component {
  state = {
-   maxFee:1000000
+   maxFee:1000000,
+   bancorConncectorAddress:null
+ }
+
+ componentDidMount () {
+   let bancorConncectorAddress
+   const connectorType = window.localStorage.getItem('connectorType')
+   if(connectorType === "USDB" || connectorType === "BNT"){
+     bancorConncectorAddress = connectorType === "USDB" ? USDBToken : BNTToken
+   }else{
+     bancorConncectorAddress = BNTToken
+     alert('You have problem with connector type, we set BNT by default')
+   }
+   this.setState({ bancorConncectorAddress })
  }
 
  createConverter = async (tokenAddress) => {
@@ -32,13 +50,13 @@ class StepTwo extends Component {
     const contract =  new web3.eth.Contract(ABIConverter, null)
 
     console.log("smartToken address ", smartToken)
-    console.log("PARAMS: ", smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000)
+    console.log("PARAMS: ", smartToken, BancorRegistry, this.state.maxFee, this.state.bancorConncectorAddress, 500000)
 
     const gasPrice = this.props.MobXStorage.GasPrice
 
     contract.deploy({
         data: BYTECODEConverter,
-        arguments: [smartToken, BancorRegistry, this.state.maxFee, BNTToken, 500000]
+        arguments: [smartToken, BancorRegistry, this.state.maxFee, this.state.bancorConncectorAddress, 500000]
     })
     .send({
       from: accounts[0],

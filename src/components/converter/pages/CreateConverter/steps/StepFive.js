@@ -8,7 +8,7 @@ import {
   netId
 } from '../../../../../config'
 
-import { Form, Alert } from "react-bootstrap"
+import { Alert } from "react-bootstrap"
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 
@@ -37,17 +37,6 @@ class StepFive extends Component {
    setTimeout(() => this.init(), 1000)
  }
 
- componentDidUpdate(prevProps, prevState) {
-   // Update Bancor connector type by select
-   if(this.state.connectorType && prevState.connectorType !== this.state.connectorType){
-     window.localStorage.setItem('connectorType', this.state.connectorType)
-     if(this.state.connectorType === "USDB" || this.state.connectorType === "BNT"){
-       const bancorConncectorAddress = this.state.connectorType === "USDB" ? USDBToken : BNTToken
-       this.setState({ bancorConncectorAddress })
-     }
-   }
- }
-
  init = async () => {
     const converterAddress = window.localStorage.getItem('Converter')
     const symbol = window.localStorage.getItem('tokenSymbol') ? window.localStorage.getItem('tokenSymbol') : "Your token"
@@ -56,7 +45,7 @@ class StepFive extends Component {
     let bancorConncectorAddress
 
     if(connectorType === "USDB" || connectorType === "BNT")
-       bancorConncectorAddress = this.state.connectorType === "USDB" ? USDBToken : BNTToken
+       bancorConncectorAddress = connectorType === "USDB" ? USDBToken : BNTToken
 
     this.setState({ converterAddress, symbol, userAddress, connectorType, bancorConncectorAddress})
  }
@@ -113,7 +102,6 @@ class StepFive extends Component {
   if(balance > 0 && connectorBalance > 0){
     // Calculate relay amount (No need for ROPSTEN)
     balance = netId === 1 ? await this.calculateRelayAmount(balance) : balance * 2
-
     balance = web3.utils.toWei(String(balance))
     const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
     console.log("PARAMS: ", accounts[0], balance)
@@ -164,19 +152,6 @@ render() {
     <Typography variant="h6" gutterBottom component="h6">
     ACTIONS
     </Typography>
-
-    <hr/>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
-    <Form.Group controlId="exampleForm.ControlSelect1">
-    <Form.Label>Select connector type</Form.Label>
-    <Form.Control as="select" onChange={(e) => this.setState({ connectorType:e.target.value })}>
-      <option>...</option>
-      <option>BNT</option>
-      <option>USDB</option>
-    </Form.Control>
-    </Form.Group>
-    </Form>
-    <hr/>
     {
       this.state.connectorType === "BNT"
       ?
@@ -207,9 +182,6 @@ render() {
       ?
       (
         <React.Fragment>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        You selected {<a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.bancorConncectorAddress} target="_blank" rel="noopener noreferrer">{this.state.connectorType}</a>} connector type
-        </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
         This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
         </Typography>

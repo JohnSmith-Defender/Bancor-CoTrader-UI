@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { Alert } from "react-bootstrap"
 
+import StepZero from "./steps/StepZero"
 import StepOne from "./steps/StepOne"
 import StepTwo from "./steps/StepTwo"
 import StepThree from "./steps/StepThree"
@@ -15,6 +16,7 @@ import Pending from "../../../templates/Spiners/Pending"
 import ConverterSettings from "./ConverterSettings"
 
 const componentList = {
+  Zero:StepZero,
   One: StepOne,
   Two: StepTwo,
   Three: StepThree,
@@ -29,7 +31,7 @@ class CreateConverter extends Component {
   constructor(props, context) {
   super(props, context);
   this.state = {
-    step:"One",
+    step:"Zero",
     hashLatest:'',
     userAddress:null
     }
