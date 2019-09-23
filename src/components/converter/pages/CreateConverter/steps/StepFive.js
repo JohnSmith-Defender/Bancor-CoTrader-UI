@@ -65,13 +65,10 @@ class StepFive extends Component {
  getRate = async (amount, path) => {
    const web3 = this.props.MobXStorage.web3
    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-   console.log("path", path, typeof path, "amount", amount)
    let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
      path,
      toWei(String(amount))
    ).call()
-
-   console.log("amountReturn", amountReturn)
 
    if(amountReturn){
      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
