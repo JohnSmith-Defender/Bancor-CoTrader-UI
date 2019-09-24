@@ -10,7 +10,7 @@ import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
 import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
-
+import Pending from '../../../templates/Spiners/Pending'
 
 class Fund extends Component {
   constructor(props, context) {
@@ -28,7 +28,8 @@ class Fund extends Component {
     smartTokenBalance:0,
     userBNTBalance:0,
     userConnectorBalance:0,
-    BancorConnectorType:null
+    BancorConnectorType:null,
+    isLoadData:false
     }
   }
 
@@ -45,6 +46,7 @@ class Fund extends Component {
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
       if(this.props.from)
         if(this.state.directionAmount > 0){
+          this.setState({ isLoadData:true })
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
@@ -74,7 +76,8 @@ class Fund extends Component {
             smartTokenBalance,
             userBNTBalance,
             userConnectorBalance,
-            BancorConnectorType
+            BancorConnectorType,
+            isLoadData:false
           })
         }else{
           this.setState({
@@ -88,7 +91,8 @@ class Fund extends Component {
             smartTokenBalance:0,
             currentUserPercent:0,
             userBNTBalance:0,
-            userConnectorBalance:0
+            userConnectorBalance:0,
+            isLoadData:false
           })
       }
     }
@@ -203,7 +207,7 @@ class Fund extends Component {
     const tokenInfo = this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
     const gasPrice = await getBancorGasLimit()
-    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB / BNT" ? USDBToken : BNTToken
     const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
 
     bnt.methods.approve(
@@ -245,7 +249,7 @@ class Fund extends Component {
     <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
     <br/>
     {
-      this.state.BNTAmount > 0 && this.state.connectorAmount > 0
+      this.state.BNTAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData
       ?
       (
         <React.Fragment>
@@ -332,7 +336,19 @@ class Fund extends Component {
         </React.Fragment>
       )
       :
-      (null)
+      (
+        <React.Fragment>
+        {
+          this.state.isLoadData
+          ?
+          (
+            <Pending/>
+          )
+          :
+          (null)
+        }
+        </React.Fragment>
+      )
     }
     </React.Fragment>
     )
