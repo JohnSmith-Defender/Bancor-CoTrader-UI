@@ -59,11 +59,10 @@ class StepOne extends Component {
      else{
        const conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
        if(conf){
-         console.log("Name ", name, "Symbol ", symbol)
          const contract = new web3.eth.Contract(ABISmartToken, null)
-
+         const connectorSymbol = window.localStorage.getItem('connectorType')
          const stname = name + " Smart Relay Token"
-         const stsymbol = symbol+"BNT"
+         const stsymbol = symbol+connectorSymbol
 
          window.localStorage.setItem('userToken', tokenAddress)
          window.localStorage.setItem('tokenSymbol', symbol)
