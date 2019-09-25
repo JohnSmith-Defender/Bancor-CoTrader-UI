@@ -1,4 +1,6 @@
+// export const API_endpoint = "http://localhost:9003"
 export const API_endpoint = "https://api-bancor.cotrader.com"
+
 export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
 // MAINNET
