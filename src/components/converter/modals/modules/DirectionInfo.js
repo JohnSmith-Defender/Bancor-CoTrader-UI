@@ -101,7 +101,7 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
-  // calculate tiny 
+  // calculate tiny
   let fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
   fromToTinyRate = fromToTinyRate * (1 / 0.00001)
 
