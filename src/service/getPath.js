@@ -39,7 +39,6 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
       if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
         // ETH, USDB, USDB, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
         path = [BancorETH, USDBToken, USDBBNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
-        console.log("Detect USDB")
       }
       // form BNT connecor
       else{
