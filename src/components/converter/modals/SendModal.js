@@ -332,7 +332,7 @@ class TradeModal extends Component {
       </React.Fragment>
 
       <br/>
-      <Form.Control name="directionAmount" placeholder="Enter token amount" onChange={e => this.change(e)} type="number" min="1"/>
+      <Form.Control name="directionAmount" placeholder={`Enter ${this.state.from ? this.state.from : 'token'} amount`} onChange={e => this.change(e)} type="number" min="1"/>
       <br/>
       <Form.Control name="receiverAddress" placeholder="Enter receiver address" onChange={e => this.change(e)}/>
       <br/>

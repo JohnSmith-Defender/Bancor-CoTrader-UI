@@ -15,8 +15,14 @@ class StepOne extends Component {
  constructor(props, context) {
  super(props, context)
  this.state = {
-  address:null
+  address:null,
+  connectorType:''
  }
+ }
+
+ componentDidMount() {
+   const connectorType = window.localStorage.getItem('connectorType')
+   this.setState({ connectorType })
  }
 
  change = e => {
@@ -60,7 +66,7 @@ class StepOne extends Component {
        const conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
        if(conf){
          const contract = new web3.eth.Contract(ABISmartToken, null)
-         const connectorSymbol = window.localStorage.getItem('connectorType')
+         const connectorSymbol = this.state.connectorType
          const stname = name + " Smart Relay Token"
          const stsymbol = symbol+connectorSymbol
 
@@ -109,13 +115,13 @@ render() {
           <strong>Create Relay Token (aka SmartToken)</strong>
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          If your token is called AAA, a relay token called AAABNT will be created.
+          If your token is called AAA, a relay token called AAA{this.state.connectorType} will be created.
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
           Relay tokens are a bridge between your token and the Bancor BNT trade network.
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          This <UserInfo label="Bancor documentation" info="Name: AAA Smart Relay Token, Symbol: AAABNT, Decimals: Your decimals number"/> step will be done
+          This <UserInfo label="Bancor documentation" info={`Name: AAA Smart Relay Token, Symbol: AAA${this.state.connectorType}, Decimals: Your decimals number`}/> step will be done
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
