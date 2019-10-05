@@ -1,4 +1,5 @@
 // This function create Bancor token path, depense of symbols input
+// TODO add path from AAA(USDB) to BBB(USDB) aaa,aaausdb,usdbnt,bbbusdb,bbb
 
 import findByProps from './findByProps'
 import {
@@ -25,8 +26,14 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
       path = [BNTToken, BNTToken, BancorETH]
     }
     else{
-      // BNT, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
-      path = [BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+        // form USDB connector
+      if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
+        // bnt,usdbbnt,usdb,cotusdb,cot
+        path = [BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+      }else{
+        // BNT, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
+        path = [BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+      }
     }
     break
 
@@ -34,11 +41,12 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     if(to === "BNT"){
       // ETH, BNT, BNT
       path = [BancorETH, BNTToken, BNTToken]
-    }else{
+    }
+    else{
       // form USDB connector
       if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
-        // ETH, USDB, USDB, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
-        path = [BancorETH, USDBToken, USDBBNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+        // ETH, BNT, BNT, USDBBNT, USDB, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
+        path = [BancorETH, BNTToken, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
       }
       // form BNT connecor
       else{
@@ -50,23 +58,42 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
 
     default:
     if(to === "BNT"){
-      // BNT, FROM_ERC20_SmartToken, TO_ERC_OR_SmartToken
-      path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken]
+      // form USDB connector
+      if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
+        // FROM_ERC_OR_SmartToken, From_smartToken, USDB, USDBBNT, BNT
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken]
+      }
+      // from BNT connector
+      else{
+        // FROM_ERC_OR_SmartToken, SmartToken, BNT
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken]
+      }
     }
+
     else if (to === "ETH") {
-      // FROM_ERC_OR_SmartToken, FROM_ERC20_SmartToken, BNT, BNT, ETH
-      path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, BNTToken, BancorETH]
+      // form USDB connector
+      if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
+        // FROM_ERC_OR_SmartToken, FROM_smartToken, USDB, USDBBNT, BNT, BNT, BancorETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, BNTToken, BancorETH,]
+      }
+      // from BNT connector
+      else{
+        // FROM_ERC_OR_SmartToken, FROM_ERC20_SmartToken, BNT, BNT, ETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, BNTToken, BancorETH]
+      }
     }
-      // form USDB case
+
+    // form USDB
     else if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
       // example: cot, usdbcot, usdb, bntusdb, bnt, bntomg, omg
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
     }
-      // to USDB case
+    // to USDB
     else if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
       // example: OMG, OMGBNT, BNT, USDBBNT, USDB, COTUSDB, COT
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
     }
+
     else{
       if(isRelated){
         // ERC20 (or SmartToken) FROM_ERC20_SmartToken ERC20(or SmartToken)
