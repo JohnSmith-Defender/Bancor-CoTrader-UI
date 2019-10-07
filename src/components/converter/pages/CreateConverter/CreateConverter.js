@@ -44,7 +44,6 @@ class CreateConverter extends Component {
       let pending = window.localStorage.getItem('Pending')
       pending = JSON.parse(pending)
       const userAddress = window.localStorage.getItem('userAddress')
-      console.log("userAddress", userAddress)
       this.setState({ userAddress })
 
       if(pending && this.props.MobXStorage.web3){

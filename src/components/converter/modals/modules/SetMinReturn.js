@@ -12,7 +12,6 @@ class SetMinReturn extends Component {
   }
 
   componentDidMount(){
-    console.log("Tets version")
     // Small delay for correct recive props
     setTimeout(() => {
       // reset previos min rate
