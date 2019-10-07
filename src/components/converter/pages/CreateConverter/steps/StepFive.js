@@ -4,8 +4,7 @@ import {
   ABIBancorNetwork,
   BancorNetwork,
   EtherscanLink,
-  USDBToken,
-  netId
+  USDBToken
 } from '../../../../../config'
 
 import { Alert } from "react-bootstrap"
@@ -67,18 +66,6 @@ class StepFive extends Component {
    return amountReturn
  }
 
- // (formula 2x BNT balance)
- calculateRelayAmount = async (balance) => {
-   if(this.state.connectorType === "USDB"){
-     const path = [USDBToken, USDBToken, BNTToken]
-     const BNTinUSDB = await this.getRate(balance, path)
-     balance = BNTinUSDB * 2
-   }else{
-     balance = balance * 2
-   }
-   return Math.round(balance)
- }
-
  // Issue new smart tokens
  issue = async () => {
   const web3 = this.props.MobXStorage.web3
@@ -100,8 +87,7 @@ class StepFive extends Component {
   connectorBalance  = Number(web3.utils.fromWei(connectorBalance))
 
   if(balance > 0 && connectorBalance > 0){
-    // Calculate relay amount (No need for ROPSTEN)
-    balance = netId === 1 ? await this.calculateRelayAmount(balance) : balance * 2
+    balance = balance * 2
     balance = web3.utils.toWei(String(balance))
     const converter = new web3.eth.Contract(ABISmartToken, smartTokenAddress)
     console.log("PARAMS: ", accounts[0], balance)

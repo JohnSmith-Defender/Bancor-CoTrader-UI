@@ -84,12 +84,12 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     }
 
     // form USDB
-    else if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
+    else if (!isRelated && tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
       // example: cot, usdbcot, usdb, bntusdb, bnt, bntomg, omg
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
     }
     // to USDB
-    else if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
+    else if (!isRelated && tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
       // example: OMG, OMGBNT, BNT, USDBBNT, USDB, COTUSDB, COT
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
     }
