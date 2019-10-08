@@ -7,6 +7,7 @@ import {
   EtherscanLink
 } from '../../../../config'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
+import detectDecimals from '../../../../service/detectDecimals'
 import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
 import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
@@ -29,7 +30,8 @@ class Fund extends Component {
     userBNTBalance:0,
     userConnectorBalance:0,
     BancorConnectorType:null,
-    isLoadData:false
+    isLoadData:false,
+    decimalsType:'ether'
     }
   }
 
@@ -64,6 +66,8 @@ class Fund extends Component {
             userConnectorBalance
           } = await this.getRelayInfo()
 
+          const decimalsType = await detectDecimals(tokenAddress, this.props.web3)
+
           this.setState({
             BNTAmount,
             connectorAmount,
@@ -77,6 +81,7 @@ class Fund extends Component {
             userBNTBalance,
             userConnectorBalance,
             BancorConnectorType,
+            decimalsType,
             isLoadData:false
           })
         }else{
@@ -258,7 +263,7 @@ class Fund extends Component {
         </Alert>
 
         <Alert variant="warning">
-        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {fromWei(String(this.state.connectorAmount))}</small>
+        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {fromWei(String(this.state.connectorAmount), this.state.decimalsType)}</small>
         </Alert>
 
         <Alert variant="primary">
