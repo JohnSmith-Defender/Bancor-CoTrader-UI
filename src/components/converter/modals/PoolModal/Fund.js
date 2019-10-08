@@ -207,7 +207,7 @@ class Fund extends Component {
     const tokenInfo = this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
     const gasPrice = await getBancorGasLimit()
-    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB / BNT" ? USDBToken : BNTToken
+    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
     const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
 
     bnt.methods.approve(
@@ -254,7 +254,7 @@ class Fund extends Component {
       (
         <React.Fragment>
         <Alert variant="info">
-        <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}BNT</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a> pool )</small>
+        <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a> pool )</small>
         </Alert>
 
         <Alert variant="warning">
@@ -262,7 +262,7 @@ class Fund extends Component {
         </Alert>
 
         <Alert variant="primary">
-        <small>Current supply of {this.props.from}BNT is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},</small>
+        <small>Current supply of {this.props.from}{this.state.BancorConnectorType} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},</small>
         {
           this.props.accounts
           ?
@@ -298,7 +298,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.BNTAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
               ?
               (
-                <small><Alert variant="danger">Insufficient BNT, You have { fromWei(String(this.state.userBNTBalance)) }</Alert></small>
+                <small><Alert variant="danger">Insufficient {this.state.BancorConnectorType}, You have { fromWei(String(this.state.userBNTBalance)) }</Alert></small>
               )
               :
               (null)
