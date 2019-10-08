@@ -94,6 +94,7 @@ class TradeModal extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+      let fee = 0
 
       let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
         path,
@@ -101,6 +102,7 @@ class TradeModal extends Component {
       ).call()
 
       if(amountReturn){
+        fee = Number(fromWei(hexToNumberString(amountReturn[1]._hex)))
         amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
       }else{
         amountReturn = 0
@@ -108,7 +110,8 @@ class TradeModal extends Component {
 
       this.setState({
         reciveSymbol:this.state.to,
-        amountReturn
+        amountReturn,
+        fee
       })
     }
   }
@@ -383,6 +386,7 @@ class TradeModal extends Component {
       useERC20AsSelectFrom={true}
       useERC20AsSelectTo={true}
       amountReturn={this.state.amountReturn}
+      fee={this.state.fee}
       />
       </Modal.Body>
     </Modal>

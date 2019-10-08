@@ -247,6 +247,10 @@ setTokensData = async () => {
        </Typography>
 
        <Typography component="div">
+        <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
+       </Typography>
+
+       <Typography component="div">
          <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 

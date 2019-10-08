@@ -122,6 +122,7 @@ class RelaysModal extends Component {
       objPropsTo,
       isRelatedDirection
     )
+    let fee = 0
 
     let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
       path,
@@ -129,6 +130,7 @@ class RelaysModal extends Component {
     ).call()
 
     if(amountReturn){
+      fee = Number(fromWei(hexToNumberString(amountReturn[1]._hex)))
       amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
     }else{
       amountReturn = 0
@@ -136,7 +138,8 @@ class RelaysModal extends Component {
 
     this.setState({
       reciveSymbol:this.state.to,
-      amountReturn
+      amountReturn,
+      fee
     })
   }
 
@@ -453,6 +456,7 @@ class RelaysModal extends Component {
       useERC20AsSelectFrom={this.state.useERC20AsSelectFrom}
       useERC20AsSelectTo={this.state.useERC20AsSelectTo}
       amountReturn={this.state.amountReturn}
+      fee={this.state.fee}
       />
       </Modal.Body>
     </Modal>
