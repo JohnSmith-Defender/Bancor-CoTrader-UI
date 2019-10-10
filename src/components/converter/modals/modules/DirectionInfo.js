@@ -7,9 +7,11 @@ import {
   ABIBancorNetwork,
   BancorNetwork,
 } from '../../../../config'
+
 import getDirectionData from '../../../../service/getDirectionData'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
+
 import Pending from '../../../templates/Spiners/Pending'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -30,7 +32,9 @@ class DirectionInfo extends Component {
       oneFromInUSD:0,
       slippage:0,
       loadData:false,
-      fromToTinyRate:0
+      fromToTinyRate:0,
+      tokenInfoTo:[],
+      tokenInfoFrom:[]
   }
   }
 
@@ -150,7 +154,7 @@ calculateSlippage = async (pathFromTo, directionAmount, web3) => {
 setTokensData = async () => {
   if(this.props.to && this.props.from && this.props.from !== this.props.to && this.props.directionAmount > 0 && this.props.amountReturn > 0){
     this.setState({ loadData:true })
-    const { objPropsFrom, objPropsTo, sendFrom, sendTo } = getDirectionData(
+    const { objPropsFrom, objPropsTo, tokenInfoFrom, tokenInfoTo, sendFrom, sendTo } = getDirectionData(
       this.props.from,
       this.props.to,
       this.props.bancorTokensStorageJson,
@@ -158,6 +162,7 @@ setTokensData = async () => {
       this.props.useERC20AsSelectTo
     )
     const web3 = getWeb3ForRead(this.props.web3)
+
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
     const {
       amountReturnFrom,
@@ -181,6 +186,8 @@ setTokensData = async () => {
       oneFromInUSD,
       slippage,
       fromToTinyRate,
+      tokenInfoTo,
+      tokenInfoFrom,
       loadData:false
      })
   }
@@ -247,10 +254,6 @@ setTokensData = async () => {
        </Typography>
 
        <Typography component="div">
-        <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
-       </Typography>
-
-       <Typography component="div">
          <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 
@@ -266,6 +269,35 @@ setTokensData = async () => {
           <small>{this.props.to}/{this.props.from} before trade: <strong style={{color: '#3f51b5'}}>{this.state.fromToTinyRate}</strong></small>
         </Typography>
 
+        <Typography component="div">
+         <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
+        </Typography>
+
+        { // Addition info
+          this.state.tokenInfoFrom['smartTokenSupply'] && this.state.tokenInfoFrom['connectorOriginalReserve'] && this.state.tokenInfoTo['connectorOriginalReserve']
+          ?
+          (
+            <React.Fragment>
+            <Typography component="div">
+             <small>{this.props.from} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['smartTokenSupply'])}</strong></small>
+            </Typography>
+
+            <Typography component="div">
+             <small>{this.props.from} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['connectorOriginalReserve'])}&nbsp;{this.props.from} and {fromWei(this.state.tokenInfoFrom['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoFrom['connectorType']}</strong></small>
+            </Typography>
+
+            <Typography component="div">
+             <small>{this.props.to} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['smartTokenSupply'])}</strong></small>
+            </Typography>
+
+            <Typography component="div">
+             <small>{this.props.to} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['connectorOriginalReserve'])}&nbsp;{this.props.to} and {fromWei(this.state.tokenInfoTo['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoTo['connectorType']}</strong></small>
+            </Typography>
+            </React.Fragment>
+          )
+          :
+          (null)
+        }
       </Paper>
       </React.Fragment>
       )

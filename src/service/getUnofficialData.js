@@ -5,7 +5,8 @@ import {
   ABISmartToken,
   ConvertersRegistryListABI,
   ConvertersRegistryList,
-  ABIConverter
+  ABIConverter,
+  ERC20Bytes32ABI
 } from '../config'
 
 import getWeb3ForRead from './getWeb3ForRead'
@@ -43,9 +44,15 @@ const getUnofficialData = async (_web3) => {
        converter = new web3.eth.Contract(ABIConverter, unofficialConverters[i])
        const tokenAddress = await converter.methods.connectorTokens(1).call()
 
-       if(tokenAddress){
+
+       // parse connector symbol
+       try{
          token = new web3.eth.Contract(ABISmartToken, tokenAddress)
          symbol = await token.methods.symbol().call()
+       }catch(err){
+          // No Standard (return bytes32)
+          token = new web3.eth.Contract(ERC20Bytes32ABI, tokenAddress)
+          symbol = web3.utils.toUtf8(await token.methods.symbol().call())
        }
 
        const smartTokenAddress = await converter.methods.token().call()
