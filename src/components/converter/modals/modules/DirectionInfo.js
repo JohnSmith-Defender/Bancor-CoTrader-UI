@@ -274,7 +274,7 @@ setTokensData = async () => {
         </Typography>
 
         { // Addition info
-          this.state.tokenInfoFrom && this.state.tokenInfoFrom.hasOwnProperty('smartTokenSupply') && this.state.tokenInfoFrom.hasOwnProperty('connectorOriginalReserve') && this.state.tokenInfoTo.hasOwnProperty('connectorOriginalReserve')
+          this.state.tokenInfoFrom && this.state.tokenInfoTo && this.state.tokenInfoFrom.hasOwnProperty('smartTokenSupply') && this.state.tokenInfoTo.hasOwnProperty('smartTokenSupply')
           ?
           (
             <React.Fragment>
