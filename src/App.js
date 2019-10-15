@@ -15,6 +15,13 @@ import getUnofficialData from "./service/getUnofficialData"
 import { Alert } from "react-bootstrap"
 import Container from '@material-ui/core/Container'
 
+import { Button } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import lightblue from "@material-ui/core/colors/lightBlue";
+// import purple from "@material-ui/core/colors/purple";
+import themeicon from './assets/img/themeicon.svg';
+
 class App extends Component {
   constructor(props, context) {
   super(props, context);
@@ -22,7 +29,16 @@ class App extends Component {
     accounts: null,
     isDataLoad:false,
     netId:undefined,
-    web3:null
+    web3:null,
+    themeType : 'dark',
+    }
+  }
+
+  changeTheme(){
+    if (this.state.themeType === 'dark'){
+      this.setState({themeType:'light'});
+    } else {
+      this.setState({themeType:'dark'});
     }
   }
 
@@ -32,7 +48,7 @@ class App extends Component {
     this.props.MobXStorage.updateStep()
     // load tokens data
     // make litle delay for correct call getWeb3()
-    setTimeout(() => this.initData(), 500)
+    setTimeout(() => this.initData(), 700)
 
     // get web3 and account
     try {
@@ -116,11 +132,35 @@ class App extends Component {
 
 
   render() {
+
+    let theme = createMuiTheme({
+      palette: {
+        primary: {
+          light: '#3f51b5',
+          main: '#3f51b5',
+          dark: '#3f51b5',
+        },
+        secondary: {
+          light: lightblue[300],
+          main: lightblue[500],
+          dark: lightblue[700],
+        },
+        background: {
+          default: this.state.themeType === 'light' ? '#fff' : '#000',
+        },
+        type: this.state.themeType
+      }
+    });
+
     return(
       <React.Fragment>
+      <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+
 
       <Navbar />
       <Container maxWidth="xl">
+      <Button variant="contained" color="primary" className={'mb-2 pl-2 pr-2'} onClick={()=>{this.changeTheme()}}><img style={{maxHeight: '24px'}} src={themeicon} alt="Change Theme" title="Change Theme" /></Button>
        <Web3Info isDataLoad={this.state.isDataLoad} web3={this.state.web3}/>
        {
          this.state.netId && this.state.netId !== netId
@@ -135,6 +175,7 @@ class App extends Component {
        }
        <Footer/>
        </Container>
+       </MuiThemeProvider>
       </React.Fragment>
     )
   }

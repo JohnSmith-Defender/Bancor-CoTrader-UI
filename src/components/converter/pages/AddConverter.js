@@ -42,7 +42,7 @@ render() {
      ?
      (
        <React.Fragment>
-        <Card style={{margin: '16px 0px'}}>
+        <Card style={{margin: '16px 0px', backgroundColor:'rgba(255,255,255,0.1)'}}>
           <CardContent>
             <Typography variant="h4" style={{fontSize: 22}} gutterBottom component="h4">
               Add converter

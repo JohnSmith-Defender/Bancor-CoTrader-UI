@@ -30,7 +30,7 @@ class StepZero extends Component {
 
   render() {
     return (
-      <Card>
+      <Card style={{backgroundColor:'rgba(255,255,255,0.1)'}}>
       <CardContent>
       <Typography variant="body1" className={'mb-2'} component="p">
       Do you want

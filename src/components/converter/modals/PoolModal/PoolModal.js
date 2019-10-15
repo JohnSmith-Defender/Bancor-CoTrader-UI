@@ -145,7 +145,7 @@ class PoolModal extends Component {
             </Form.Group>
 
             <FormControlLabel
-                control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" color="primary" />}
+                control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" className="custom_check" color="primary" />}
                 label="Show unofficial"
             />
             {

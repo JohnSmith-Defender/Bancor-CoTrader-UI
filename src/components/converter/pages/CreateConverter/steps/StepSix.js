@@ -57,7 +57,7 @@ class StepSix extends Component {
 render() {
   return(
     <React.Fragment>
-    <Card>
+    <Card style={{backgroundColor:'rgba(255,255,255,0.1)'}}>
     <CardContent>
     <Typography variant="h4" gutterBottom component="h4">
     Step 6

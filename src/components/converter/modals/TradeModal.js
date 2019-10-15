@@ -250,6 +250,7 @@ class TradeModal extends Component {
       show={this.state.ShowModal}
       onHide={() => this.closeModal()}
       aria-labelledby="example-modal-sizes-title-lg"
+      bgcolor="modal"
       >
       <Modal.Header closeButton>
       <Modal.Title id="example-modal-sizes-title-lg">
@@ -268,7 +269,7 @@ class TradeModal extends Component {
 
 
           <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" color="primary" />}
+              control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" className="custom_check" color="primary" />}
               label="Show unofficial"
           />
 
@@ -315,7 +316,7 @@ class TradeModal extends Component {
           <React.Fragment>
 
           <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectToOficial" color="primary" />}
+              control={<Checkbox onChange={e => this.change(e)} name="selectToOficial" className="custom_check" color="primary"/>}
               label="Show unofficial"
           />
 

@@ -10,6 +10,8 @@ const useStyles = makeStyles(theme => ({
   card: {
     minWidth: 275,
     margin: theme.spacing(2, 0),
+    backgroundColor:'rgba(255,255,255,0.1)',
+    /*color:'rgba(255,255,255,0.8)',*/
   },
   bullet: {
     display: 'inline-block',

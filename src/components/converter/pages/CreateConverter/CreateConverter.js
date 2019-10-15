@@ -74,9 +74,9 @@ class CreateConverter extends Component {
             this.props.MobXStorage.web3
             ?
             (
-              <div className="container-fluid">
+              <div className="full-width">
               <br />
-              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong style={{"color":"red"}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{"color":"red"}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{"color":"red"}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
+              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong style={{color: '#3f51b5'}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{color: '#3f51b5'}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{color: '#3f51b5'}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
               {
                 this.state.userAddress && this.state.userAddress !== this.props.MobXStorage.accounts[0]
                 ?

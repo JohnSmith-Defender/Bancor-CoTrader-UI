@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
   footertext:{
     textAlign:'center',
     fontSize:14,
-    color:'#333'
   },
 }));
 
@@ -20,11 +19,11 @@ function Footer() {
     <div className={classes.footer}>
     <Typography className={classes.footertext} color="textSecondary">
       DEX is free trade. Let freedom ring. This is a free, open source, unrestricted portal into the{" "}
-      <a style={{color: '#3f51b5'}} href="http://Bancor.network" target="_blank" rel="noopener noreferrer">Bancor.network</a>,{" "}
-      made by <a style={{color: '#3f51b5'}} href="https://about.cotrader.com/" rel="noopener noreferrer" target="_blank">CoTrader</a>
+      <a color="textprimary" href="http://Bancor.network" target="_blank" rel="noopener noreferrer">Bancor.network</a>,{" "}
+      made by <a color="textprimary" href="https://about.cotrader.com/" rel="noopener noreferrer" target="_blank">CoTrader</a>
     </Typography>
     <Typography className={classes.footertext} color="textSecondary">
-      <a style={{color: '#3f51b5'}} href="https://t.me/cotrader" target="_blank" rel="noopener noreferrer"> Chat and Support</a>
+      <a color="textprimary" href="https://t.me/cotrader" target="_blank" rel="noopener noreferrer"> Chat and Support</a>
     </Typography>
     <div align="center">
     <Panel/>

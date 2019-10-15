@@ -49,7 +49,7 @@ class ConverterSettingsPage extends Component {
         ?
         (
           <React.Fragment>
-          <Card style={{margin: '16px 0px'}}>
+          <Card style={{margin: '16px 0px', backgroundColor:'rgba(255,255,255,0.1)'}}>
           <CardContent>
 
           <Typography variant="h4" style={{fontSize: 22}} gutterBottom component="h4">
@@ -95,7 +95,7 @@ class ConverterSettingsPage extends Component {
                 )
                 :
                 (
-                  <Alert variant="warning">You don't have any converter</Alert>
+                  <Alert variant="warning" style={{color: '#3f51b5'}}>You don't have any converter</Alert>
                 )
               }
               {

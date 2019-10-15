@@ -315,13 +315,13 @@ class RelaysModal extends Component {
 
 
           <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" color="primary" />}
+              control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" className="custom_check" color="primary" />}
               label="Show unofficial"
           />
           <FormControlLabel
               control={<Checkbox
                 onChange={e => this.setState({ useERC20AsSelectFrom: !this.state.useERC20AsSelectFrom })}
-                checked={!this.state.useERC20AsSelectFrom} color="primary"/>}
+                checked={!this.state.useERC20AsSelectFrom} className="custom_check" color="primary"/>}
                 label="Show relays, hide tokens"
           />
 
@@ -367,7 +367,7 @@ class RelaysModal extends Component {
         (
           <React.Fragment>
           <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectToOficial" color="primary" />}
+              control={<Checkbox onChange={e => this.change(e)} name="selectToOficial" className="custom_check" color="primary" />}
               label="Show unofficial"
           />
           <FormControlLabel

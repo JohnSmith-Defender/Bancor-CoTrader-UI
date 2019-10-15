@@ -58,24 +58,29 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     width: '100%',
-    backgroundColor: theme.palette.background.paper,
+    //backgroundColor: theme.palette.background.paper,
+    backgroundColor:'transparent',
   },
   tab_item:{
-    fontWeight: '600'
+    fontWeight: '600',
+    //color:'#ffffff',
+  },
+  app_bg:{
+    backgroundColor : 'rgba(255,255,255,0.1)',
+    borderRadius: '4px',
   }
 }));
 
 export default function TabsBar() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-
   function handleChange(event, newValue) {
     setValue(newValue);
   }
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
+      <AppBar position="static" color="secondary" className={classes.app_bg}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -83,7 +88,7 @@ export default function TabsBar() {
           scrollButtons="on"
           indicatorColor="primary"
           textColor="primary"
-          aria-label="scrollable force tabs example"
+          aria-label="scrollable force tabs"
         >
           <Tab className={classes.tab_item} label="Trade" icon={<SwapHoriz />} {...a11yProps(0)} />
           <Tab className={classes.tab_item} label="Send" icon={<Send />} {...a11yProps(1)} />

@@ -5,13 +5,24 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 40px;
 }
-
+a {color: #3f51b5;}
+.btn-primary {background-color: #3f51b5;border-color: #3f51b5;}
+.btn-outline-primary {color: #3f51b5;border-color: #3f51b5;}
+.badge-primary{background-color: #3f51b5;}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
+.modal-header, .modal-body{color:#333;}
+.custom_check{color:#3f51b5!important;}
+.modal-content{max-width: 450px;margin: auto;}
+.alert-warning {
+    color: inherit;
+    background-color: transparent;
+    border-color: inherit;
+}
 form {
 margin: 0 auto;
 width:250px;
