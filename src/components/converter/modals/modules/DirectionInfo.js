@@ -273,6 +273,17 @@ setTokensData = async () => {
          <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
         </Typography>
 
+        {
+          this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
+          ?
+          (
+            <Typography component="div">
+             <small>Converison fee: <strong style={{color: '#3f51b5'}}>{this.state.tokenInfoFrom['conversionFee']} %</strong></small>
+            </Typography>
+          )
+          :(null)
+        }
+
         { // Addition info
           this.state.tokenInfoFrom && this.state.tokenInfoTo && this.state.tokenInfoFrom.hasOwnProperty('smartTokenSupply') && this.state.tokenInfoTo.hasOwnProperty('smartTokenSupply')
           ?
