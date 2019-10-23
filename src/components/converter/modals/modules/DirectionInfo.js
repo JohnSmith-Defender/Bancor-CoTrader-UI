@@ -274,7 +274,7 @@ setTokensData = async () => {
         </Typography>
 
         {
-          this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
+          this.state.tokenInfoFrom && this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
           ?
           (
             <Typography component="div">
