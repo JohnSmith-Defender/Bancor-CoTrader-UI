@@ -5,7 +5,7 @@
 import React, { Component } from 'react'
 import { Alert, Form,  Modal } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
-import { hexToNumberString, toWei, fromWei } from 'web3-utils'
+import { toWeiByDecimals, fromWeiByDecimals } from '../../../service/weiByDecimals'
 import {
   ABISmartToken,
   ABIBancorNetwork,
@@ -26,6 +26,8 @@ import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Chip from '@material-ui/core/Chip';
+
+
 
 class TradeModal extends Component {
   constructor(props, context) {
@@ -87,7 +89,7 @@ class TradeModal extends Component {
     }
   }
 
-  // View internal and extarnal rate
+  // View rate
   getRate = async () => {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
     if(this.state.from !== this.state.to){
@@ -95,15 +97,16 @@ class TradeModal extends Component {
       const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
       let fee = 0
+      const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
 
       let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
         path,
-        toWei(this.state.directionAmount)
+        amountSend
       ).call()
 
       if(amountReturn){
-        fee = Number(fromWei(hexToNumberString(amountReturn[1]._hex)))
-        amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
+        fee = await fromWeiByDecimals(path[path.length - 1], amountReturn[1], web3)
+        amountReturn = await fromWeiByDecimals(path[path.length - 1], amountReturn[0], web3)
       }else{
         amountReturn = 0
       }
@@ -124,12 +127,13 @@ class TradeModal extends Component {
     const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const gasPrice = await getBancorGasLimit()
+    const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
     let batch = new web3.BatchRequest()
 
     // approve tx
     const approveData = token.methods.approve(
     BancorNetwork,
-    web3.utils.toWei(String(this.state.directionAmount))
+    amountSend
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
 
     // approve gas should be more than in trade
@@ -147,7 +151,7 @@ class TradeModal extends Component {
     // trade tx
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
     const tradeData = bancorNetworkContract.methods.claimAndConvertFor(path,
-      toWei(this.state.directionAmount),
+      amountSend,
       this.props.MobXStorage.minReturn,
       this.state.receiverAddress
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
@@ -172,7 +176,7 @@ class TradeModal extends Component {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
-    const amount = web3.utils.toWei(String(this.state.directionAmount))
+    const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
     const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convertFor(path, amount, this.props.MobXStorage.minReturn, this.state.receiverAddress)

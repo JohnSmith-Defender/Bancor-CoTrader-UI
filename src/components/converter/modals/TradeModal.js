@@ -105,6 +105,8 @@ class TradeModal extends Component {
       if(amountReturn){
         fee = await fromWeiByDecimals(path[path.length - 1], amountReturn[1], web3)
         amountReturn = await fromWeiByDecimals(path[path.length - 1], amountReturn[0], web3)
+      }else{
+        amountReturn = 0
       }
 
       this.setState({
@@ -129,7 +131,7 @@ class TradeModal extends Component {
     // approve tx
     const approveData = token.methods.approve(
     BancorNetwork,
-    amountSend,
+    amountSend
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
 
     // approve gas should be more than in trade
