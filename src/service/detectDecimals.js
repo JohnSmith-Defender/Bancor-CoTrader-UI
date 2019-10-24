@@ -27,10 +27,6 @@ const detectDecimals = async (address, web3) => {
     break
 
     case 9:
-    type = 'gwei'
-    break
-
-    case 10:
     type = 'Gwei'
     break
 
@@ -44,6 +40,10 @@ const detectDecimals = async (address, web3) => {
 
     case 21:
     type = 'kether'
+    break
+
+    case 24:
+    type = 'mether'
     break
 
     case 27:
