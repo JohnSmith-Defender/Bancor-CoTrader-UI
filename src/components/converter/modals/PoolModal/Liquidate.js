@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Form, Alert } from "react-bootstrap"
-import { toWeiByDecimals, fromWeiByDecimals } from '../../../../service/weiByDecimals'
+import { toWei, fromWei } from 'web3-utils'
 import FakeButton from '../../../templates/FakeButton'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 
@@ -8,8 +8,7 @@ import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 class Liquidate extends Component {
   state = {
     directionAmount:0,
-    smartTokenBalance:0,
-    smarTokenAddress:null
+    smartTokenBalance:0
   }
 
   componentDidUpdate = async (prevProps, prevState) => {
@@ -18,7 +17,7 @@ class Liquidate extends Component {
       if(this.props.from){
       const smarTokenAddress = this.props.getInfoBySymbol()[3]
       const smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smarTokenAddress, this.props.accounts[0])
-      this.setState({ smartTokenBalance, smarTokenAddress })
+      this.setState({ smartTokenBalance })
       }
     }
   }
@@ -27,9 +26,8 @@ class Liquidate extends Component {
     if(this.state.directionAmount > 0){
       const converter = this.props.getInfoBySymbol()[0]
       const gasPrice = await getBancorGasLimit()
-      const smarTokenAddress = this.props.getInfoBySymbol()[3]
-      const amount = await toWeiByDecimals(smarTokenAddress, this.state.directionAmount, this.props.web3)
-      converter.methods.liquidate(amount)
+
+      converter.methods.liquidate(toWei(String(this.state.directionAmount)))
       .send({ from:this.props.accounts[0], gasPrice})
     }
     else {
@@ -57,10 +55,10 @@ class Liquidate extends Component {
       }
       </Form.Group>
       {
-        this.state.directionAmount > 0 && this.props.from && this.state.smarTokenAddress
+        this.state.directionAmount > 0 && this.props.from
         ?
         (
-          <Alert variant="info">Your balance of {this.props.from}BNT is {fromWeiByDecimals(this.state.smarTokenAddress, this.state.smartTokenBalance, this.props.web3)}</Alert>
+          <Alert variant="info">Your balance of {this.props.from}BNT is {fromWei(String(this.state.smartTokenBalance))}</Alert>
         )
         :
         (null)

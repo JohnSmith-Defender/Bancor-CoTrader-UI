@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
+import { fromWeiByDecimals } from '../../../../service/weiByDecimals'
+
 import {
   ABISmartToken,
   BNTToken,
   USDBToken,
   EtherscanLink
 } from '../../../../config'
+
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
-import detectDecimals from '../../../../service/detectDecimals'
 import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
 import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
@@ -30,8 +32,8 @@ class Fund extends Component {
     userBNTBalance:0,
     userConnectorBalance:0,
     BancorConnectorType:null,
-    isLoadData:false,
-    decimalsType:'ether'
+    payAmount:0,
+    isLoadData:false
     }
   }
 
@@ -66,7 +68,7 @@ class Fund extends Component {
             userConnectorBalance
           } = await this.getRelayInfo()
 
-          const decimalsType = await detectDecimals(tokenAddress, this.props.web3)
+          const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
 
           this.setState({
             BNTAmount,
@@ -81,7 +83,7 @@ class Fund extends Component {
             userBNTBalance,
             userConnectorBalance,
             BancorConnectorType,
-            decimalsType,
+            payAmount,
             isLoadData:false
           })
         }else{
@@ -263,7 +265,7 @@ class Fund extends Component {
         </Alert>
 
         <Alert variant="warning">
-        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {fromWei(String(this.state.connectorAmount), this.state.decimalsType)}</small>
+        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
         </Alert>
 
         <Alert variant="primary">
