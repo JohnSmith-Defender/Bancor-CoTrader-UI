@@ -5,7 +5,7 @@
 import React, { Component } from 'react'
 import { Alert, Form,  Modal } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
-import { hexToNumberString, toWei, fromWei } from 'web3-utils'
+import { toWeiByDecimals, fromWeiByDecimals } from '../../../service/weiByDecimals'
 import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -110,37 +110,33 @@ class RelaysModal extends Component {
   // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // View rate
   getRate = async () => {
-    const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-    const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const { objPropsFrom, objPropsTo, isRelatedDirection } = this.overrideGetDirectionData()
+    if(this.state.from && this.state.to && this.state.directionAmount > 0){
+    if(this.state.from !== this.state.to){
+      const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
+      const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+      const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+      let fee = 0
+      const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
 
-    const path = getPath(
-      this.state.from,
-      this.state.to,
-      this.state.bancorTokensStorageJson,
-      objPropsFrom,
-      objPropsTo,
-      isRelatedDirection
-    )
-    let fee = 0
+      let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
+        path,
+        amountSend
+      ).call()
 
-    let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
-      path,
-      toWei(this.state.directionAmount)
-    ).call()
+      if(amountReturn){
+        fee = await fromWeiByDecimals(path[path.length - 1], amountReturn[1], web3)
+        amountReturn = await fromWeiByDecimals(path[path.length - 1], amountReturn[0], web3)
+      }else{
+        amountReturn = 0
+      }
 
-    if(amountReturn){
-      fee = Number(fromWei(hexToNumberString(amountReturn[1]._hex)))
-      amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
-    }else{
-      amountReturn = 0
+      this.setState({
+        reciveSymbol:this.state.to,
+        amountReturn,
+        fee
+      })
     }
-
-    this.setState({
-      reciveSymbol:this.state.to,
-      amountReturn,
-      fee
-    })
+  }
   }
 
   // not need call this functions if user not select to and from
@@ -166,13 +162,13 @@ class RelaysModal extends Component {
       objPropsFrom,
       objPropsTo
     )
-
+    const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
     let batch = new web3.BatchRequest()
 
     // approve tx
     const approveData = token.methods.approve(
     BancorNetwork,
-    web3.utils.toWei(String(this.state.directionAmount))
+    amountSend
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
 
     // approve gas should be more than in trade
@@ -189,7 +185,7 @@ class RelaysModal extends Component {
     // trade tx
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const tradeData = bancorNetworkContract.methods.claimAndConvert(path,
-      toWei(this.state.directionAmount),
+      amountSend,
       this.props.MobXStorage.minReturn
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
 
@@ -216,10 +212,11 @@ class RelaysModal extends Component {
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const gasPrice = await getBancorGasLimit()
+    const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
 
     converterContract.methods.quickConvert(
       path,
-      web3.utils.toWei(String(this.state.directionAmount)),
+      amountSend,
       this.props.MobXStorage.minReturn
     ).send({from: this.props.MobXStorage.accounts[0], gasPrice})
     this.closeModal()
@@ -231,7 +228,7 @@ class RelaysModal extends Component {
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson, objPropsFrom, objPropsTo)
-    const amount = web3.utils.toWei(String(this.state.directionAmount))
+    const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
     const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
