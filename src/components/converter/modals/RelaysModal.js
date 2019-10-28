@@ -107,14 +107,28 @@ class RelaysModal extends Component {
     )
   }
 
-  // TODO DRY refactoring, all this methods in one file for POLL, TRADE, SEND modals
   // View rate
+  // return amount + fee
+
+  // TODO DRY refactoring
+  // NOTE: this methods not as in SEND and TRADE
+  // we need addition info objPropsFrom and objPropsTo for smarttoken path
+  // Be carful when will do DRY refactoring 
   getRate = async () => {
     if(this.state.from && this.state.to && this.state.directionAmount > 0){
     if(this.state.from !== this.state.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-      const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+
+      const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
+      const path = getPath(
+        this.state.from,
+        this.state.to,
+        this.state.bancorTokensStorageJson,
+        objPropsFrom,
+        objPropsTo
+      )
+
       let fee = 0
       const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
 
