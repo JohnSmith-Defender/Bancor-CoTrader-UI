@@ -72,7 +72,13 @@ class PoolModal extends Component {
     return tokenBalance
   }
 
-  // return converter contract, converter address, connector (ERC20) token address, smart token address and smart token contract
+  /*
+  return converter contract,
+  converter address,
+  connector (ERC20) token address,
+  smart token address,
+  smart token contract,
+  and all token info object */
   getInfoBySymbol = () => {
     if(this.state.from && this.state.bancorTokensStorageJson){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
@@ -82,7 +88,8 @@ class PoolModal extends Component {
         tokenInfo.converterAddress,
         tokenInfo.tokenAddress,
         tokenInfo.smartTokenAddress,
-        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
+        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress),
+        tokenInfo
       ]
     }
   }

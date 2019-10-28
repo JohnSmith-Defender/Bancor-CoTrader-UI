@@ -10,10 +10,10 @@ import {
 } from '../../../../config'
 
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
-import FakeButton from '../../../templates/FakeButton'
 import BigNumber from 'bignumber.js'
 import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
 import Pending from '../../../templates/Spiners/Pending'
+import UserInfo from '../../../templates/UserInfo'
 
 class Fund extends Component {
   constructor(props, context) {
@@ -33,6 +33,7 @@ class Fund extends Component {
     userConnectorBalance:0,
     BancorConnectorType:null,
     payAmount:0,
+    tokenInfo:null,
     isLoadData:false
     }
   }
@@ -57,6 +58,7 @@ class Fund extends Component {
           const BancorConnectorType = await this.getBancorConnectorType()
           console.log("BancorConnectorType", BancorConnectorType)
           const {
+            tokenInfo,
             smartTokenSupplyOriginal,
             newSmartTokenSupply,
             newUserPercent,
@@ -71,6 +73,7 @@ class Fund extends Component {
           const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
 
           this.setState({
+            tokenInfo,
             BNTAmount,
             connectorAmount,
             smartTokenAddress,
@@ -99,6 +102,7 @@ class Fund extends Component {
             currentUserPercent:0,
             userBNTBalance:0,
             userConnectorBalance:0,
+            tokenInfo:null,
             isLoadData:false
           })
       }
@@ -112,6 +116,7 @@ class Fund extends Component {
     const tokenAddress = info[2]
     const smartTokenAddress = info[3]
     const smartTokenContract = info[4]
+    const tokenInfo = info[5]
 
     // get data for calculate user input % in relation to totalSupply
     let smartTokenSupplyOriginal = await smartTokenContract.methods.totalSupply().call()
@@ -141,6 +146,7 @@ class Fund extends Component {
     const newUserPercent = await this.calculateUserPercentFromSupply(share, newSmartTokenSupply)
     smartTokenBalance = fromWei(String(smartTokenBalance))
     return {
+      tokenInfo,
       smartTokenSupplyOriginal,
       newSmartTokenSupply,
       newUserPercent,
@@ -253,7 +259,19 @@ class Fund extends Component {
   render(){
     return(
     <React.Fragment>
-    <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
+    {
+      this.props.web3
+      ?
+      (
+        <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
+      )
+      :
+      (
+        <Alert variant="warning">
+        <strong>Please connect your wallet</strong>
+        </Alert>
+      )
+    }
     <br/>
     {
       this.state.BNTAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData
@@ -262,6 +280,26 @@ class Fund extends Component {
         <React.Fragment>
         <Alert variant="info">
         <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a> pool )</small>
+        </Alert>
+
+        {
+          this.state.tokenInfo && this.state.tokenInfo.hasOwnProperty('conversionFee') && this.state.tokenInfo.hasOwnProperty('connectorType')
+          ?
+          (
+            <Alert variant="info">
+            <small>Pool earns trade fee {this.state.tokenInfo['conversionFee']}% {<UserInfo label="?" info={`The pool relay token holders of ${this.props.from}/${this.state.tokenInfo['connectorType']} earn the x% converter fee of every trade of ${this.props.from}`}/>}</small>
+            </Alert>
+          )
+          :
+          (null)
+        }
+
+        <Alert variant="info">
+        <small>Pool ROI (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now" /> *2) = xx.yy%</small>
+        </Alert>
+
+        <Alert variant="info">
+        <small>Pool liquidity depth is x ETH (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/> *1)</small>
         </Alert>
 
         <Alert variant="warning">
@@ -317,29 +355,16 @@ class Fund extends Component {
         }
         {/* Buttons */}
         <br/>
-        {
-          this.props.web3
-          ?
-          (
-            <Card className="text-center">
-            <Card.Body>
-            <ButtonGroup>
-            <Button variant="outline-primary" size="sm" onClick={() => this.approveBancorCoonector()}>Step 1: Approve {this.state.BancorConnectorType}</Button>
-            <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve {this.props.from}</Button>
-            <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
-            </ButtonGroup>
-            <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
-            </Card.Body>
-            </Card>
-          )
-          :
-          (
-            <ButtonGroup>
-            <FakeButton info="Please connect to web3" buttonName="Approve"/>
-            <FakeButton info="Please connect to web3" buttonName="Fund"/>
-            </ButtonGroup>
-          )
-        }
+        <Card className="text-center">
+        <Card.Body>
+        <ButtonGroup>
+        <Button variant="outline-primary" size="sm" onClick={() => this.approveBancorCoonector()}>Step 1: Approve {this.state.BancorConnectorType}</Button>
+        <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve {this.props.from}</Button>
+        <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
+        </ButtonGroup>
+        <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
+        </Card.Body>
+        </Card>
         </React.Fragment>
       )
       :

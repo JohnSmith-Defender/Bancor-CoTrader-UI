@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Form, Alert } from "react-bootstrap"
 import { toWei, fromWei } from 'web3-utils'
-import FakeButton from '../../../templates/FakeButton'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 
 
@@ -40,19 +39,22 @@ class Liquidate extends Component {
     return (
       <React.Fragment>
       <Form.Group>
-      <Form.Control name="directionAmount" placeholder="Enter relay amount to liguidate" onChange={e => this.setState({directionAmount:e.target.value})} type="number" min="1"/>
-      <br/>
       {
-        this.props.accounts
+        this.props.web3
         ?
         (
-          <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
+          <Form.Control name="directionAmount" placeholder="Enter relay amount to liguidate" onChange={e => this.setState({directionAmount:e.target.value})} type="number" min="1"/>
         )
         :
         (
-          <FakeButton info="Please connect to web3" buttonName="Liguidate"/>
+          <Alert variant="warning">
+          <strong>Please connect your wallet</strong>
+          </Alert>
         )
       }
+
+      <br/>
+      <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
       </Form.Group>
       {
         this.state.directionAmount > 0 && this.props.from
