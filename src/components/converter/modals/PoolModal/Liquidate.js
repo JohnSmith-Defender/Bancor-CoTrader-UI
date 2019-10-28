@@ -43,7 +43,11 @@ class Liquidate extends Component {
         this.props.web3
         ?
         (
+          <React.Fragment>
           <Form.Control name="directionAmount" placeholder="Enter relay amount to liguidate" onChange={e => this.setState({directionAmount:e.target.value})} type="number" min="1"/>
+          <br/>
+          <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
+          </React.Fragment>
         )
         :
         (
@@ -52,9 +56,6 @@ class Liquidate extends Component {
           </Alert>
         )
       }
-
-      <br/>
-      <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
       </Form.Group>
       {
         this.state.directionAmount > 0 && this.props.from
