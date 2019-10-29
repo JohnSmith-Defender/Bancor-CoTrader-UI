@@ -1,5 +1,4 @@
 // This function create Bancor token path, depense of symbols input
-// TODO add path from AAA(USDB) to BBB(USDB) aaa,aaausdb,usdbnt,bbbusdb,bbb
 
 import findByProps from './findByProps'
 import {
@@ -83,12 +82,17 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
       }
     }
 
-    // form USDB
+    // from to USDB connector
+    else if(!isRelated && tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB" && tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
+      // example: OMG, OMGBNT, USDB, USDBBNT, COTUSDB, COT
+      path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+    }
+    // form USDB connector
     else if (!isRelated && tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
       // example: cot, usdbcot, usdb, bntusdb, bnt, bntomg, omg
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
     }
-    // to USDB
+    // to USDB connector
     else if (!isRelated && tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
       // example: OMG, OMGBNT, BNT, USDBBNT, USDB, COTUSDB, COT
       path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
