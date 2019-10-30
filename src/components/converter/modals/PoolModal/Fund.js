@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { NavLink } from 'react-router-dom'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import { fromWeiByDecimals } from '../../../../service/weiByDecimals'
 
@@ -334,7 +335,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.connectorAmount))) > Number(fromWei(String(this.state.userConnectorBalance)))
               ?
               (
-                <small><Alert variant="danger">Insufficient {this.props.from}, You have { fromWei(String(this.state.userConnectorBalance)) }</Alert></small>
+                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.props.from}</NavLink> you need ({fromWei(String(this.state.connectorAmount))})</Alert></small>
               )
               :
               (null)
@@ -343,7 +344,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.BNTAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
               ?
               (
-                <small><Alert variant="danger">Insufficient {this.state.BancorConnectorType}, You have { fromWei(String(this.state.userBNTBalance)) }</Alert></small>
+                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.state.BancorConnectorType}</NavLink> you need ({fromWei(String(this.state.BNTAmount))}) </Alert></small>
               )
               :
               (null)

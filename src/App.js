@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { HashRouter } from 'react-router-dom'
+
 import getWeb3 from "./utils/getWeb3"
 import { inject, observer } from 'mobx-react'
 import { netId, API_endpoint } from './config'
@@ -6,8 +8,8 @@ import axios from 'axios'
 
 import Footer from "./components/static/Footer"
 import Web3Info from "./components/static/Web3Info"
-import Navbar from './components/static/Navbar';
-import TabsBar from './components/static/TabsBar';
+import Navbar from './components/static/Navbar'
+import Routes from './components/static/Routes'
 
 import getOfficialData from "./service/getOfficialData"
 import getUnofficialData from "./service/getUnofficialData"
@@ -43,7 +45,7 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
-    console.log("version 10/09/19")
+    console.log("version 30/10/19")
     // init curent step for create converter
     this.props.MobXStorage.updateStep()
     // load tokens data
@@ -79,13 +81,19 @@ class App extends Component {
 
   initData = async () => {
     this.setState({ isDataLoad:true })
-    // try get data form server
-    try{
-      await this.getDataFromServer()
-      console.log("Load data from server")
-    }
-    // if server not work get data form file and blockchain
-    catch(e){
+    if(this.state.netId === 1){
+      // try get data from server for MAINNET case
+      try{
+        await this.getDataFromServer()
+        console.log("Load data from server")
+      }
+      // if server not work get data form file and blockchain
+      catch(e){
+        await this.getDataFromBlockchain()
+        console.log("Load data from blockchain and file")
+      }
+    }else{
+      // Just get from blockchain for Ropsten case
       await this.getDataFromBlockchain()
       console.log("Load data from blockchain and file")
     }
@@ -153,7 +161,7 @@ class App extends Component {
     });
 
     return(
-      <React.Fragment>
+      <HashRouter>
       <MuiThemeProvider theme={theme}>
       <CssBaseline />
 
@@ -170,13 +178,14 @@ class App extends Component {
          )
          :
          (
-           <TabsBar />
+           <Routes />
          )
        }
+
        <Footer/>
        </Container>
        </MuiThemeProvider>
-      </React.Fragment>
+      </HashRouter>
     )
   }
 }

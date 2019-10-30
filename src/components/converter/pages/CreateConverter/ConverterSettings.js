@@ -10,12 +10,21 @@ class ConverterSettings extends Component {
     currentGasStatus:undefined
   }
 
+  _isMounted = false
+
   componentDidMount = async () => {
+    this._isMounted = true
     let currentGasStatus = window.localStorage.getItem('gasPriceState')
     if(!currentGasStatus)
        currentGasStatus = "highGasPrice"
     await this.setGasPrice(currentGasStatus)
+
+    if(this._isMounted)
     this.setState({ currentGasStatus })
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   setGasPrice = async (gasPriceState) => {

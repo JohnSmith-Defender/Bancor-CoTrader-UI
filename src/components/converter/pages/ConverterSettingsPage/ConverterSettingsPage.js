@@ -19,11 +19,20 @@ class ConverterSettingsPage extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(prevProps.MobXStorage.bancorTokensStorageJson !== this.state.bancorTokensStorageJson){
-      this.setConvertersByOwner()
-    }
+  _isMounted = false
+
+  componentDidMount () {
+    this._isMounted = true
+    setTimeout(() => {
+      if(this.props.MobXStorage.bancorTokensStorageJson && this._isMounted)
+        this.setConvertersByOwner()
+    }, 2000)
   }
+
+  componentWillUnmount() {
+    this._isMounted = false
+  }
+
 
   setConvertersByOwner = () => {
     const user = this.props.MobXStorage.accounts[0]

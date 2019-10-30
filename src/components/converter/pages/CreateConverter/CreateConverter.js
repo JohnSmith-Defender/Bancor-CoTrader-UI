@@ -37,21 +37,31 @@ class CreateConverter extends Component {
     }
   }
 
+  _isMounted = false
   // check tx status for case is user confirm tx and then close or reload page
   componentDidMount = () => {
+    this._isMounted = true
     // Small delay for correct recive props
     setTimeout(() => {
       let pending = window.localStorage.getItem('Pending')
       pending = JSON.parse(pending)
       const userAddress = window.localStorage.getItem('userAddress')
-      this.setState({ userAddress })
+
+      let hashLatest
 
       if(pending && this.props.MobXStorage.web3){
-        const hashLatest = window.localStorage.getItem('txLatest')
+        hashLatest = window.localStorage.getItem('txLatest')
         this.setState({ hashLatest })
         this.props.MobXStorage.checkTxStatus(hashLatest)
       }
+
+      if(this._isMounted)
+      this.setState({ hashLatest, userAddress })
     }, 1000)
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   updateRenderStep = () => {
