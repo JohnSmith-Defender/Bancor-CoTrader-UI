@@ -13,6 +13,7 @@ import PoolPage from "../converter/pages/PoolPage"
 // import AddConverter from "../converter/pages/AddConverter"
 import CreateConverter from "../converter/pages/CreateConverter/CreateConverter"
 import ConverterSettingsPage from "../converter/pages/ConverterSettingsPage/ConverterSettingsPage"
+import StablePoolPage from "../converter/pages/StablePoolPage"
 
 
 export default function Routes() {
@@ -23,6 +24,7 @@ export default function Routes() {
      <Route path="/trade" component={(props) => <TradePage {...props} />} />
      <Route path="/send" component={(props) => <SendPage {...props} />} />
      <Route path="/pool" component={(props) => <PoolPage {...props} />} />
+     <Route path="/stable-pool" component={(props) => <StablePoolPage {...props} />} />
      <Route path="/relay" component={(props) => <RelaysPage {...props} />} />
      <Route path="/create-converter" component={(props) => <CreateConverter {...props} />} />
      <Route path="/converter-settings" component={(props) => <ConverterSettingsPage{...props} />} />
