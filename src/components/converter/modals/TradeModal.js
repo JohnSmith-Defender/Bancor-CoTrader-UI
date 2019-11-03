@@ -10,6 +10,7 @@ import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import findByProps from '../../../service/findByProps'
 import getPath from '../../../service/getPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
+import SelectSymbols from './modules/SelectSymbols'
 
 import {
   ABISmartToken,
@@ -21,12 +22,8 @@ import {
 import DirectionInfo from './modules/DirectionInfo'
 import SetMinReturn from './modules/SetMinReturn'
 import FakeButton from '../../templates/FakeButton'
-
-import { Typeahead } from 'react-bootstrap-typeahead'
 import { Alert, Form,  Modal } from "react-bootstrap"
 import Button from '@material-ui/core/Button'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Chip from '@material-ui/core/Chip'
 import MMBatchManual from '../../static/MMBatchManual'
 
@@ -35,65 +32,37 @@ class TradeModal extends Component {
   constructor(props, context) {
    super(props, context)
     this.state = {
-    to:undefined,
-    from:undefined,
     directionAmount:0,
-    connectorSymbol:'',
-    reciveSymbol:'',
     amountReturn:0,
     ShowModal:false,
-    officialSymbols:null,
-    unofficialSymbols:null,
-    bancorTokensStorageJson:null,
     bancorNetworkContract: null,
-    selectToOficial:true,
-    selectFromOficial:true,
     web3:null,
-    fee:0
+    fee:0,
+    to:'',
+    from:''
     }
   }
 
-  // helper for setState
-  change = e => {
-    if(typeof this.state[e.target.name] === "boolean"){
-      this.setState({
-        [e.target.name]: !this.state[e.target.name]
-      })
-    }else{
-      this.setState({
-        [e.target.name]: e.target.value
-      })
-    }
-  }
 
   componentDidUpdate(prevProps, prevState){
     // Update rate by onChange
-    if(prevState.from !== this.state.from || prevState.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
-      if(this.state.directionAmount > 0){
-        this.getRate()
-      }
-    }
+    if(prevProps.MobXStorage.from !== this.state.from || prevProps.MobXStorage.to !== this.state.to || prevState.directionAmount !== this.state.directionAmount){
+      this.getRate()
 
-    // Update state with tokens data
-    if (prevProps.MobXStorage.bancorTokensStorageJson !== this.state.bancorTokensStorageJson) {
-      const officialSymbols = this.props.MobXStorage.officialSymbols
-      const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
-      const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
       this.setState({
-        officialSymbols,
-        unofficialSymbols,
-        bancorTokensStorageJson
+        to: this.props.MobXStorage.to,
+        from: this.props.MobXStorage.from
       })
     }
   }
 
   // View rate
   getRate = async () => {
-    if(this.state.from && this.state.to && this.state.directionAmount > 0){
-    if(this.state.from !== this.state.to){
+    if(this.props.MobXStorage.from && this.props.MobXStorage.to && this.state.directionAmount > 0){
+    if(this.props.MobXStorage.from !== this.props.MobXStorage.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-      const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+      const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
       let fee = 0
       const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
 
@@ -110,7 +79,6 @@ class TradeModal extends Component {
       }
 
       this.setState({
-        reciveSymbol:this.state.to,
         amountReturn,
         fee
       })
@@ -121,7 +89,7 @@ class TradeModal extends Component {
   // Batch requset for case when from === ERC20
   approveAndTrade = async () => {
     const web3 = this.props.MobXStorage.web3
-    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
+    const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from)[0]
     const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const gasPrice = await getBancorGasLimit()
@@ -147,7 +115,7 @@ class TradeModal extends Component {
     }
 
     // trade tx
-    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
     const tradeData = bancorNetworkContract.methods.claimAndConvert(path,
       amountSend,
       this.props.MobXStorage.minReturn
@@ -171,8 +139,8 @@ class TradeModal extends Component {
   // in case if from === BNT and to !== ETH
   quickConvert = async () => {
     const web3 = this.props.MobXStorage.web3
-    const tokenInfoFrom = findByProps(this.state.bancorTokensStorageJson, "symbol", this.state.from)[0]
-    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+    const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from)[0]
+    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
     const gasPrice = await getBancorGasLimit()
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
@@ -189,7 +157,7 @@ class TradeModal extends Component {
   convertFromETH = async () => {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const path = getPath(this.state.from, this.state.to, this.state.bancorTokensStorageJson)
+    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
     const gasPrice = await getBancorGasLimit()
 
@@ -200,12 +168,12 @@ class TradeModal extends Component {
 
   // trade
   trade = () => {
-  if(this.state.to && this.state.from && this.state.directionAmount > 0){
-    if(this.state.to !== this.state.from){
-      if(this.state.from === "ETH"){
+  if(this.props.MobXStorage.to && this.props.MobXStorage.from && this.state.directionAmount > 0){
+    if(this.props.MobXStorage.to !== this.props.MobXStorage.from){
+      if(this.props.MobXStorage.from === "ETH"){
         this.convertFromETH()
       }
-      else if(this.state.from === "BNT"){
+      else if(this.props.MobXStorage.from === "BNT"){
         this.quickConvert()
       }
       else{
@@ -223,12 +191,8 @@ class TradeModal extends Component {
     to:undefined,
     from:undefined,
     directionAmount:0,
-    connectorSymbol:'',
-    reciveSymbol:'',
     amountReturn:0,
-    ShowModal:false,
-    selectToOficial:true,
-    selectFromOficial:true
+    ShowModal:false
   })
 
 
@@ -263,108 +227,22 @@ class TradeModal extends Component {
       </Modal.Header>
       <Modal.Body>
 
-      {/*select from*/}
-      <React.Fragment>
-      {
-        this.state.officialSymbols && this.state.unofficialSymbols
-        ?
-        (
-          <React.Fragment>
-
-
-          <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" className="custom_check" color="primary" />}
-              label="Show unofficial"
-          />
-
-
-          {
-            this.state.selectFromOficial
-            ?
-            (
-              <Typeahead
-                  labelKey="fromOfficialTokens"
-                  multiple={false}
-                  id="officialTokens"
-                  options={this.state.officialSymbols}
-                  onChange={(s) => this.setState({from: s[0]})}
-                  placeholder="Choose a symbol from"
-              />
-            )
-            :
-            (
-              <Typeahead
-                  labelKey="fromUnofficialTokens"
-                  multiple={false}
-                  id="unofficialTokens"
-                  options={this.state.unofficialSymbols}
-                  onChange={(s) => this.setState({from: s[0]})}
-                  placeholder="Choose a symbol from"
-              />
-            )
-          }
-          </React.Fragment>
-        )
-        :
-        (null)
-      }
-      </React.Fragment>
-
-
-      {/*select to*/}
-      <React.Fragment>
-      {
-        this.state.officialSymbols && this.state.unofficialSymbols
-        ?
-        (
-          <React.Fragment>
-
-          <FormControlLabel
-              control={<Checkbox onChange={e => this.change(e)} name="selectToOficial" className="custom_check" color="primary"/>}
-              label="Show unofficial"
-          />
-
-
-          {
-            this.state.selectToOficial
-            ?
-            (
-              <Typeahead
-                  labelKey="toOfficialTokens"
-                  multiple={false}
-                  id="toOfficialTokens"
-                  options={this.state.officialSymbols}
-                  onChange={(s) => this.setState({to: s[0]})}
-                  placeholder="Choose a symbol to"
-              />
-            )
-            :
-            (
-              <Typeahead
-                  labelKey="toUnofficialTokens"
-                  multiple={false}
-                  id="toUnofficialTokens"
-                  options={this.state.unofficialSymbols}
-                  onChange={(s) => this.setState({to: s[0]})}
-                  placeholder="Choose a symbol to"
-              />
-            )
-          }
-          </React.Fragment>
-        )
-        :
-        (<p>Loading data ...</p>)
-      }
-      </React.Fragment>
+      {/*select symbols*/}
+      <SelectSymbols symbolDirection="from" useSmartTokenSymbols={false}/>
+      <SelectSymbols symbolDirection="to" useSmartTokenSymbols={false}/>
 
       <br/>
-      <Form.Control name="directionAmount" placeholder={`Enter ${this.state.from ? this.state.from : 'token'} amount`} onChange={e => this.change(e)} type="number" min="1"/>
+      <Form.Control
+      name="directionAmount"
+      placeholder={`Enter ${this.props.MobXStorage.from ? this.props.MobXStorage.from : 'token'} amount`}
+      onChange={e => this.setState({ directionAmount:e.target.value })}
+      type="number" min="1"/>
       <br/>
       {
         this.state.directionAmount > 0
         ?
         ( <div>
-          <Alert variant="success">You will receive {this.state.amountReturn} {this.state.reciveSymbol}</Alert>
+          <Alert variant="success">You will receive {this.state.amountReturn} {this.props.MobXStorage.to}</Alert>
           <br/>
           {
             this.props.MobXStorage.web3
@@ -392,16 +270,16 @@ class TradeModal extends Component {
       <br/>
       <SetMinReturn
       amountReturn={this.state.amountReturn}
-      from={this.state.from}
-      to={this.state.to}
+      from={this.props.MobXStorage.from}
+      to={this.props.MobXStorage.to}
       directionAmount={this.state.directionAmount}
       />
       <br/>
       <DirectionInfo
-      from={this.state.from}
-      to={this.state.to}
+      from={this.props.MobXStorage.from}
+      to={this.props.MobXStorage.to}
       directionAmount={this.state.directionAmount}
-      bancorTokensStorageJson={this.state.bancorTokensStorageJson}
+      bancorTokensStorageJson={this.props.MobXStorage.bancorTokensStorageJson}
       web3={this.props.MobXStorage.web3}
       accounts={this.props.MobXStorage.accounts}
       useERC20AsSelectFrom={true}

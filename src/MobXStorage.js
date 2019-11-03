@@ -1,3 +1,5 @@
+// TODO describe this storage class
+
 import { observable, action, decorate } from 'mobx'
 import { gasPrice } from './config'
 
@@ -14,6 +16,28 @@ class MOBXStorage {
   timer = 0
   GasPrice = gasPrice
   minReturn = "1"
+  from = ''
+  to = ''
+  useERC20AsSelectFrom = true
+  useERC20AsSelectTo = true
+
+  // Select from token or smart token
+  updateSelectType = (direction, value) => {
+    if(direction === "from"){
+      this.useERC20AsSelectFrom = value
+    }else{
+      this.useERC20AsSelectTo = value
+    }
+  }
+
+  // Select symbol
+  updateSymbolSelector = (direction, value) => {
+    if(direction === "from"){
+      this.from = value
+    }else{
+      this.to = value
+    }
+  }
 
   changeMinReturn = (_minReturn) => {
     const min = Math.round(parseFloat(_minReturn))
@@ -103,7 +127,13 @@ decorate(MOBXStorage, {
     bancorTokensStorageJson:observable,
     GasPrice:observable,
     minReturn:observable,
+    from:observable,
+    to:observable,
+    useERC20AsSelectFrom:observable,
+    useERC20AsSelectTo:observable,
 
+    updateSelectType:action,
+    updateSymbolSelector:action,
     changeMinReturn:action,
     checkTxStatus:action,
     initWeb3AndAccounts:action,
