@@ -288,7 +288,7 @@ class Fund extends Component {
           ?
           (
             <Alert variant="info">
-            <small>Pool earns trade fee {this.state.tokenInfo['conversionFee']}% {<UserInfo label="?" info={`The pool relay token holders of ${this.props.from}/${this.state.tokenInfo['connectorType']} earn the x% converter fee of every trade of ${this.props.from}`}/>}</small>
+            <small>Pool earns trade fee {this.state.tokenInfo['conversionFee']}% ({<UserInfo label="?" info={`The pool relay token holders of ${this.props.from}/${this.state.tokenInfo['connectorType']} earn the x% converter fee of every trade of ${this.props.from}`}/>})</small>
             </Alert>
           )
           :
@@ -296,11 +296,11 @@ class Fund extends Component {
         }
 
         <Alert variant="info">
-        <small>Pool ROI (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now" /> *2) = xx.yy%</small>
+        <small>Pool ROI (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now" />) = xx.yy%</small>
         </Alert>
 
         <Alert variant="info">
-        <small>Pool liquidity depth is x ETH (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/> *1)</small>
+        <small>Pool liquidity depth is x ETH (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
         </Alert>
 
         <Alert variant="warning">
@@ -358,7 +358,7 @@ class Fund extends Component {
         <br/>
         <Card className="text-center">
         <Card.Body>
-        <ButtonGroup>
+        <ButtonGroup vertical="true">
         <Button variant="outline-primary" size="sm" onClick={() => this.approveBancorCoonector()}>Step 1: Approve {this.state.BancorConnectorType}</Button>
         <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve {this.props.from}</Button>
         <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
