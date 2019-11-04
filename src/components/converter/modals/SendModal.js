@@ -5,7 +5,6 @@
 import React, { Component } from 'react'
 import { Alert, Form,  Modal } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
-import { toWeiByDecimals, fromWeiByDecimals } from '../../../service/weiByDecimals'
 import SelectSymbols from './modules/SelectSymbols'
 
 import {
@@ -14,9 +13,15 @@ import {
   BancorNetwork
 } from '../../../config'
 
+import {
+  toWeiByDecimals,
+  //fromWeiByDecimals 
+} from '../../../service/weiByDecimals'
+
 import findByProps from '../../../service/findByProps'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
+import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 import MMBatchManual from '../../static/MMBatchManual'
 
@@ -60,22 +65,9 @@ class TradeModal extends Component {
     if(this.props.MobXStorage.from  && this.props.MobXStorage.to && this.state.directionAmount > 0){
     if(this.props.MobXStorage.from  !== this.props.MobXStorage.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
       const path = getPath(this.props.MobXStorage.from , this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
-      let fee = 0
       const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
-
-      let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
-        path,
-        amountSend
-      ).call()
-
-      if(amountReturn){
-        fee = await fromWeiByDecimals(path[path.length - 1], amountReturn[1], web3)
-        amountReturn = await fromWeiByDecimals(path[path.length - 1], amountReturn[0], web3)
-      }else{
-        amountReturn = 0
-      }
+      const { amountReturn, fee } = await getRateByPath(path, amountSend, web3)
 
       this.setState({
         amountReturn,

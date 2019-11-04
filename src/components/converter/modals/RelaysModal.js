@@ -5,7 +5,6 @@
 import React, { Component } from 'react'
 import { Alert, Form,  Modal } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
-import { toWeiByDecimals, fromWeiByDecimals } from '../../../service/weiByDecimals'
 import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
@@ -17,9 +16,15 @@ import {
   BancorNetwork
 } from '../../../config'
 
+import {
+  toWeiByDecimals,
+  //fromWeiByDecimals 
+} from '../../../service/weiByDecimals'
+
 import getDirectionData from '../../../service/getDirectionData'
 import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
+import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 import findByProps from '../../../service/findByProps'
 import MMBatchManual from '../../static/MMBatchManual'
@@ -70,18 +75,12 @@ class RelaysModal extends Component {
   }
 
   // View rate
-  // return amount + fee
-
-  // TODO DRY refactoring
-  // NOTE: this methods not as in SEND and TRADE
-  // we need addition info objPropsFrom and objPropsTo for smarttoken path
-  // Be carful when will do DRY refactoring
+  // return amount and fee
   getRate = async () => {
     if(this.props.MobXStorage.from && this.props.MobXStorage.to && this.state.directionAmount > 0){
     if(this.props.MobXStorage.from !== this.props.MobXStorage.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-
+      // for detect in path this smart token or not
       const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
       const path = getPath(
         this.props.MobXStorage.from,
@@ -90,28 +89,15 @@ class RelaysModal extends Component {
         objPropsFrom,
         objPropsTo
       )
-
-      let fee = 0
       const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
-
-      let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
-        path,
-        amountSend
-      ).call()
-
-      if(amountReturn){
-        fee = await fromWeiByDecimals(path[path.length - 1], amountReturn[1], web3)
-        amountReturn = await fromWeiByDecimals(path[path.length - 1], amountReturn[0], web3)
-      }else{
-        amountReturn = 0
-      }
+      const { amountReturn, fee } = await getRateByPath(path, amountSend, web3)
 
       this.setState({
         amountReturn,
         fee
       })
+     }
     }
-  }
   }
 
 

@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import { hexToNumberString, fromWei, toWei } from 'web3-utils'
+import { hexToNumberString, fromWei } from 'web3-utils'
 import { Alert } from "react-bootstrap"
+
 import {
   ABISmartToken,
   EtherscanLink,
-  ABIBancorNetwork,
-  BancorNetwork,
 } from '../../../../config'
 
+import { toWeiByDecimals } from '../../../../service/weiByDecimals'
 import getDirectionData from '../../../../service/getDirectionData'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
-
+import getRateByPath from '../../../../service/getRateByPath'
 import Pending from '../../../templates/Spiners/Pending'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -73,20 +73,12 @@ class DirectionInfo extends Component {
     return { userBalanceFrom, balanceOfTo }
   }
 
+
+
 // return rate from Bancor network
 getReturnByPath = async (path, amount, web3) => {
-  const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-  let amountReturn = await bancorNetwork.methods.getReturnByPath(
-    path,
-    toWei(String(parseFloat(amount).toFixed(6)))
-  ).call()
-
-  if(amountReturn){
-    amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
-  }else{
-    amountReturn = 0
-  }
-
+  const amountSend = await toWeiByDecimals(path[0], amount, web3)
+  const { amountReturn } = await getRateByPath(path, amountSend, web3)
   return amountReturn
 }
 
