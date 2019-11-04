@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { hexToNumberString, fromWei } from 'web3-utils'
+import { hexToNumberString, fromWei, toWei } from 'web3-utils'
 import { Alert } from "react-bootstrap"
 
 import {
@@ -7,7 +7,6 @@ import {
   EtherscanLink,
 } from '../../../../config'
 
-import { toWeiByDecimals } from '../../../../service/weiByDecimals'
 import getDirectionData from '../../../../service/getDirectionData'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
@@ -77,7 +76,7 @@ class DirectionInfo extends Component {
 
 // return rate from Bancor network
 getReturnByPath = async (path, amount, web3) => {
-  const amountSend = await toWeiByDecimals(path[0], amount, web3)
+  const amountSend = toWei(String(amount))
   const { amountReturn } = await getRateByPath(path, amountSend, web3)
   return amountReturn
 }
