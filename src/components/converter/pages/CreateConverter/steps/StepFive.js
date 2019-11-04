@@ -174,7 +174,7 @@ render() {
       (
         <React.Fragment>
         <Typography variant="body1" className={'mb-2'} component="p">
-        This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), BNT connector balance x2"/> step will be done
+        This <UserInfo label="Bancor documentation" info="Converter address (received from the token issuer), Bancor connector balance x2"/> step will be done
         </Typography>
         <Button variant="contained" color="primary" size="medium" onClick={() => this.issue()}>issue</Button>
         </React.Fragment>
