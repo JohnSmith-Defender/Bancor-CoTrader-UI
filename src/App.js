@@ -32,7 +32,7 @@ class App extends Component {
     isDataLoad:false,
     netId:undefined,
     web3:null,
-    themeType : 'dark',
+    themeType : 'light',
     }
   }
 
