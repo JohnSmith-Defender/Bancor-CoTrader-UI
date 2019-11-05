@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
-import { fromWeiByDecimals } from '../../../../service/weiByDecimals'
+import { fromWeiByDecimals, fromWeiByDecimalsInput } from '../../../../service/weiByDecimals'
 
 import {
   ABISmartToken,
@@ -294,15 +294,17 @@ class Fund extends Component {
           :
           (null)
         }
-
-        <Alert variant="info">
-        <small>Pool ROI (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now" />) = xx.yy%</small>
-        </Alert>
-
-        <Alert variant="info">
-        <small>Pool liquidity depth is x ETH (<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
-        </Alert>
-
+        {
+          this.state.tokenInfo && this.state.tokenInfo.hasOwnProperty('connectorBancorReserve') && this.state.tokenInfo.hasOwnProperty('connectorOriginalReserve') && this.state.tokenInfo.hasOwnProperty('tokenDecimals')
+          ?
+          (
+            <Alert variant="info">
+            <small>Pool liquidity depth {this.props.from}: &nbsp; {fromWeiByDecimalsInput(this.state.tokenInfo["tokenDecimals"], String(this.state.tokenInfo["connectorOriginalReserve"]))} and {this.state.tokenInfo["connectorType"]}: &nbsp;{fromWei(String(this.state.tokenInfo["connectorBancorReserve"]))}(<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
+            </Alert>
+          )
+          :
+          (null)
+        }
         <Alert variant="warning">
         <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
         </Alert>
