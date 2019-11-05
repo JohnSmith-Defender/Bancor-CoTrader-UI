@@ -24,6 +24,10 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
       // BNT, BNT, ETH
       path = [BNTToken, BNTToken, BancorETH]
     }
+    // new
+    else if(to === "USDB(USDB)"){
+      path = [BNTToken, USDBBNTToken, USDBToken]
+    }
     else{
         // form USDB connector
       if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
@@ -36,10 +40,15 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     }
     break
 
+
     case 'ETH':
     if(to === "BNT"){
       // ETH, BNT, BNT
       path = [BancorETH, BNTToken, BNTToken]
+    }
+    // new
+    else if(to === "USDB(USDB)"){
+      path = [BancorETH, BNTToken, BNTToken, USDBBNTToken, USDBToken]
     }
     else{
       // form USDB connector
@@ -55,6 +64,26 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     }
     break
 
+    // New
+    case 'USDB(USDB)':
+      if(to === "BNT"){
+        path = [USDBToken, USDBBNTToken, BNTToken]
+      }
+      else if (to === "ETH"){
+        path = [USDBToken, USDBBNTToken, BNTToken, BNTToken, BancorETH]
+      }
+      //to USDB connector
+      else if(tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
+        // example: USDB, USDBBNT, ERC20 or Relay
+        path = [USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+      }
+      // to BNT connector
+      else{
+        path = [USDBToken, USDBBNTToken, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+      }
+    break
+
+
     default:
     if(to === "BNT"){
       // form USDB connector
@@ -69,6 +98,7 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
       }
     }
 
+
     else if (to === "ETH") {
       // form USDB connector
       if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
@@ -81,6 +111,21 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
         path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, BNTToken, BancorETH]
       }
     }
+
+    // NEW
+    else if (to === "USDB(USDB)") {
+      // form USDB connector
+      if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
+        // FROM_ERC_OR_SmartToken, FROM_smartToken, USDB, USDBBNT, BNT, BNT, BancorETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken]
+      }
+      // from BNT connector
+      else{
+        // FROM_ERC_OR_SmartToken, FROM_ERC20_SmartToken, BNT, BNT, ETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, USDBBNTToken, USDBToken]
+      }
+    }
+
 
     // from to USDB connector
     else if(!isRelated && tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB" && tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
