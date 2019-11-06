@@ -11,6 +11,7 @@ function StablePool() {
   const stableSymbols = ["daiusdb", "usdtusdb"]
 
   useLayoutEffect(() => {
+    let isCancelled = false
     async function fetchData(){
      let res = []
      try{
@@ -26,10 +27,14 @@ function StablePool() {
      catch(e){
        res = [{ data:"Can't get data" }]
      }
+      if(!isCancelled)
       setData(res)
     }
     if(!data)
     fetchData()
+    return () => {
+      isCancelled = true;
+    }
   })
 
   return(
