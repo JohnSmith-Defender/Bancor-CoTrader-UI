@@ -1,16 +1,19 @@
+// Stupid component for render data
+
 import React from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import { ArrowRight } from '@material-ui/icons'
-import pageStyles from '../../../css/pageStyles'
-import UserInfo from '../../templates/UserInfo'
+import pageStyles from '../../../../css/pageStyles'
+import UserInfo from '../../../templates/UserInfo'
 
 const useStyles = pageStyles
 
-function StablePoolPage() {
-  const classes = useStyles();
-  const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>;
+function StablePoolPage(props) {
+  const classes = useStyles()
+  const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>
+  console.log(props)
   return (
     <React.Fragment>
       <Card className={classes.card}>
