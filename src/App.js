@@ -77,6 +77,10 @@ class App extends Component {
       )
       console.error(error)
     }
+
+    // relaod app if accout was changed
+    if(window.ethereum)
+    window.ethereum.on('accountsChanged', () => window.location.reload())
   }
 
   initData = async () => {
@@ -134,7 +138,6 @@ class App extends Component {
 
 
   render() {
-
     let theme = createMuiTheme({
       palette: {
         primary: {
