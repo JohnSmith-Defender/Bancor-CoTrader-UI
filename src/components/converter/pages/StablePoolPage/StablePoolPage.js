@@ -7,13 +7,16 @@ import Typography from '@material-ui/core/Typography'
 import { ArrowRight } from '@material-ui/icons'
 import pageStyles from '../../../../css/pageStyles'
 import UserInfo from '../../../templates/UserInfo'
+import { Col, Row } from "react-bootstrap"
+import PoolChart from './PoolChart'
 
 const useStyles = pageStyles
 
 function StablePoolPage(props) {
+  if(props.data)
+  console.log(props.data["daiusdb"])
   const classes = useStyles()
   const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>
-  console.log(props)
   return (
     <React.Fragment>
       <Card className={classes.card}>
@@ -21,6 +24,24 @@ function StablePoolPage(props) {
           <Typography className={classes.title} gutterBottom>
             Stable Pool ROI
           </Typography>
+          {
+            props.stableSymbols && props.data
+            ?
+            (
+              <React.Fragment>
+              {props.stableSymbols.map((symbol, key) =>
+                <Row key={key}>
+                <Col>{symbol}</Col>
+                <Col><PoolChart label="ROI" data={props.data[symbol]}/></Col>
+                </Row>
+              )
+              }
+              </React.Fragment>
+            )
+            :
+            (<p>Loading</p>)
+          }
+          <br/>
           <Typography variant="body1" className={'mb-2'} component="p">
             {bull} Liquidity pools in AMM DEXs (<UserInfo label="?" info={ <span> Bancor is an AMM DEX, which means you can always buy or sell tokens A to B from Bancor smart contracts at the price of the B/A ratio in the “relay token” reserves (ignoring slippage) <a href="https://medium.com/@cotrader.com/bancor-amm-dex-formula-calculation-example-9dbc00ca3a5e" target="_blank" rel="noopener noreferrer">learn more</a> </span>} /> replace buy and sell orders in legacy exchanges.
 
@@ -41,9 +62,11 @@ function StablePoolPage(props) {
           <Typography variant="body1" className={'mb-2'} component="p">
             {bull} Pools of stable tokens traded against other stable tokens are thus potentially very lucrative, because there will be near 0 volatility, meaning low impermanent loss and high returns.
           </Typography>
+
         </CardContent>
       </Card>
     </React.Fragment>
   )
 }
+
 export default StablePoolPage

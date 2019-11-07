@@ -1,31 +1,33 @@
 // use react hooks
 // Smart component for load data
 import React, { useState, useLayoutEffect } from 'react'
+import { inject, observer } from 'mobx-react'
 import StablePoolPage from './StablePoolPage'
 import axios from 'axios'
 
 const endPoint = 'https://bancor-analytics-api.herokuapp.com/api/v1/'
 
-function StablePool() {
+function StablePool(props) {
   const [data, setData] = useState(null)
+  // stable DAI, USDB, USDT
   const stableSymbols = ["daiusdb", "usdtusdb"]
 
   useLayoutEffect(() => {
     let isCancelled = false
     async function fetchData(){
-     let res = []
+     let res = {}
      try{
        let result
        for(let i=0; i<stableSymbols.length; i++){
          result = await axios(
            `${endPoint}roi/${stableSymbols[i]}`,
          )
-         //res.push({ [stableSymbols[i]]:result.data })
-         res.push(result.data)
+         //res.push({ token: {[stableSymbols[i]]:result.data} })
+         res[[stableSymbols[i]]] = result.data
        }
      }
      catch(e){
-       res = [{ data:"Can't get data" }]
+       res = { data:null }
      }
       if(!isCancelled)
       setData(res)
@@ -38,8 +40,8 @@ function StablePool() {
   })
 
   return(
-    <StablePoolPage stableSymbols={stableSymbols} data={data}/>
+    <StablePoolPage stableSymbols={stableSymbols} data={data} MobXStorage={props.MobXStorage}/>
   )
 }
 
-export default StablePool
+export default inject('MobXStorage')(observer(StablePool))
