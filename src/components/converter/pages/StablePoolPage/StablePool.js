@@ -15,22 +15,28 @@ function StablePool(props) {
   useLayoutEffect(() => {
     let isCancelled = false
     async function fetchData(){
-     let res = {}
+     let result = {}
      try{
-       let result
+       let roi
+       let info
+       let tokenObj
        for(let i=0; i<stableSymbols.length; i++){
-         result = await axios(
+         roi = await axios(
            `${endPoint}roi/${stableSymbols[i]}`,
          )
+         info = await axios(
+           `${endPoint}info/${stableSymbols[i]}`,
+         )
+         tokenObj = { ...roi.data, ...info.data }
          //res.push({ token: {[stableSymbols[i]]:result.data} })
-         res[[stableSymbols[i]]] = result.data
+         result[[stableSymbols[i]]] = tokenObj
        }
      }
      catch(e){
-       res = { data:null }
+       result = { data:null }
      }
       if(!isCancelled)
-      setData(res)
+      setData(result)
     }
     if(!data)
     fetchData()

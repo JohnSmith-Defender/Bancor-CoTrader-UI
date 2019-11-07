@@ -14,7 +14,7 @@ const useStyles = pageStyles
 
 function StablePoolPage(props) {
   if(props.data)
-  console.log(props.data["daiusdb"])
+  console.log("props.data.token_price_in_base_token",props.data.token_price_in_base_token)
   const classes = useStyles()
   const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>
   return (
@@ -30,16 +30,18 @@ function StablePoolPage(props) {
             (
               <React.Fragment>
               {props.stableSymbols.map((symbol, key) =>
-                <Row key={key}>
-                <Col>{symbol}</Col>
-                <Col><PoolChart label="ROI" data={props.data[symbol]}/></Col>
+                <Row key={key} style={{backgroundColor:"whitesmoke"}}>
+                <Col><strong style={{color:"mediumslateblue"}}>{symbol.toUpperCase()}</strong></Col>
+                <Col>price: <span style={{color:"mediumslateblue"}}>{props.data[symbol].token_price_in_base_token}</span></Col>
+                <Col><PoolChart label="Volume" data={props.data[symbol]} property="token_price_in_base_token"/></Col>
+                <Col><PoolChart label="ROI" data={props.data[symbol]} property="token_price_in_usd"/></Col>
                 </Row>
               )
               }
               </React.Fragment>
             )
             :
-            (<p>Loading</p>)
+            (<p>Loading data ...</p>)
           }
           <br/>
           <Typography variant="body1" className={'mb-2'} component="p">
