@@ -14,7 +14,6 @@ function timeStempToDate(timestamp){
 }
 
 function PoolChart(props){
-  console.log("props.data", props.data)
   const timeLabels = props.data.roi.map(item => timeStempToDate(item.timestamp))
   const chartData = props.data.roi.map(item => item[props.property])
   const label = props.label

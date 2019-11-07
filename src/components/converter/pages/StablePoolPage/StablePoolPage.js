@@ -13,8 +13,6 @@ import PoolChart from './PoolChart'
 const useStyles = pageStyles
 
 function StablePoolPage(props) {
-  if(props.data)
-  console.log("props.data.token_price_in_base_token",props.data.token_price_in_base_token)
   const classes = useStyles()
   const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>
   return (
@@ -33,6 +31,19 @@ function StablePoolPage(props) {
                 <Row key={key} style={{backgroundColor:"whitesmoke"}}>
                 <Col><strong style={{color:"mediumslateblue"}}>{symbol.toUpperCase()}</strong></Col>
                 <Col>price: <span style={{color:"mediumslateblue"}}>{props.data[symbol].token_price_in_base_token}</span></Col>
+                <Col>status:
+                {
+                  props.data[symbol].tokenInfo[0].isOfficial === 0
+                  ?
+                  (
+                    <span style={{color:"green"}}>official</span>
+                  )
+                  :
+                  (
+                    <span style={{color:"red"}}>unofficial</span>
+                  )
+                }
+                </Col>
                 <Col><PoolChart label="Volume" data={props.data[symbol]} property="token_price_in_base_token"/></Col>
                 <Col><PoolChart label="ROI" data={props.data[symbol]} property="token_price_in_usd"/></Col>
                 </Row>
