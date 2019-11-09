@@ -74,7 +74,7 @@ class DirectionInfo extends Component {
   }
 
 // return rate from Bancor network
-// Note: work slowly when we use service/getRateByPath instead directly implement 
+// Note: work slowly when we use service/getRateByPath instead directly implement
 getReturnByPath = async (path, amount, web3) => {
   const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
   let amountReturn = await bancorNetwork.methods.getReturnByPath(
