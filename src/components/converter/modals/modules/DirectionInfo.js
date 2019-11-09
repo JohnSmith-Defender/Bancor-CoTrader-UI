@@ -32,7 +32,6 @@ class DirectionInfo extends Component {
       oneFromInUSD:0,
       slippage:0,
       loadData:false,
-      fromToTinyRate:0,
       tokenInfoTo:[],
       tokenInfoFrom:[]
   }
@@ -108,10 +107,6 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
-  // calculate tiny
-  let fromToTinyRate = await this.getReturnByPath(pathFromTo, 0.00001, web3)
-  fromToTinyRate = fromToTinyRate * (1 / 0.00001)
-
   const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
 
   return {
@@ -120,8 +115,7 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
     totalTradeValue,
     oneFromInUSD,
     oneToInUSD,
-    slippage,
-    fromToTinyRate
+    slippage
    }
 }
 
@@ -166,8 +160,7 @@ setTokensData = async () => {
       totalTradeValue,
       oneFromInUSD,
       oneToInUSD,
-      slippage,
-      fromToTinyRate
+      slippage
     } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
 
     this.setState({
@@ -181,7 +174,6 @@ setTokensData = async () => {
       oneFromInUSD,
       oneToInUSD,
       slippage,
-      fromToTinyRate,
       tokenInfoTo,
       tokenInfoFrom,
       loadData:false
@@ -259,10 +251,6 @@ setTokensData = async () => {
 
         <Typography component="div">
           <small>{this.props.to}/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
-        </Typography>
-
-        <Typography component="div">
-          <small>{this.props.to}/{this.props.from} before trade: <strong style={{color: '#3f51b5'}}>{this.state.fromToTinyRate}</strong></small>
         </Typography>
 
         <Typography component="div">
