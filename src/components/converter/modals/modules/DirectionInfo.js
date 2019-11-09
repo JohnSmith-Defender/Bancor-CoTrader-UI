@@ -26,7 +26,7 @@ class DirectionInfo extends Component {
       userBalanceFrom:0,
       balanceOfTo:0,
       amountReturnFrom:0,
-      amountReturnTo:0,
+      oneToInUSD:0,
       amountReturnFromTo:0,
       totalTradeValue:0,
       oneFromInUSD:0,
@@ -97,12 +97,14 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
   const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
   const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
-  // get rate for from oneFromInUSD in DAI
+  // get rate for from in DAI
   const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
-  // get rate for from/to oneFromInUSD
+  // get rate for from/to
   const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
   // get rate in DAI for from 1 token
   const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
+  // get rate in DAI for 1 to token
+  const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3)
 
   const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
@@ -112,19 +114,12 @@ getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, we
 
   const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
 
-  // get values wich dependce of this.props.amountReturn
-  let amountReturnTo
-  if(amountReturn > 0){
-    // get rate in DAI for to converted
-    amountReturnTo = await this.getReturnByPath(pathTo, amountReturn, web3)
-  }
-
   return {
     amountReturnFrom,
-    amountReturnTo,
     amountReturnFromTo,
     totalTradeValue,
     oneFromInUSD,
+    oneToInUSD,
     slippage,
     fromToTinyRate
    }
@@ -167,10 +162,10 @@ setTokensData = async () => {
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
     const {
       amountReturnFrom,
-      amountReturnTo,
       amountReturnFromTo,
       totalTradeValue,
       oneFromInUSD,
+      oneToInUSD,
       slippage,
       fromToTinyRate
     } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
@@ -181,10 +176,10 @@ setTokensData = async () => {
       userBalanceFrom,
       balanceOfTo,
       amountReturnFrom,
-      amountReturnTo,
       amountReturnFromTo,
       totalTradeValue,
       oneFromInUSD,
+      oneToInUSD,
       slippage,
       fromToTinyRate,
       tokenInfoTo,
@@ -259,7 +254,7 @@ setTokensData = async () => {
        </Typography>
 
         <Typography component="div">
-          <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.amountReturnTo}</strong></small>
+          <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
         </Typography>
 
         <Typography component="div">
