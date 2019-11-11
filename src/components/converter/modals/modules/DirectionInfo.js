@@ -36,7 +36,9 @@ class DirectionInfo extends Component {
       tokenInfoTo:[],
       tokenInfoFrom:[],
       fromDecimals:18,
-      toDecimals:18
+      toDecimals:18,
+      toAverage:0,
+      fromAverage:0
   }
   }
 
@@ -75,42 +77,51 @@ class DirectionInfo extends Component {
     return { userBalanceFrom, balanceOfTo }
   }
 
-  // return rate from Bancor network
-  // Note: work slowly when we use service/getRateByPath instead directly implement
-  getReturnByPath = async (path, amount, web3) => {
+  // return rate from Bancor network and convert result from wei
+  // take into account decimals
+  getReturnByPath = async (path, amount, web3, fromDecimals, toDecimals) => {
     const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const amountSend = await toWeiByDecimalsInput(this.state.fromDecimals, String(parseFloat(amount).toFixed(6)))
+    const amountSend = toWeiByDecimalsInput(fromDecimals, String(amount))
     let amountReturn = await bancorNetwork.methods.getReturnByPath(
       path,
       amountSend
     ).call()
 
-
     if(amountReturn){
-      amountReturn = await fromWeiByDecimalsInput(this.state.toDecimals, amountReturn[0])
+      amountReturn = fromWeiByDecimalsInput(toDecimals, amountReturn[0])
     }else{
       amountReturn = 0
     }
-
     return amountReturn
   }
 
-  // return rate in DAI (USD) total trade value, slippage, ect
+  // return rate in DAI (USD) total trade value, slippage, average
   getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, web3) => {
     const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
     const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
     const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
     // get rate for from in DAI
-    const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
+    const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3, this.state.fromDecimals, 18)
     // get rate for from/to
-    const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
-    // get rate in DAI for from 1 token
-    const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
-    // get rate in DAI for 1 to token
-    const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3)
+    const amountReturnFromTo = await this.getReturnByPath(
+      pathFromTo,
+      directionAmount,
+      web3,
+      this.state.fromDecimals,
+      this.state.toDecimals
+    )
 
-    const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
+    // get rate in DAI for from 1 token
+    const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3, this.state.fromDecimals, 18)
+    // get rate in DAI for 1 to token
+    const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3, this.state.toDecimals, 18)
+
+    // calculateAverage
+    const toAverage = oneToInUSD / amountReturnFromTo
+    const fromAverage = oneFromInUSD / amountReturnFromTo
+
+    const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3, this.state.fromDecimals, 18)
 
     const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
 
@@ -120,7 +131,9 @@ class DirectionInfo extends Component {
       totalTradeValue,
       oneFromInUSD,
       oneToInUSD,
-      slippage
+      slippage,
+      toAverage,
+      fromAverage
      }
   }
 
@@ -131,10 +144,24 @@ class DirectionInfo extends Component {
     // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
     const tinyTrade = Number(directionAmount) / tinyDiv
     // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
-    const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
+    const outputAmountFromTinyTrade = await this.getReturnByPath(
+      pathFromTo,
+      tinyTrade,
+      web3,
+      this.state.fromDecimals,
+      this.state.toDecimals
+    )
+
     const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
     // realTradeRate = useroneFromInUSDFromAmount / userOuputAmountFromRealTrade
-    const ouputAmountFromRealTrade = await this.getReturnByPath(pathFromTo, directionAmount, web3)
+    const ouputAmountFromRealTrade = await this.getReturnByPath(
+      pathFromTo,
+      directionAmount,
+      web3,
+      this.state.fromDecimals,
+      this.state.toDecimals
+    )
+
     const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
     // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
     let slippage = (1 - realTradeRate / tinyTradeRate) * 100
@@ -143,6 +170,7 @@ class DirectionInfo extends Component {
     return slippage
   }
 
+  // set from and to decimals
   setDecimals(tokenInfoFrom, tokenInfoTo){
     console.log("setTokensData");
     let fromDecimals
@@ -187,7 +215,9 @@ class DirectionInfo extends Component {
       totalTradeValue,
       oneFromInUSD,
       oneToInUSD,
-      slippage
+      slippage,
+      toAverage,
+      fromAverage
     } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
 
     this.setState({
@@ -203,6 +233,8 @@ class DirectionInfo extends Component {
       slippage,
       tokenInfoTo,
       tokenInfoFrom,
+      toAverage,
+      fromAverage,
       loadData:false
      })
     }
@@ -265,6 +297,10 @@ class DirectionInfo extends Component {
        </Typography>
 
        <Typography component="div">
+         <small>USD/{this.props.to} <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
+       </Typography>
+
+       <Typography component="div">
         <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
        </Typography>
 
@@ -272,17 +308,17 @@ class DirectionInfo extends Component {
          <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 
-        <Typography component="div">
-          <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
-        </Typography>
+       <Typography component="div">
+         <small>USD/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.fromAverage}</strong></small>
+       </Typography>
 
-        <Typography component="div">
-          <small>{this.props.to}/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
-        </Typography>
+       <Typography component="div">
+         <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.toAverage}</strong></small>
+       </Typography>
 
-        <Typography component="div">
+       <Typography component="div">
          <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
-        </Typography>
+       </Typography>
 
         {
           this.state.tokenInfoFrom && this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
