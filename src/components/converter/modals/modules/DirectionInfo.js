@@ -81,12 +81,12 @@ class DirectionInfo extends Component {
   // take into account decimals
   getReturnByPath = async (path, amount, web3, fromDecimals, toDecimals) => {
     const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const amountSend = toWeiByDecimalsInput(fromDecimals, String(amount))
+    const amountSend = toWeiByDecimalsInput(fromDecimals, String(parseFloat(amount).toFixed(6)))
+
     let amountReturn = await bancorNetwork.methods.getReturnByPath(
       path,
       amountSend
     ).call()
-
     if(amountReturn){
       amountReturn = fromWeiByDecimalsInput(toDecimals, amountReturn[0])
     }else{
@@ -139,6 +139,8 @@ class DirectionInfo extends Component {
 
 
   calculateSlippage = async (pathFromTo, directionAmount, web3) => {
+   let slippage
+   try{
     const tinyDiv = directionAmount < 0.001 ? 10 : 1000
     // formula
     // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
@@ -164,15 +166,16 @@ class DirectionInfo extends Component {
 
     const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
     // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
-    let slippage = (1 - realTradeRate / tinyTradeRate) * 100
+    slippage = (1 - realTradeRate / tinyTradeRate) * 100
     slippage = Math.abs(parseFloat(slippage).toFixed(6))
-
+  }catch(e){
+    slippage = 0
+  }
     return slippage
   }
 
   // set from and to decimals
   setDecimals(tokenInfoFrom, tokenInfoTo){
-    console.log("setTokensData");
     let fromDecimals
     let toDecimals
 
