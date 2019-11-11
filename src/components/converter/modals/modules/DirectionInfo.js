@@ -59,7 +59,8 @@ class DirectionInfo extends Component {
     if(this.props.from !== "ETH"){
       token = new web3.eth.Contract(ABISmartToken, sendFrom)
       userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
-      userBalanceFrom = fromWeiByDecimalsInput(this.state.fromDecimals, userBalanceFrom[0])
+      const userBalanceFromConvert = fromWeiByDecimalsInput(this.state.fromDecimals, userBalanceFrom[0])
+      userBalanceFrom = !isNaN(userBalanceFromConvert) ? userBalanceFromConvert : 0
     }else{
       userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
       userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
@@ -68,7 +69,8 @@ class DirectionInfo extends Component {
     if(this.props.to !== "ETH"){
       tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
       balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
-      balanceOfTo = fromWeiByDecimalsInput(this.state.toDecimals, balanceOfTo[0])
+      const balanceOfToConvert = fromWeiByDecimalsInput(this.state.toDecimals, balanceOfTo[0])
+      balanceOfTo = !isNaN(balanceOfToConvert) ? balanceOfToConvert : 0
     }else{
       balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
       balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
