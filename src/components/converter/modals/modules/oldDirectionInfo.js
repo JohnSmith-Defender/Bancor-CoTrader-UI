@@ -1,6 +1,6 @@
+// TODO DELETE this file AFTER TESTS 
 import React, { Component } from 'react'
-import { fromWei } from 'web3-utils'
-import { fromWeiByDecimalsInput, toWeiByDecimalsInput } from '../../../../service/weiByDecimals'
+import { hexToNumberString, fromWei, toWei } from 'web3-utils'
 import { Alert } from "react-bootstrap"
 import {
   ABISmartToken,
@@ -34,9 +34,7 @@ class DirectionInfo extends Component {
       slippage:0,
       loadData:false,
       tokenInfoTo:[],
-      tokenInfoFrom:[],
-      fromDecimals:18,
-      toDecimals:18
+      tokenInfoFrom:[]
   }
   }
 
@@ -57,7 +55,7 @@ class DirectionInfo extends Component {
     if(this.props.from !== "ETH"){
       token = new web3.eth.Contract(ABISmartToken, sendFrom)
       userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
-      userBalanceFrom = fromWeiByDecimalsInput(this.state.fromDecimals, userBalanceFrom[0])
+      userBalanceFrom = fromWei(hexToNumberString(userBalanceFrom._hex))
     }else{
       userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
       userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
@@ -66,7 +64,7 @@ class DirectionInfo extends Component {
     if(this.props.to !== "ETH"){
       tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
       balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
-      balanceOfTo = fromWeiByDecimalsInput(this.state.toDecimals, balanceOfTo[0])
+      balanceOfTo = fromWei(hexToNumberString(balanceOfTo._hex))
     }else{
       balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
       balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
@@ -75,99 +73,78 @@ class DirectionInfo extends Component {
     return { userBalanceFrom, balanceOfTo }
   }
 
-  // return rate from Bancor network
-  // Note: work slowly when we use service/getRateByPath instead directly implement
-  getReturnByPath = async (path, amount, web3) => {
-    const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const amountSend = await toWeiByDecimalsInput(this.state.fromDecimals, String(parseFloat(amount).toFixed(6)))
-    let amountReturn = await bancorNetwork.methods.getReturnByPath(
-      path,
-      amountSend
-    ).call()
+// return rate from Bancor network
+// Note: work slowly when we use service/getRateByPath instead directly implement
+getReturnByPath = async (path, amount, web3) => {
+  const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
+  let amountReturn = await bancorNetwork.methods.getReturnByPath(
+    path,
+    toWei(String(parseFloat(amount).toFixed(6)))
+  ).call()
 
-
-    if(amountReturn){
-      amountReturn = await fromWeiByDecimalsInput(this.state.toDecimals, amountReturn[0])
-    }else{
-      amountReturn = 0
-    }
-
-    return amountReturn
+  if(amountReturn){
+    amountReturn = Number(fromWei(hexToNumberString(amountReturn[0]._hex)))
+  }else{
+    amountReturn = 0
   }
 
-  // return rate in DAI (USD) total trade value, slippage, ect
-  getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, web3) => {
-    const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
-    const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
-    const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+  return amountReturn
+}
 
-    // get rate for from in DAI
-    const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
-    // get rate for from/to
-    const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
-    // get rate in DAI for from 1 token
-    const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
-    // get rate in DAI for 1 to token
-    const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3)
+// return rate in DAI (USD) total trade value, slippage, ect
+getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, web3) => {
+  const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
+  const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
+  const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
 
-    const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
+  // get rate for from in DAI
+  const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3)
+  // get rate for from/to
+  const amountReturnFromTo = await this.getReturnByPath(pathFromTo, directionAmount, web3)
+  // get rate in DAI for from 1 token
+  const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3)
+  // get rate in DAI for 1 to token
+  const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3)
 
-    const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
+  const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3)
 
-    return {
-      amountReturnFrom,
-      amountReturnFromTo,
-      totalTradeValue,
-      oneFromInUSD,
-      oneToInUSD,
-      slippage
-     }
-  }
+  const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
+
+  return {
+    amountReturnFrom,
+    amountReturnFromTo,
+    totalTradeValue,
+    oneFromInUSD,
+    oneToInUSD,
+    slippage
+   }
+}
 
 
-  calculateSlippage = async (pathFromTo, directionAmount, web3) => {
-    const tinyDiv = directionAmount < 0.001 ? 10 : 1000
-    // formula
-    // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
-    const tinyTrade = Number(directionAmount) / tinyDiv
-    // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
-    const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
-    const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
-    // realTradeRate = useroneFromInUSDFromAmount / userOuputAmountFromRealTrade
-    const ouputAmountFromRealTrade = await this.getReturnByPath(pathFromTo, directionAmount, web3)
-    const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
-    // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
-    let slippage = (1 - realTradeRate / tinyTradeRate) * 100
-    slippage = Math.abs(parseFloat(slippage).toFixed(6))
+calculateSlippage = async (pathFromTo, directionAmount, web3) => {
+  const tinyDiv = directionAmount < 0.001 ? 10 : 1000
+  // formula
+  // tinyTrade = useroneFromInUSDFromAmount  / tinyDiv
+  const tinyTrade = Number(directionAmount) / tinyDiv
+  // tinyTradeRate = tinyTrade / userOuputAmountFromTinyTrade
+  const outputAmountFromTinyTrade = await this.getReturnByPath(pathFromTo, tinyTrade, web3)
+  const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
+  // realTradeRate = useroneFromInUSDFromAmount / userOuputAmountFromRealTrade
+  const ouputAmountFromRealTrade = await this.getReturnByPath(pathFromTo, directionAmount, web3)
+  const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
+  // slippage% = (1 - realTradeRate / tinyTradeRate) * 100
+  let slippage = (1 - realTradeRate / tinyTradeRate) * 100
+  slippage = Math.abs(parseFloat(slippage).toFixed(6))
 
-    return slippage
-  }
+  return slippage
+}
 
-  setDecimals(tokenInfoFrom, tokenInfoTo){
-    console.log("setTokensData");
-    let fromDecimals
-    let toDecimals
 
-    try{
-      fromDecimals = tokenInfoFrom['tokenDecimals']
-    }catch(e){
-      fromDecimals = 18
-    }
 
-    try{
-      toDecimals = tokenInfoTo['tokenDecimals']
-    }catch(e){
-      toDecimals = 18
-    }
-
-    this.setState({ fromDecimals, toDecimals })
-  }
-
-  // update states
-  setTokensData = async () => {
+// update states
+setTokensData = async () => {
   if(this.props.to && this.props.from && this.props.from !== this.props.to && this.props.directionAmount > 0 && this.props.amountReturn > 0){
     this.setState({ loadData:true })
-
     const { objPropsFrom, objPropsTo, tokenInfoFrom, tokenInfoTo, sendFrom, sendTo } = getDirectionData(
       this.props.from,
       this.props.to,
@@ -175,9 +152,6 @@ class DirectionInfo extends Component {
       this.props.useERC20AsSelectFrom,
       this.props.useERC20AsSelectTo
     )
-
-    this.setDecimals(tokenInfoFrom, tokenInfoTo)
-
     const web3 = getWeb3ForRead(this.props.web3)
 
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
@@ -205,8 +179,8 @@ class DirectionInfo extends Component {
       tokenInfoFrom,
       loadData:false
      })
-    }
   }
+}
 
   render(){
    return(
