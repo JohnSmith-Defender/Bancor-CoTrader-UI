@@ -139,7 +139,7 @@ export default function Navbar() {
           </Typography>
 
           <Typography className={classes.logo2} variant="inherit" noWrap>
-            <img className={classes.logoimg} src={logo} alt="Cotrader" />
+            <a href="https://cotrader.com/" target="_blank" rel="noopener noreferrer"><img className={classes.logoimg} src={logo} alt="Cotrader" /></a>
           </Typography>
 
         </Toolbar>
