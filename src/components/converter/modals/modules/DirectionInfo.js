@@ -282,9 +282,10 @@ class DirectionInfo extends Component {
          <small>USD/{this.props.to} <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
        </Typography>*/}
 
-       <Typography component="div">
+       {/*Need fix*/}
+       {/*<Typography component="div">
         <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
-       </Typography>
+       </Typography>*/}
 
        <Typography component="div">
          <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
@@ -294,11 +295,12 @@ class DirectionInfo extends Component {
          <small>Rate {this.props.from}/{this.props.to} <strong style={{color: '#3f51b5'}}>{this.state.rateToFrom}</strong></small>
        </Typography>
 
-       <Typography component="div">
+        {/*Need fix*/}
+       {/*<Typography component="div">
          <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
-       </Typography>
+       </Typography>*/}
 
-       {
+       {/*Need fix
           this.state.tokenInfoFrom && this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
           ?
           (
@@ -307,7 +309,7 @@ class DirectionInfo extends Component {
             </Typography>
           )
           :(null)
-       }
+       */}
       </Paper>
       </React.Fragment>
       )
