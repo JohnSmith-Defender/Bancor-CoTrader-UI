@@ -50,7 +50,7 @@ class DirectionInfo extends Component {
   }
 
   // get user balance
-  getTokensBalance = async (sendFrom, sendTo, web3) => {
+  getTokensBalance = async (sendFrom, sendTo, fromDecimals, toDecimals, web3) => {
     let userBalanceFrom
     let token
     let tokenTo
@@ -59,8 +59,7 @@ class DirectionInfo extends Component {
     if(this.props.from !== "ETH"){
       token = new web3.eth.Contract(ABISmartToken, sendFrom)
       userBalanceFrom = await token.methods.balanceOf(this.props.accounts[0]).call()
-      const userBalanceFromConvert = fromWeiByDecimalsInput(this.state.fromDecimals, userBalanceFrom[0])
-      userBalanceFrom = !isNaN(userBalanceFromConvert) ? userBalanceFromConvert : 0
+      userBalanceFrom = fromWeiByDecimalsInput(fromDecimals, userBalanceFrom)
     }else{
       userBalanceFrom = await web3.eth.getBalance((this.props.accounts[0]))
       userBalanceFrom = fromWei(String(parseFloat(userBalanceFrom).toFixed()))
@@ -69,8 +68,7 @@ class DirectionInfo extends Component {
     if(this.props.to !== "ETH"){
       tokenTo = new web3.eth.Contract(ABISmartToken, sendTo)
       balanceOfTo = await tokenTo.methods.balanceOf(this.props.accounts[0]).call()
-      const balanceOfToConvert = fromWeiByDecimalsInput(this.state.toDecimals, balanceOfTo[0])
-      balanceOfTo = !isNaN(balanceOfToConvert) ? balanceOfToConvert : 0
+      balanceOfTo = fromWeiByDecimalsInput(toDecimals, balanceOfTo)
     }else{
       balanceOfTo = await web3.eth.getBalance((this.props.accounts[0]))
       balanceOfTo = fromWei(String(parseFloat(balanceOfTo).toFixed()))
@@ -190,7 +188,7 @@ class DirectionInfo extends Component {
 
     const web3 = getWeb3ForRead(this.props.web3)
 
-    const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
+    const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, fromDecimals, toDecimals, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
 
     const {
       amountReturnFrom,
