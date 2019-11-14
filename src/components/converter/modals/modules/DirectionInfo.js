@@ -10,6 +10,7 @@ import {
 } from '../../../../config'
 
 import getDirectionData from '../../../../service/getDirectionData'
+import getDecimals from '../../../../service/getDecimals'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
 
@@ -37,8 +38,7 @@ class DirectionInfo extends Component {
       tokenInfoFrom:[],
       fromDecimals:18,
       toDecimals:18,
-      toAverage:0,
-      fromAverage:0
+      rateToFrom:0
   }
   }
 
@@ -98,34 +98,33 @@ class DirectionInfo extends Component {
   }
 
   // return rate in DAI (USD) total trade value, slippage, average
-  getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, web3) => {
+  getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, fromDecimals, toDecimals, web3) => {
     const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
-    const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
+    // const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
     const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
-
     // get rate for from in DAI
-    const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3, this.state.fromDecimals, 18)
+    const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3, fromDecimals, 18)
     // get rate for from/to
     const amountReturnFromTo = await this.getReturnByPath(
       pathFromTo,
       directionAmount,
       web3,
-      this.state.fromDecimals,
-      this.state.toDecimals
+      fromDecimals,
+      toDecimals
     )
 
-    // get rate in DAI for from 1 token
-    const oneFromInUSD = await this.getReturnByPath(pathFrom, 1, web3, this.state.fromDecimals, 18)
+    // get rate in DAI for from 1 token (NOT USED)
+    // Uncoment when this will be need
+    const oneFromInUSD = 0 //await this.getReturnByPath(pathFrom, 1, web3, this.state.fromDecimals, 18)
     // get rate in DAI for 1 to token
-    const oneToInUSD = await this.getReturnByPath(pathTo, 1, web3, this.state.toDecimals, 18)
+    const oneToInUSD = 0 //await this.getReturnByPath(pathTo, 1, web3, this.state.toDecimals, 18)
 
-    // calculateAverage
-    const toAverage = oneToInUSD / amountReturnFromTo
-    const fromAverage = oneFromInUSD / amountReturnFromTo
+    // to : from
+    const rateToFrom = this.props.amountReturn / this.props.directionAmount
 
-    const totalTradeValue = await this.getReturnByPath(pathFrom, directionAmount, web3, this.state.fromDecimals, 18)
+    const totalTradeValue = amountReturnFrom
 
-    const slippage = await this.calculateSlippage(pathFromTo, directionAmount, web3)
+    const slippage = await this.calculateSlippage(pathFromTo, directionAmount, fromDecimals, toDecimals, web3)
 
     return {
       amountReturnFrom,
@@ -134,13 +133,12 @@ class DirectionInfo extends Component {
       oneFromInUSD,
       oneToInUSD,
       slippage,
-      toAverage,
-      fromAverage
+      rateToFrom,
      }
   }
 
 
-  calculateSlippage = async (pathFromTo, directionAmount, web3) => {
+  calculateSlippage = async (pathFromTo, directionAmount, fromDecimals, toDecimals, web3) => {
    let slippage
    try{
     const tinyDiv = directionAmount < 0.001 ? 10 : 1000
@@ -152,8 +150,8 @@ class DirectionInfo extends Component {
       pathFromTo,
       tinyTrade,
       web3,
-      this.state.fromDecimals,
-      this.state.toDecimals
+      fromDecimals,
+      toDecimals
     )
 
     const tinyTradeRate = tinyTrade / outputAmountFromTinyTrade
@@ -162,8 +160,8 @@ class DirectionInfo extends Component {
       pathFromTo,
       directionAmount,
       web3,
-      this.state.fromDecimals,
-      this.state.toDecimals
+      fromDecimals,
+      toDecimals
     )
 
     const realTradeRate = Number(directionAmount) / ouputAmountFromRealTrade
@@ -174,26 +172,6 @@ class DirectionInfo extends Component {
     slippage = 0
   }
     return slippage
-  }
-
-  // set from and to decimals
-  setDecimals(tokenInfoFrom, tokenInfoTo){
-    let fromDecimals
-    let toDecimals
-
-    try{
-      fromDecimals = tokenInfoFrom['tokenDecimals']
-    }catch(e){
-      fromDecimals = 18
-    }
-
-    try{
-      toDecimals = tokenInfoTo['tokenDecimals']
-    }catch(e){
-      toDecimals = 18
-    }
-
-    this.setState({ fromDecimals, toDecimals })
   }
 
   // update states
@@ -208,12 +186,12 @@ class DirectionInfo extends Component {
       this.props.useERC20AsSelectFrom,
       this.props.useERC20AsSelectTo
     )
-
-    this.setDecimals(tokenInfoFrom, tokenInfoTo)
+    const { fromDecimals, toDecimals } = getDecimals(tokenInfoFrom, tokenInfoTo)
 
     const web3 = getWeb3ForRead(this.props.web3)
 
     const { userBalanceFrom, balanceOfTo } = this.props.accounts ? await this.getTokensBalance(sendFrom, sendTo, web3) : { userBalanceFrcom:0, balanceOfTo:0 }
+
     const {
       amountReturnFrom,
       amountReturnFromTo,
@@ -221,9 +199,8 @@ class DirectionInfo extends Component {
       oneFromInUSD,
       oneToInUSD,
       slippage,
-      toAverage,
-      fromAverage
-    } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, web3)
+      rateToFrom
+    } = await this.getRateInfo(objPropsFrom, objPropsTo, this.props.directionAmount, this.props.amountReturn, fromDecimals, toDecimals, web3)
 
     this.setState({
       sendFrom,
@@ -238,8 +215,9 @@ class DirectionInfo extends Component {
       slippage,
       tokenInfoTo,
       tokenInfoFrom,
-      toAverage,
-      fromAverage,
+      rateToFrom,
+      fromDecimals,
+      toDecimals,
       loadData:false
      })
     }
@@ -297,13 +275,14 @@ class DirectionInfo extends Component {
         (null)
       }
 
-       <Typography component="div">
+       {/*Rate from and to in usd (dai) not used*/}
+       {/*<Typography component="div">
         <small>USD/{this.props.from}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
-       </Typography>
+       </Typography>*/}
 
-       <Typography component="div">
+       {/*<Typography component="div">
          <small>USD/{this.props.to} <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
-       </Typography>
+       </Typography>*/}
 
        <Typography component="div">
         <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
@@ -314,18 +293,14 @@ class DirectionInfo extends Component {
        </Typography>
 
        <Typography component="div">
-         <small>USD/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.fromAverage}</strong></small>
-       </Typography>
-
-       <Typography component="div">
-         <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.toAverage}</strong></small>
+         <small>Rate {this.props.from}/{this.props.to} <strong style={{color: '#3f51b5'}}>{this.state.rateToFrom}</strong></small>
        </Typography>
 
        <Typography component="div">
          <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
        </Typography>
 
-        {
+       {
           this.state.tokenInfoFrom && this.state.tokenInfoFrom.hasOwnProperty('conversionFee')
           ?
           (
@@ -334,33 +309,7 @@ class DirectionInfo extends Component {
             </Typography>
           )
           :(null)
-        }
-
-        { // Addition info
-          this.state.tokenInfoFrom && this.state.tokenInfoTo && this.state.tokenInfoFrom.hasOwnProperty('smartTokenSupply') && this.state.tokenInfoTo.hasOwnProperty('smartTokenSupply')
-          ?
-          (
-            <React.Fragment>
-            <Typography component="div">
-             <small>{this.props.from} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['smartTokenSupply'])}</strong></small>
-            </Typography>
-
-           {/* <Typography component="div">
-             <small>{this.props.from} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['connectorOriginalReserve'])}&nbsp;{this.props.from} and {fromWei(this.state.tokenInfoFrom['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoFrom['connectorType']}</strong></small>
-            </Typography> */}
-
-            <Typography component="div">
-             <small>{this.props.to} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['smartTokenSupply'])}</strong></small>
-            </Typography>
-
-          {/*  <Typography component="div">
-             <small>{this.props.to} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['connectorOriginalReserve'])}&nbsp;{this.props.to} and {fromWei(this.state.tokenInfoTo['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoTo['connectorType']}</strong></small>
-            </Typography> */}
-            </React.Fragment>
-          )
-          :
-          (null)
-        }
+       }
       </Paper>
       </React.Fragment>
       )
