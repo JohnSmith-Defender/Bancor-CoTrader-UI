@@ -13,8 +13,36 @@ class EditList extends Component {
     COTverified:true,
     converterInfo:null,
     selectBlackList:'true',
-    selectCOTlist:'true'
+    selectCOTlist:'true',
+    symbolName: null
     }
+  }
+
+  // change symbol or smartTokenSymbol
+  changeSymbolsName = async (column) => {
+    if(this.state.symbolName){
+    if(this.state.converterAddress){
+      const body = {
+        column,
+        value:this.state.symbolName,
+        converterAddress:this.state.converterAddress
+      }
+
+      const head = {
+        headers: {
+        'Authorization': 'Bearer ' + this.props.AdminToken
+        }
+      }
+
+      const res = await axios.post(API_endpoint + '/edit-symbol', body, head)
+      alert(res.data)
+    }else{
+      alert('Please input converter address')
+    }
+   }
+   else{
+     alert('Please input symbol name')
+   }
   }
 
   // change isBlacklisted' or "isCoTraderVerified status
@@ -43,6 +71,7 @@ class EditList extends Component {
     }
   }
 
+  // View status of converter
   getStatus = async () => {
     if(this.state.converterAddress){
       const res = await axios.get(API_endpoint + '/get-converter-status/' +this.state.converterAddress)
@@ -95,7 +124,25 @@ class EditList extends Component {
       </InputGroup.Prepend>
       </InputGroup>
 
+      <hr/>
 
+      <Form.Label>Change symbol</Form.Label>
+      <InputGroup>
+      <Form.Control type="symbol" placeholder="Enter symbol" onChange={(e) => this.setState({ symbolName:e.target.value })}/>
+      <InputGroup.Prepend>
+      <Button variant="outline-secondary" size="sm" onClick={() => this.changeSymbolsName('symbol')}>Apply</Button>
+      </InputGroup.Prepend>
+      </InputGroup>
+
+      <hr/>
+
+      <Form.Label>Change relay symbol</Form.Label>
+      <InputGroup>
+      <Form.Control type="relaySymbol" placeholder="Enter relay symbol" onChange={(e) => this.setState({ symbolName:e.target.value })}/>
+      <InputGroup.Prepend>
+      <Button variant="outline-secondary" size="sm" onClick={() => this.changeSymbolsName('smartTokenSymbol')}>Apply</Button>
+      </InputGroup.Prepend>
+      </InputGroup>
       </Form.Group>
 
       </Form>
