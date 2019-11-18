@@ -22,7 +22,13 @@ function HomePage(props) {
           {bull} This dapp allows you to trade, send, add tokens and earn from liquidity pools in the Bancor network.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
+          {bull} Add new tokens in the "create converter" tab.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
           {bull} Please be careful when choosing unverified tokens.
+          </Typography>
+          <Typography variant="body1" className={'mb-2'} component="p">
+          {bull} Ask us to verify new tokens in "Chat & Support" below.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
           {bull} More updates coming soon.

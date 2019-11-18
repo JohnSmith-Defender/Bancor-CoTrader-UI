@@ -31,12 +31,6 @@ function TradePage(props) {
         <Typography variant="body1" className={'mb-2'} component="p">
         {bull} Our default lists include both Bancor official and CoTrader verified tokens.
         </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        {bull} You can add a new token in the "add converter" tab.
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        {bull} You can ask us to verify the token in "Chat & Support" below.
-      </Typography>
       <Typography variant="body1" className={'mb-2'} component="p">
       {bull} Please be careful when choosing unverified tokens.
     </Typography>
