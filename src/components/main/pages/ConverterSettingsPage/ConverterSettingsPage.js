@@ -104,7 +104,7 @@ class ConverterSettingsPage extends Component {
                 )
                 :
                 (
-                  <Alert variant="warning" style={{color: '#3f51b5'}}>You don't have any converter</Alert>
+                  <Alert variant="warning" style={{color: '#3f51b5'}}>You don't have any converters</Alert>
                 )
               }
               {
