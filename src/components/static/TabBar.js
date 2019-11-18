@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default function TabBar() {
+export default function TabBar(props) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -42,8 +42,17 @@ export default function TabBar() {
           <NavLink to="/send"><Tab className={classes.tab_item} label="Send" icon={<Send />} /></NavLink>
           <NavLink to="/pool"><Tab className={classes.tab_item} label="Pool" icon={<Pool />} /></NavLink>
           <NavLink to="/relay"><Tab className={classes.tab_item} label="Relays" icon={<Timeline />} /></NavLink>
-          <NavLink to="/create-converter"><Tab className={classes.tab_item} label="Create Converter" icon={<Create />} /></NavLink>
-          <NavLink to="/converter-settings"><Tab className={classes.tab_item} label="Converter Settings" icon={<Settings />} /></NavLink>
+          {
+            props.location === '/'
+            ?
+            (
+              <>
+              <NavLink to="/create-converter"><Tab className={classes.tab_item} label="Create Converter" icon={<Create />} /></NavLink>
+              <NavLink to="/converter-settings"><Tab className={classes.tab_item} label="Converter Settings" icon={<Settings />} /></NavLink>
+              </>
+            )
+            :(null)
+          }
         </Grid>
       </AppBar>
 

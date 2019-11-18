@@ -8,7 +8,7 @@ import pageStyles from '../../../css/pageStyles'
 
 const useStyles = pageStyles
 
-function HomePage() {
+function HomePage(props) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}><ArrowRight className={classes.icon} /></span>;
   return (
@@ -19,7 +19,7 @@ function HomePage() {
           Welcome to the Bancor Portal
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} This app allows you to trade, send, add tokens and earn from liquidity pools in the Bancor network.
+          {bull} This dapp allows you to trade, send, add tokens and earn from liquidity pools in the Bancor network.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
           {bull} Please be careful when choosing unverified tokens.
@@ -28,7 +28,7 @@ function HomePage() {
           {bull} More updates coming soon.
         </Typography>
         <Typography className={classes.modal} component="div">
-          <TabBar/>
+          <TabBar location={props.location.pathname}/>
         </Typography>
       </CardContent>
     </Card>

@@ -47,8 +47,13 @@ class SelectSymbols extends Component {
         unofficialSymbols,
         officialSmartTokenSymbols,
         unofficialSmartTokenSymbols,
-        bancorTokensStorageJson
+        bancorTokensStorageJson,
+        useERC20AsSelect:true
       })
+
+      // reset smart tokens select
+      this.props.MobXStorage.updateSelectType("to", true)
+      this.props.MobXStorage.updateSelectType("from", true)
   }
 
   updateMobxSelect = (value) => {

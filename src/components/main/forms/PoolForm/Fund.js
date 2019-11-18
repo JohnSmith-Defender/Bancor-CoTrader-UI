@@ -280,7 +280,7 @@ class Fund extends Component {
       (
         <React.Fragment>
         <Alert variant="info">
-        <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}</a> pool )</small>
+        <small>You will receive {this.state.directionAmount} <a href={EtherscanLink + "token/" + this.state.smartTokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}{this.state.tokenInfo['connectorType']}</a>  (the relay token for the <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}({this.state.tokenInfo['connectorType']})</a> pool )</small>
         </Alert>
 
         {

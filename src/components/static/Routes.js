@@ -5,15 +5,15 @@ import {
   // Redirect
 } from 'react-router-dom'
 
-import TradePage from "../converter/pages/TradePage"
-import HomePage from "../converter/pages/HomePage"
-import SendPage from "../converter/pages/SendPage"
-import RelaysPage from "../converter/pages/RelaysPage"
-import PoolPage from "../converter/pages/PoolPage"
+import TradePage from "../main/pages/TradePage"
+import HomePage from "../main/pages/HomePage"
+import SendPage from "../main/pages/SendPage"
+import RelaysPage from "../main/pages/RelaysPage"
+import PoolPage from "../main/pages/PoolPage"
 // import AddConverter from "../converter/pages/AddConverter"
-import CreateConverter from "../converter/pages/CreateConverter/CreateConverter"
-import ConverterSettingsPage from "../converter/pages/ConverterSettingsPage/ConverterSettingsPage"
-import StablePool from "../converter/pages/StablePoolPage/StablePool"
+import CreateConverter from "../main/pages/CreateConverter/CreateConverter"
+import ConverterSettingsPage from "../main/pages/ConverterSettingsPage/ConverterSettingsPage"
+import StablePool from "../main/pages/StablePoolPage/StablePool"
 
 
 export default function Routes() {
