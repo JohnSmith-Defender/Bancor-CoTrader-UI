@@ -12,7 +12,8 @@ import {
 
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 import BigNumber from 'bignumber.js'
-import { Button, Alert, Form, Card, ButtonGroup } from "react-bootstrap"
+import { Alert, Form, Card } from "react-bootstrap"
+import Button from '@material-ui/core/Button'
 import Pending from '../../../templates/Spiners/Pending'
 import UserInfo from '../../../templates/UserInfo'
 
@@ -57,7 +58,6 @@ class Fund extends Component {
           const BNTAmount = connectorsInfo[0]
           const connectorAmount = connectorsInfo[1]
           const BancorConnectorType = await this.getBancorConnectorType()
-          console.log("BancorConnectorType", BancorConnectorType)
           const {
             tokenInfo,
             smartTokenSupplyOriginal,
@@ -216,46 +216,72 @@ class Fund extends Component {
   }
 
 
-  // TEMPORARY SOLUTION UNTIL ISSUE WITH BATCHREQUEST
-  approveBancorCoonector = async () => {
-    const tokenInfo = this.props.getInfoBySymbol()
-    const converterAddress = tokenInfo[1]
-    const gasPrice = await getBancorGasLimit()
-    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
-    const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
+  approveAndPool = async () => {
+     const web3 = this.props.web3
+     const tokenInfo = this.props.getInfoBySymbol()
+     const converter = tokenInfo[0]
+     const converterAddress = tokenInfo[1]
+     const gasPrice = await getBancorGasLimit()
+     const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+     const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
+     const connectorAddress = tokenInfo[2]
+     const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
 
-    bnt.methods.approve(
-    converterAddress,
-    this.state.BNTAmount
-  ).send({from: this.props.accounts[0], gasPrice})
+     let batch = new web3.BatchRequest()
+     // approve tx 1
+     const approveBancorData = bnt.methods.approve(
+       converterAddress,
+       this.state.BNTAmount
+     ).encodeABI({from: this.props.accounts[0]})
+
+
+     // approve tx 2
+     const approveConnectorData = connector.methods.approve(
+       converterAddress,
+       this.state.connectorAmount
+     ).encodeABI({from: this.props.accounts[0]})
+
+
+     // pool
+     const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
+     .encodeABI({from: this.props.accounts[0]})
+
+     // approve gas should be more than in trade
+     const approveGasPrice = Number(gasPrice) + 2000000000
+
+     const approveBancor = {
+       "from": this.props.accounts[0],
+       "to": bancorConnectorAddress,
+       "value": "0x0",
+       "data": approveBancorData,
+       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
+       "gas": web3.eth.utils.toHex(85000),
+     }
+
+     const approveConnector = {
+       "from": this.props.accounts[0],
+       "to": connectorAddress,
+       "value": "0x0",
+       "data": approveConnectorData,
+       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
+       "gas": web3.eth.utils.toHex(85000),
+     }
+
+     const fund = {
+       "from": this.props.accounts[0],
+       "to": converterAddress,
+       "value": "0x0",
+       "data": poolData,
+       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
+       "gas": web3.eth.utils.toHex(185000),
+     }
+
+
+     batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
+     batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
+     batch.add(web3.eth.sendTransaction.request(fund, () => console.log("Pool")))
+     batch.execute()
   }
-
-  approveConnector = async () => {
-    const tokenInfo = this.props.getInfoBySymbol()
-    const converterAddress = tokenInfo[1]
-    const connectorAddress = tokenInfo[2]
-    const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
-    const gasPrice = await getBancorGasLimit()
-
-    connector.methods.approve(
-    converterAddress,
-    this.state.connectorAmount
-    ).send({from: this.props.accounts[0], gasPrice})
-   }
-
-   fund = async () => {
-     if(this.state.directionAmount > 0){
-       const info = this.props.getInfoBySymbol()
-       const converter = info[0]
-       const gasPrice = await getBancorGasLimit()
-
-       converter.methods.fund(toWei(String(this.state.directionAmount)))
-       .send({ from:this.props.accounts[0], gasPrice})
-     }
-     else {
-       alert("Please input amount")
-     }
-   }
 
   render(){
     return(
@@ -360,12 +386,7 @@ class Fund extends Component {
         <br/>
         <Card className="text-center">
         <Card.Body>
-        <ButtonGroup vertical="true">
-        <Button variant="outline-primary" size="sm" onClick={() => this.approveBancorCoonector()}>Step 1: Approve {this.state.BancorConnectorType}</Button>
-        <Button variant="outline-primary" size="sm" onClick={() => this.approveConnector()}>Step 2: Approve {this.props.from}</Button>
-        <Button variant="outline-primary" size="sm" onClick={() => this.fund()}>Step 3: Fund</Button>
-        </ButtonGroup>
-        <Card.Text><small>Please do not press fund button untill step 1 and 2 will be confirmed</small></Card.Text>
+        <Button variant="contained" color="primary" onClick={() => this.approveAndPool()}>Fund</Button>
         </Card.Body>
         </Card>
         </React.Fragment>

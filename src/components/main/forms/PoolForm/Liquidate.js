@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Button, Form, Alert } from "react-bootstrap"
+import { Form, Alert } from "react-bootstrap"
 import { toWei, fromWei } from 'web3-utils'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
+import Button from '@material-ui/core/Button'
 
 
 class Liquidate extends Component {
@@ -46,7 +47,7 @@ class Liquidate extends Component {
           <React.Fragment>
           <Form.Control name="directionAmount" placeholder="Enter relay amount to liguidate" onChange={e => this.setState({directionAmount:e.target.value})} type="number" min="1"/>
           <br/>
-          <Button variant="outline-primary" size="sm" onClick={() => this.liquidate()}>Liguidate</Button>
+          <Button variant="contained" color="primary" onClick={() => this.liquidate()}>Liguidate</Button>
           </React.Fragment>
         )
         :

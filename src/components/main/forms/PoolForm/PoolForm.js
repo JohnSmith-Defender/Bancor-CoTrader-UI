@@ -49,26 +49,39 @@ class PoolForm extends Component {
   unmounted = false
   componentDidMount(){
     this.unmounted = false
-    // delay for corerct recieve props
-    setTimeout(() => {
-      let officialSymbols = this.props.MobXStorage.officialSymbols
-      const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
-      const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
-
-      // delete BNT from pool
-      officialSymbols = officialSymbols.filter(e => e !== 'BNT')
-
-      if(!this.unmounted)
-      this.setState({
-        officialSymbols,
-        unofficialSymbols,
-        bancorTokensStorageJson
-      })
-    }, 2000)// Update state with tokens data
+    // if data alredy load
+    if(this.props.MobXStorage.bancorTokensStorageJson){
+      this.initData()
+    }
+    // check data status via interval
+    else{
+      const interval = setInterval(() => {
+      if(this.props.MobXStorage.bancorTokensStorageJson){
+        this.initData()
+        clearInterval(interval)
+      }
+    }, 1000)
+    }
   }
 
   componentWillUnmount() {
     this.unmounted = true
+  }
+
+  initData(){
+    let officialSymbols = this.props.MobXStorage.officialSymbols
+    const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
+    const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
+
+    // delete BNT from pool
+    officialSymbols = officialSymbols.filter(e => e !== 'BNT')
+
+    if(!this.unmounted)
+    this.setState({
+      officialSymbols,
+      unofficialSymbols,
+      bancorTokensStorageJson
+    })
   }
 
   getTokenBalance = async (web3, tokenAddress, user) => {
