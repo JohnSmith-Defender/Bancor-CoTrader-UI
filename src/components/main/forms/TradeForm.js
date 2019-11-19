@@ -29,10 +29,9 @@ import {
 import DirectionInfo from './modules/DirectionInfo'
 import SetMinReturn from './modules/SetMinReturn'
 import FakeButton from '../../templates/FakeButton'
-import { Alert, Form } from "react-bootstrap"
+import { Alert, Form, Col, Row } from "react-bootstrap"
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
-import MMBatchManual from '../../static/MMBatchManual'
 
 
 class TradeForm extends Component {
@@ -207,14 +206,18 @@ class TradeForm extends Component {
             {
               this.props.MobXStorage.web3
               ?
-              (
-                /*If connect to web3 */
-                <React.Fragment>
-                <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
-                <hr/>
-                <MMBatchManual/>
-                <hr/>
-                </React.Fragment>
+              ( /*If connect to web3 */
+                <Row>
+                <Col><Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button></Col>
+                <Col>
+                <SetMinReturn
+                amountReturn={this.state.amountReturn}
+                from={this.props.MobXStorage.from}
+                to={this.props.MobXStorage.to}
+                directionAmount={this.state.directionAmount}
+                />
+                </Col>
+                </Row>
               )
               :
               (
@@ -227,13 +230,6 @@ class TradeForm extends Component {
           :
           (null)
         }
-        <br/>
-        <SetMinReturn
-        amountReturn={this.state.amountReturn}
-        from={this.props.MobXStorage.from}
-        to={this.props.MobXStorage.to}
-        directionAmount={this.state.directionAmount}
-        />
         <br/>
         {
           netId === 1

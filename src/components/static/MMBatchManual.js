@@ -1,9 +1,8 @@
+// NOT USED
 import React from 'react'
 import { Modal, Image } from 'react-bootstrap'
 import { useState } from 'react'
 import Button from '@material-ui/core/Button'
-
-
 
 function MMBatchManual(props) {
   const [show, setShow] = useState(false);

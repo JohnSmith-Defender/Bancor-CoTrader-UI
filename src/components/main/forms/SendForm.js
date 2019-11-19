@@ -3,7 +3,7 @@
 // TODO DRY
 
 import React, { Component } from 'react'
-import { Alert, Form } from "react-bootstrap"
+import { Alert, Form, Col, Row } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import SelectSymbols from './modules/SelectSymbols'
 import { isMobile } from 'react-device-detect'
@@ -25,7 +25,6 @@ import getWeb3ForRead from '../../../service/getWeb3ForRead'
 import getPath from '../../../service/getPath'
 import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
-import MMBatchManual from '../../static/MMBatchManual'
 
 import DirectionInfo from './modules/DirectionInfo'
 import FakeButton from '../../templates/FakeButton'
@@ -196,12 +195,17 @@ class SendForm extends Component {
               ?
               (
                 /*If connect to web3 */
-                <React.Fragment>
-                <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
-                <hr/>
-                <MMBatchManual/>
-                <hr/>
-                </React.Fragment>
+                <Row>
+                <Col><Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button></Col>
+                <Col>
+                <SetMinReturn
+                amountReturn={this.state.amountReturn}
+                from={this.props.MobXStorage.from }
+                to={this.props.MobXStorage.to}
+                directionAmount={this.state.directionAmount}
+                />
+                </Col>
+                </Row>
               )
               :
               (
@@ -214,13 +218,6 @@ class SendForm extends Component {
           :
           (null)
         }
-        <br/>
-        <SetMinReturn
-        amountReturn={this.state.amountReturn}
-        from={this.props.MobXStorage.from }
-        to={this.props.MobXStorage.to}
-        directionAmount={this.state.directionAmount}
-        />
         <br/>
         {
           netId === 1

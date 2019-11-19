@@ -3,7 +3,7 @@
 // TODO DRY
 
 import React, { Component } from 'react'
-import { Alert, Form } from "react-bootstrap"
+import { Alert, Form, Row, Col } from "react-bootstrap"
 import { inject, observer } from 'mobx-react'
 import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
@@ -28,7 +28,6 @@ import getPath from '../../../service/getPath'
 import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 import findByProps from '../../../service/findByProps'
-import MMBatchManual from '../../static/MMBatchManual'
 import { isMobile } from 'react-device-detect'
 
 import SelectSymbols from './modules/SelectSymbols'
@@ -232,16 +231,20 @@ class RelaysForm extends Component {
             ( <div>
               <Alert variant="success">You will receive {this.state.amountReturn} {this.props.MobXStorage.to}</Alert>
               {
-                /*Buttons*/
                 this.props.MobXStorage.web3
                 ?
                 (
-                  <React.Fragment>
-                  <Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button>
-                  <hr/>
-                  <MMBatchManual/>
-                  <hr/>
-                  </React.Fragment>
+                  <Row>
+                  <Col><Button variant="contained" color="primary" onClick={() => this.trade()}>Trade</Button></Col>
+                  <Col>
+                  <SetMinReturn
+                  amountReturn={this.state.amountReturn}
+                  from={this.props.MobXStorage.from}
+                  to={this.props.MobXStorage.to}
+                  directionAmount={this.state.directionAmount}
+                  />
+                  </Col>
+                  </Row>
                 )
                 :
                 (
@@ -253,13 +256,6 @@ class RelaysForm extends Component {
             :
             (null)
           }
-          <br/>
-          <SetMinReturn
-          amountReturn={this.state.amountReturn}
-          from={this.props.MobXStorage.from}
-          to={this.props.MobXStorage.to}
-          directionAmount={this.state.directionAmount}
-          />
           <br/>
           {
             netId === 1
