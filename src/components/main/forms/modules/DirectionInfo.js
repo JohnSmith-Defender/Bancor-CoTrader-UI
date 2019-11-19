@@ -7,6 +7,7 @@ import {
   EtherscanLink,
   ABIBancorNetwork,
   BancorNetwork,
+  StableSymbol
 } from '../../../../config'
 
 import getDirectionData from '../../../../service/getDirectionData'
@@ -95,9 +96,9 @@ class DirectionInfo extends Component {
     return amountReturn
   }
 
-  // return rate in DAI (USD) total trade value, slippage, average
+  // return rate in USDB(USDB) total trade value, slippage, average
   getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, fromDecimals, toDecimals, web3) => {
-    const pathFrom = getPath(this.props.from, "DAI", this.props.bancorTokensStorageJson, objPropsFrom)
+    const pathFrom = getPath(this.props.from, StableSymbol, this.props.bancorTokensStorageJson, objPropsFrom)
     // const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
     const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     // get rate for from in DAI
