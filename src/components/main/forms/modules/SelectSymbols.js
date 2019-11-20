@@ -104,7 +104,7 @@ class SelectSymbols extends Component {
                   id="officialTokens"
                   options={this.state.useERC20AsSelect ? this.state.officialSymbols :this.state.officialSmartTokenSymbols}
                   onChange={(s) => this.updateMobxSelect(s[0])}
-                  placeholder={`Choose a token for ${this.props.symbolDirection === 'from' ? 'send' :'receive'}`}
+                  placeholder={`Choose token to ${this.props.symbolDirection === 'from' ? 'send' :'receive'}`}
               />
             )
             :
@@ -115,7 +115,7 @@ class SelectSymbols extends Component {
                   id="unofficialTokens"
                   options={this.state.useERC20AsSelect ? this.state.unofficialSymbols : this.state.unofficialSmartTokenSymbols}
                   onChange={(s) => this.updateMobxSelect(s[0])}
-                  placeholder={`Choose a token for ${this.props.symbolDirection  === 'from' ? 'send' :'receive'}`}
+                  placeholder={`Choose token to ${this.props.symbolDirection  === 'from' ? 'send' :'receive'}`}
               />
             )
           }
