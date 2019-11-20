@@ -125,7 +125,7 @@ render() {
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
-        <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+        <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
         <Form.Group>
          <Form.Label>Enter Address of the Token You'd Like to Create a Relay For:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>

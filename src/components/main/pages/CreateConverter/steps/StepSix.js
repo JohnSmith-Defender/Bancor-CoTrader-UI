@@ -73,7 +73,7 @@ render() {
     <UserInfo label="Bancor documentation" info="Owner: converter address"/>
     </Typography>
 
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.Activation()}>activation</Button>
     </Form>
     </CardContent>

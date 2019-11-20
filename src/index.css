@@ -7,7 +7,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: 40px;
 }
-a {color: #3f51b5;}
+/* Light Theme*/
+.custom_check{color:#3f51b5!important;}
+a, .text_blue {color: #3f51b5;}
+header a, header a:hover {color: #3f51b5;}
+header a button,header a:hover button{opacity: 1 !important;}
+.bg_blue{background-color: #3f51b5}
+
+/* Dark Theme*/
+body.dark a, body.dark .text_blue {color: #039be5;}
+body.dark header a, body.dark header a:hover {color: #039be5;}
+body.dark .custom_check{color:#039be5!important;}
+body.dark .MuiAppBar-colorPrimary, body.dark .MuiButton-containedPrimary, .bg_blue{background-color: #039be5;}
+body.dark .btn.btn-link{color: #039be5 !important}
+body.dark .lds-ellipsis div{background: #039be5 !important}
+body.dark .MuiChip-outlinedPrimary {color: #039be5;border: 1px solid #039be5;}
+
 .btn-primary {background-color: #3f51b5;border-color: #3f51b5;}
 .btn-outline-primary {color: #3f51b5;border-color: #3f51b5;}
 .badge-primary{background-color: #3f51b5;}
@@ -15,8 +30,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+body.dark .form-control{color: inherit;background-color: transparent;}
 .modal-header, .modal-body{color:#333;}
-.custom_check{color:#3f51b5!important;}
+
 .modal-content{max-width: 450px;margin: auto;}
 .alert-warning {
     color: inherit;
@@ -24,6 +40,12 @@ code {
     border-color: inherit;
 }
 form {
-margin: 0 auto;
-width:250px;
+  margin: 0 auto;
+  width:250px;
+}
+.theme_switcher{position: absolute; top: -64px; left: calc(50% - 25px); box-shadow: none; cursor: pointer;}
+.MuiExpansionPanelSummary-content{display:inline!important}
+.MuiExpansionPanelSummary-root.Mui-expanded {min-height: 40px !important;border-radius:4px;}
+@media (max-width:768px) {
+ .theme_switcher {top: -60px;left: calc(50% + 25px);}
 }

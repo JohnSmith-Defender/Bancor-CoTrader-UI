@@ -27,6 +27,7 @@ import Create from '@material-ui/icons/Create'
 import Settings from '@material-ui/icons/Settings'
 import logo from '../../assets/img/logo.png';
 import logo2 from '../../assets/img/bancor-logo.png';
+import Container from '@material-ui/core/Container';
 
 const drawerWidth = 240;
 
@@ -43,6 +44,9 @@ const useStyles = makeStyles(theme => ({
   logo2:{
     marginRight:10,
     maxHeight:25,
+    [theme.breakpoints.down('sm')]: {
+      width: '27px',
+    },
   },
   logoimg:{
     maxHeight:25,
@@ -55,8 +59,8 @@ const useStyles = makeStyles(theme => ({
     zIndex:0,
   },
   appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
+    //width: `calc(100% - ${drawerWidth}px)`,
+    //marginLeft: '58px',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -122,7 +126,8 @@ export default function Navbar() {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
+      <Container maxWidth="md">
+        <Toolbar disableGutters="true">
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -143,6 +148,7 @@ export default function Navbar() {
           </Typography>
 
         </Toolbar>
+        </Container>
       </AppBar>
       <Drawer
         className={classes.drawer}

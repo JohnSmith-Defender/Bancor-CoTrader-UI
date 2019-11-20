@@ -56,7 +56,7 @@ class StepThree extends Component {
     </Typography>
     <Typography className={'mt-2 mb-2'} component="div">
     <hr/>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.addConnector()}>add connector</Button>
     </Form>
     </Typography>

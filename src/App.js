@@ -17,11 +17,8 @@ import getUnofficialData from "./service/getUnofficialData"
 import { Alert } from "react-bootstrap"
 import Container from '@material-ui/core/Container'
 
-import { Button } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import lightblue from "@material-ui/core/colors/lightBlue";
-// import purple from "@material-ui/core/colors/purple";
 import themeicon from './assets/img/themeicon.svg';
 
 class App extends Component {
@@ -39,8 +36,10 @@ class App extends Component {
   changeTheme(){
     if (this.state.themeType === 'dark'){
       this.setState({themeType:'light'});
+      document.body.classList.remove('dark');
     } else {
       this.setState({themeType:'dark'});
+      document.body.classList.add('dark');
     }
   }
 
@@ -143,15 +142,16 @@ class App extends Component {
         primary: {
           light: '#3f51b5',
           main: '#3f51b5',
-          dark: '#3f51b5',
+          dark: '#039be5',
         },
         secondary: {
-          light: lightblue[300],
-          main: lightblue[500],
-          dark: lightblue[700],
+          light: '#3f51b5',
+          main: '#3f51b5',
+          dark: '#039be5',
         },
         background: {
           default: this.state.themeType === 'light' ? '#fff' : '#000',
+          paper: this.state.themeType === 'light' ? '#fff' : '#000',
         },
         type: this.state.themeType
       }
@@ -164,8 +164,8 @@ class App extends Component {
 
 
       <Navbar />
-      <Container maxWidth="xl">
-      <Button variant="contained" color="primary" className={'mb-2 pl-2 pr-2'} onClick={()=>{this.changeTheme()}}><img style={{maxHeight: '24px'}} src={themeicon} alt="Change Theme" title="Change Theme" /></Button>
+      <Container maxWidth="md" className={'text-center'} style={{position: 'relative'}}>
+      <span variant="transparent" color="primary" className={'theme_switcher'} onClick={()=>{this.changeTheme()}}><img style={{maxHeight: '25px'}} src={themeicon} alt="Change Theme" title="Change Theme" /></span>
        <Web3Info isDataLoad={this.state.isDataLoad} web3={this.state.web3}/>
        {
          this.state.netId && this.state.netId !== netId

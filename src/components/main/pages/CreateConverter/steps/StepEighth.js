@@ -55,7 +55,7 @@ render() {
     <Typography variant="body1" className={'mb-2'} component="p">
     To add your token to an unofficial list that will enable anyone to trade it, add it to this registry.
     </Typography>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.AddToList()}>add to list</Button>
     <Button variant="contained" color="secondary" size="medium" onClick={() => this.reset()}>back to step "One"</Button>
     </Form>
