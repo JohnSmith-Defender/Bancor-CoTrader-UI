@@ -120,7 +120,7 @@ class PoolForm extends Component {
         this.props.MobXStorage.bancorTokensStorageJson
         ?
         (
-          <div style={!isMobile ? {align:"left", width: "550px"}: null}>
+          <div style={!isMobile ? {textAlign:"left", maxWidth: "550px", margin:"auto", padding:"20px", border:"1px solid #eee", borderRadius:"10px"}: null}>
             {
               this.state.officialSymbols && this.state.unofficialSymbols
               ?

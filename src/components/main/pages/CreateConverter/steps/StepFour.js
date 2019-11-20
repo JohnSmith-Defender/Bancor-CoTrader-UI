@@ -70,7 +70,7 @@ render() {
     </Typography>
     <Typography className={'mt-2 mb-2'} component="div">
     <hr/>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
     <Form.Group>
     <Form.Control name="fee" value={this.state.fee} onChange={e => this.change(e)} type="number" min="1000"/>
     </Form.Group>

@@ -44,7 +44,7 @@ class StepZero extends Component {
        as the reserve liquidity of your new token exchange?
       </Typography>
 
-      <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+      <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
       <Form.Group controlId="exampleForm.ControlSelect1">
       <Form.Label><small>Select connector type</small></Form.Label>
       <Form.Control as="select" onChange={(e) => this.setState({ connectorType:e.target.value })}>

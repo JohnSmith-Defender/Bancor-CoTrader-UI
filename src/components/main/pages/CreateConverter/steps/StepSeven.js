@@ -43,7 +43,7 @@ render() {
     <Typography variant="body1" className={'mb-2'} component="p">
     The relay will be activate in blockhain only if converter confirm ownership
     </Typography>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+    <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.acceptTokenOwnership()}>accept token ownership</Button>
     </Form>
     </CardContent>

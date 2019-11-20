@@ -95,7 +95,7 @@ render() {
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
-        <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+        <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
         <Form.Control name="fee" value={this.state.maxFee} onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
         <Form.Text className="text-muted">
         Min fee 1000 (0.1%) max fee 1000000 (100%)

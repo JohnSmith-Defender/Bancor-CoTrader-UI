@@ -218,7 +218,7 @@ class RelaysForm extends Component {
       this.props.MobXStorage.bancorTokensStorageJson
       ?
       (
-          <div style={!isMobile ? {align:"left", width: "550px"}: null}>
+          <div style={!isMobile ? {textAlign:"left", maxWidth: "550px", margin:"auto", padding:"20px", border:"1px solid #eee", borderRadius:"10px"}: null}>
           <SelectSymbols symbolDirection="from" useSmartTokenSymbols={true}/>
           <SelectSymbols symbolDirection="to" useSmartTokenSymbols={true}/>
 

@@ -12,8 +12,6 @@ import Create from '@material-ui/icons/Create'
 import Grid from '@material-ui/core/Grid'
 import Settings from '@material-ui/icons/Settings'
 
-
-
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -26,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     //color:'#ffffff',
   },
   app_bg:{
-    backgroundColor : 'rgba(255,255,255,0.1)',
+    backgroundColor : 'rgba(255,255,255,0.05)',
     borderRadius: '4px',
   }
 }));
@@ -38,7 +36,7 @@ export default function TabBar(props) {
     <div className={classes.root}>
       <AppBar position="static" color="secondary" className={classes.app_bg}>
       <Grid container justify="center" alignItems="center">
-          <NavLink to="/trade"><Tab className={classes.tab_item} label="Trade" icon={<SwapHoriz />} /></NavLink>
+          <NavLink to="/trade" color="primary"><Tab color="primary" className={classes.tab_item} label="Trade" icon={<SwapHoriz />} /></NavLink>
           <NavLink to="/send"><Tab className={classes.tab_item} label="Send" icon={<Send />} /></NavLink>
           <NavLink to="/pool"><Tab className={classes.tab_item} label="Pool" icon={<Pool />} /></NavLink>
           <NavLink to="/relay"><Tab className={classes.tab_item} label="Relays" icon={<Timeline />} /></NavLink>

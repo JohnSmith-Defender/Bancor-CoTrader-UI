@@ -4,7 +4,7 @@ const pageStyles = makeStyles(theme => ({
   card: {
     minWidth: 275,
     margin: theme.spacing(2, 0),
-    backgroundColor:'rgba(255,255,255,0.1)',
+    backgroundColor:'rgba(255,255,255,0.05)',
   },
   bullet: {
     display: 'inline-block',
@@ -35,6 +35,24 @@ const pageStyles = makeStyles(theme => ({
     textAlign:'center',
     fontSize:14
   },
+  readmore:{
+    display:'inline-block!important',
+    boxShadow:'none',
+    backgroundColor: 'transparent',
+    '&::before':{
+      backgroundColor:'transparent!important'
+    },
+  },
+  readmorebtn:{
+    display:'inline-block!important',
+    boxShadow:'none',
+    backgroundColor: 'transparent',
+    border:'1px solid #bbb',
+    borderRadius:'4px',   
+  },
+  readmorecontent:{
+    display:'block!important',
+  }
 }))
 
 export default pageStyles
