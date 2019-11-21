@@ -215,7 +215,7 @@ class Fund extends Component {
     return connectorsAmount
   }
 
-
+  // Batch request
   approveAndPool = async () => {
      const web3 = this.props.web3
      const tokenInfo = this.props.getInfoBySymbol()
@@ -228,6 +228,7 @@ class Fund extends Component {
      const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
 
      let batch = new web3.BatchRequest()
+
      // approve tx 1
      const approveBancorData = bnt.methods.approve(
        converterAddress,
@@ -276,6 +277,29 @@ class Fund extends Component {
        "gas": web3.eth.utils.toHex(185000),
      }
 
+     // add additional request reset approve for case if approved alredy BNT or USDB
+     if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
+       let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
+       bancorApproved = hexToNumberString(bancorApproved._hex)
+       console.log("bancorApproved", bancorApproved)
+       if(bancorApproved > 0){
+         const resetApproveData = bnt.methods.approve(
+           converterAddress,
+           0
+         ).encodeABI({from: this.props.accounts[0]})
+
+         const resetApprove = {
+           "from": this.props.accounts[0],
+           "to": bancorConnectorAddress,
+           "value": "0x0",
+           "data": resetApproveData,
+           "gasPrice": web3.eth.utils.toHex(approveGasPrice),
+           "gas": web3.eth.utils.toHex(85000),
+         }
+
+         batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
+       }
+     }
 
      batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
      batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))

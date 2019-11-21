@@ -127,7 +127,7 @@ export default function Navbar() {
         })}
       >
       <Container maxWidth="md">
-        <Toolbar disableGutters="true">
+        <Toolbar disableGutters={true}>
           <IconButton
             color="inherit"
             aria-label="open drawer"

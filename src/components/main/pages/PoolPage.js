@@ -20,7 +20,7 @@ function PoolPage(props) {
   return (
     <React.Fragment>
       <Card className={classes.card}>
-        <CardContent maxWidth="md">
+        <CardContent maxwidth="md">
           <Typography className={classes.modal} component="div">
             <TabBar location={props.location.pathname}/>
           </Typography>
