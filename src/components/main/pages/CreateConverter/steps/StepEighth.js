@@ -20,7 +20,7 @@ class StepEighth extends Component {
    let conf = window.confirm(`Are you sure you want to start from scratch?`)
    if(conf){
      window.localStorage.clear()
-     this.props.MobXStorage.updateStep()
+     window.location.reload()
    }
  }
 

@@ -1,5 +1,4 @@
 import { ABIConverter } from '../../../../../config'
-import { Form } from "react-bootstrap"
 import React, { Component } from 'react'
 
 import Card from '@material-ui/core/Card';
@@ -51,13 +50,11 @@ class StepThree extends Component {
     <strong>Add connector</strong>
     </Typography>
     <Typography variant="body1" className={'mb-2'} component="p">
-    This <UserInfo label="Bancor documentation" info="Existing ERC20 token address, ratio ()constant reserve ratio, represented in ppm, 1-1000000"/> step will be done
+    This <UserInfo label="Bancor documentation" info="Existing ERC20 token address, ratio 50% by default"/> step will be done
     </Typography>
     <Typography className={'mt-2 mb-2'} component="div">
     <hr/>
-    <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
     <Button variant="contained" color="primary" size="medium" onClick={() => this.addReserve()}>add reserve</Button>
-    </Form>
     </Typography>
     </CardContent>
   </Card>
