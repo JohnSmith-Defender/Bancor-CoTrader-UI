@@ -42,14 +42,14 @@ form {margin: 0 auto;width:250px;}
 .MuiExpansionPanelSummary-root.Mui-expanded {min-height: 40px !important;border-radius:4px;}
 .MuiTab-root {min-width: 120px!important;}
 @media only screen and (min-width: 960px) {
-  body.fullWidth_container span[class*="makeStyles-logo2-"], body.fullWidth_container span.jss665{margin-right:90px}
+  body.fullWidth_container span[class*="makeStyles-logo2-"], body.fullWidth_container span.jss1473{margin-right:90px}
   body.fullWidth_container .MuiContainer-maxWidthMd {max-width: 1920px!important;}
   body.laptop_container .MuiContainer-maxWidthMd {max-width: 960px!important;}
   body.tablet_container .MuiContainer-maxWidthMd {max-width: 580px!important;}
 }
 @media only screen and (max-width: 1130px) {
   .screen-toggle-bar{display: none;}
-  body.fullWidth_container span[class*="makeStyles-logo2-"], body.fullWidth_container span.jss665{margin-right:0px}
+  body.fullWidth_container span[class*="makeStyles-logo2-"], body.fullWidth_container span.jss1473{margin-right:0px}
 }
 @media (max-width:768px) {
  .theme_switcher {top: -60px;left: calc(50% + 25px);}
