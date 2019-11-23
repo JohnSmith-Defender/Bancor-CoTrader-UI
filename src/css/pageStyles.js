@@ -26,7 +26,7 @@ const pageStyles = makeStyles(theme => ({
     borderTop: '1px solid #eee',
   },
   modal:{
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(0, 0, 2, 0),
   },
   button:{
     margin: theme.spacing(1),
@@ -48,7 +48,7 @@ const pageStyles = makeStyles(theme => ({
     boxShadow:'none',
     backgroundColor: 'transparent',
     border:'1px solid #bbb',
-    borderRadius:'4px',   
+    borderRadius:'4px',
   },
   readmorecontent:{
     display:'block!important',

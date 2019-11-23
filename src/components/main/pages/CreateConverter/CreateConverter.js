@@ -86,7 +86,7 @@ class CreateConverter extends Component {
             (
               <div className="full-width">
               <br />
-              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong style={{color: '#3f51b5'}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{color: '#3f51b5'}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{color: '#3f51b5'}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
+              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong className="text_blue">do not delete your browser history</strong> before completing all steps. Please <strong className="text_blue"> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong className="text_blue">do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
               {
                 this.state.userAddress && this.state.userAddress !== this.props.MobXStorage.accounts[0]
                 ?
@@ -122,7 +122,7 @@ class CreateConverter extends Component {
       <ConverterSettings MobXStorage={this.props.MobXStorage}/>
 
       <div className="container-fluid" align="center">
-      <small><a style={{color: '#3f51b5'}} href="https://drive.google.com/open?id=1y5jJz8B4fpub-skJCun3FmYAMUMVnUUN" target="_blank" rel="noopener noreferrer">Bancor Documentation</a></small>
+      <small><a href="https://drive.google.com/open?id=1y5jJz8B4fpub-skJCun3FmYAMUMVnUUN" target="_blank" rel="noopener noreferrer">Bancor Documentation</a></small>
       </div>
       </React.Fragment>
     )

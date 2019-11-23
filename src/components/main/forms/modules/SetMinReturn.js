@@ -55,7 +55,7 @@ class SetMinReturn extends Component {
         ?
         (
           <Accordion>
-          <Accordion.Toggle style={{color: '#3f51b5'}} as={Button} onClick={() => this.setState({ show: !this.state.show })} variant="link" eventKey="1">
+          <Accordion.Toggle className="text_blue" as={Button} onClick={() => this.setState({ show: !this.state.show })} variant="link" eventKey="1">
             Advanced settings { this.state.show ? <strong>&uArr;</strong>:  <strong>&dArr;</strong> }
           </Accordion.Toggle>
 
