@@ -164,7 +164,7 @@ render() {
         You can deposit any amounts you want. The ratio of the values in USD will determine the starting price.
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-        <strong style={{color: 'red'}}>Make sure that your <a style={{color: '#3f51b5'}} href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">contract</a> received BOTH tokens, only then press "issue"</strong>
+        <strong style={{color: 'red'}}>Make sure that your <a className="text_blue" href={EtherscanLink + "address/" + this.state.converterAddress} target="_blank" rel="noopener noreferrer">contract</a> received BOTH tokens, only then press "issue"</strong>
         </Typography>
         </React.Fragment>
       )

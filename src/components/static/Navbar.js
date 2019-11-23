@@ -28,6 +28,9 @@ import Settings from '@material-ui/icons/Settings'
 import logo from '../../assets/img/logo.png';
 import logo2 from '../../assets/img/bancor-logo.png';
 import Container from '@material-ui/core/Container';
+import Desktop from '@material-ui/icons/DesktopMac';
+import Laptop from '@material-ui/icons/LaptopMac';
+import Tablet from '@material-ui/icons/Tablet';
 
 const drawerWidth = 240;
 
@@ -117,11 +120,35 @@ export default function Navbar() {
     setOpen(false);
   }
 
+  function fullWidth(){
+    if (!document.body.classList.contains('fullWidth_container')){
+      document.body.classList.remove('tablet_container');
+      document.body.classList.remove('laptop_container');
+      document.body.classList.add('fullWidth_container');
+    }
+  }
+
+  function laptopWidth(){
+    if (!document.body.classList.contains('laptop_container')){
+      document.body.classList.remove('fullWidth_container');
+      document.body.classList.remove('tablet_container');
+      document.body.classList.add('laptop_container');
+    }
+  }
+
+  function tabletWidth(){
+    if (!document.body.classList.contains('tablet_container')){
+      document.body.classList.remove('fullWidth_container');
+      document.body.classList.remove('laptop_container');
+      document.body.classList.add('tablet_container');
+    }
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
-        position="static"
+        position="relative"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
@@ -149,6 +176,13 @@ export default function Navbar() {
 
         </Toolbar>
         </Container>
+
+        <div className="screen-toggle-bar">
+        <Desktop className={'fullscreen-toggle'} onClick={fullWidth} title="Full Screen" style={{fontSize: '25px', cursor: 'pointer', float: 'right', marginLeft: '10px'}}/>
+        <Laptop className={'fullscreen-toggle'} onClick={laptopWidth} title="Medium Screen" style={{fontSize: '25px', cursor: 'pointer', float: 'right', marginLeft: '10px'}}/>
+        <Tablet className={'fullscreen-toggle'} onClick={tabletWidth} title="Small Screen" style={{fontSize: '25px', cursor: 'pointer', float: 'right', marginLeft: '10px'}}/>
+        </div>
+
       </AppBar>
       <Drawer
         className={classes.drawer}

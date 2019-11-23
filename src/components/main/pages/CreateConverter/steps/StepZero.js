@@ -35,11 +35,11 @@ class StepZero extends Component {
       <Typography variant="body1" className={'mb-2'} component="p">
       Do you want
       &thinsp;
-      <a style={{color: '#3f51b5'}} href="https://www.bancor.network/token/BNT" target="_blank" rel="noopener noreferrer">BNT</a>
+      <a className="text_blue" href="https://www.bancor.network/token/BNT" target="_blank" rel="noopener noreferrer">BNT</a>
        &thinsp;
        or
        &thinsp;
-       <a style={{color: '#3f51b5'}} href="https://www.bancor.network/token/USDB" target="_blank" rel="noopener noreferrer">USDB</a>
+       <a className="text_blue" href="https://www.bancor.network/token/USDB" target="_blank" rel="noopener noreferrer">USDB</a>
       &thinsp;
        as the reserve liquidity of your new token exchange?
       </Typography>

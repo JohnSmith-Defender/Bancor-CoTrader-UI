@@ -1,4 +1,4 @@
-// TODO DELETE this file AFTER TESTS 
+// TODO DELETE this file AFTER TESTS
 import React, { Component } from 'react'
 import { hexToNumberString, fromWei, toWei } from 'web3-utils'
 import { Alert } from "react-bootstrap"
@@ -212,8 +212,8 @@ setTokensData = async () => {
       <Chip label="Additional info" style={{marginBottom: '15px'}} variant="outlined" color="primary"/>
         <Typography component="div">
           <small>Etherscan:
-          <strong>{ <a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }</strong>,
-          <strong>{ <a style={{color: '#3f51b5'}} href={EtherscanLink + "token/" + this.state.sendFrom} target="_blank" rel="noopener noreferrer"> {this.props.from}</a> }</strong>
+          <strong>{ <a className="text_blue" href={EtherscanLink + "token/" + this.state.sendTo} target="_blank" rel="noopener noreferrer"> {this.props.to}</a> }</strong>,
+          <strong>{ <a className="text_blue" href={EtherscanLink + "token/" + this.state.sendFrom} target="_blank" rel="noopener noreferrer"> {this.props.from}</a> }</strong>
           </small>
         </Typography>
 
@@ -223,10 +223,10 @@ setTokensData = async () => {
         (
           <React.Fragment>
           <Typography component="div">
-          <small>Your balance of {this.props.from}: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.userBalanceFrom).toFixed(6)}</strong></small>
+          <small>Your balance of {this.props.from}: <strong className="text_blue">{parseFloat(this.state.userBalanceFrom).toFixed(6)}</strong></small>
           </Typography>
           <Typography component="div">
-          <small>Your balance of {this.props.to}: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.balanceOfTo).toFixed(6)}</strong></small>
+          <small>Your balance of {this.props.to}: <strong className="text_blue">{parseFloat(this.state.balanceOfTo).toFixed(6)}</strong></small>
           </Typography>
           </React.Fragment>
         )
@@ -235,27 +235,27 @@ setTokensData = async () => {
       }
 
        <Typography component="div">
-        <small>USD/{this.props.from}: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
+        <small>USD/{this.props.from}: <strong className="text_blue">${parseFloat(this.state.oneFromInUSD).toFixed(6)}</strong></small>
        </Typography>
 
        <Typography component="div">
-        <small>Slippage: <strong style={{color: '#3f51b5'}}>{this.state.slippage} %</strong></small>
+        <small>Slippage: <strong className="text_blue">{this.state.slippage} %</strong></small>
        </Typography>
 
        <Typography component="div">
-         <small>Trade value: <strong style={{color: '#3f51b5'}}>${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
+         <small>Trade value: <strong className="text_blue">${parseFloat(this.state.totalTradeValue).toFixed(6)}</strong></small>
        </Typography>
 
         <Typography component="div">
-          <small>USD/{this.props.to} avg pay rate: <strong style={{color: '#3f51b5'}}>${this.state.oneToInUSD}</strong></small>
+          <small>USD/{this.props.to} avg pay rate: <strong className="text_blue">${this.state.oneToInUSD}</strong></small>
         </Typography>
 
         <Typography component="div">
-          <small>{this.props.to}/{this.props.from} avg pay rate: <strong style={{color: '#3f51b5'}}>{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
+          <small>{this.props.to}/{this.props.from} avg pay rate: <strong className="text_blue">{parseFloat(this.state.amountReturnFromTo).toFixed(6)} {this.props.to}</strong></small>
         </Typography>
 
         <Typography component="div">
-         <small>Fee: <strong style={{color: '#3f51b5'}}>{this.props.fee} {this.props.to}</strong></small>
+         <small>Fee: <strong className="text_blue">{this.props.fee} {this.props.to}</strong></small>
         </Typography>
 
         {
@@ -263,7 +263,7 @@ setTokensData = async () => {
           ?
           (
             <Typography component="div">
-             <small>Converison fee: <strong style={{color: '#3f51b5'}}>{this.state.tokenInfoFrom['conversionFee']} %</strong></small>
+             <small>Converison fee: <strong className="text_blue">{this.state.tokenInfoFrom['conversionFee']} %</strong></small>
             </Typography>
           )
           :(null)
@@ -275,19 +275,19 @@ setTokensData = async () => {
           (
             <React.Fragment>
             <Typography component="div">
-             <small>{this.props.from} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['smartTokenSupply'])}</strong></small>
+             <small>{this.props.from} relay supply: <strong className="text_blue">{fromWei(this.state.tokenInfoFrom['smartTokenSupply'])}</strong></small>
             </Typography>
 
            {/* <Typography component="div">
-             <small>{this.props.from} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoFrom['connectorOriginalReserve'])}&nbsp;{this.props.from} and {fromWei(this.state.tokenInfoFrom['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoFrom['connectorType']}</strong></small>
+             <small>{this.props.from} reserve: <strong className="text_blue">{fromWei(this.state.tokenInfoFrom['connectorOriginalReserve'])}&nbsp;{this.props.from} and {fromWei(this.state.tokenInfoFrom['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoFrom['connectorType']}</strong></small>
             </Typography> */}
 
             <Typography component="div">
-             <small>{this.props.to} relay supply: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['smartTokenSupply'])}</strong></small>
+             <small>{this.props.to} relay supply: <strong className="text_blue">{fromWei(this.state.tokenInfoTo['smartTokenSupply'])}</strong></small>
             </Typography>
 
           {/*  <Typography component="div">
-             <small>{this.props.to} reserve: <strong style={{color: '#3f51b5'}}>{fromWei(this.state.tokenInfoTo['connectorOriginalReserve'])}&nbsp;{this.props.to} and {fromWei(this.state.tokenInfoTo['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoTo['connectorType']}</strong></small>
+             <small>{this.props.to} reserve: <strong className="text_blue">{fromWei(this.state.tokenInfoTo['connectorOriginalReserve'])}&nbsp;{this.props.to} and {fromWei(this.state.tokenInfoTo['connectorBancorReserve'])}&nbsp;{this.state.tokenInfoTo['connectorType']}</strong></small>
             </Typography> */}
             </React.Fragment>
           )

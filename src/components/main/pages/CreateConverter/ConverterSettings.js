@@ -64,7 +64,7 @@ class ConverterSettings extends Component {
         <br/>
         <UserInfo info="The price you pay for gas effects the speed and cost for transactions. Gas prices vary greatly. They tend to be low several hours around midnight, GMT+0, especially on weekends. You can save money by trying expensive transactions during those times."/>
         <br/>
-        <small>Please select <a style={{color: '#3f51b5'}} href={EtherscanLink + "/gasTracker"} target="_blank" rel="noopener noreferrer"> gas price</a></small>
+        <small>Please select <a href={EtherscanLink + "/gasTracker"} target="_blank" rel="noopener noreferrer"> gas price</a></small>
         <br/>
         <ButtonGroup size="sm">
         <Button
