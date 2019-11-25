@@ -170,7 +170,7 @@ export default function Navbar() {
             <img className={classes.logoimg} src={logo2} alt="Bancor" />
           </Typography>
 
-          <Typography className={classes.logo2} variant="inherit" noWrap>
+          <Typography className={'cotrader-logo ' + classes.logo2} variant="inherit" noWrap>
             <a href="https://cotrader.com/" target="_blank" rel="noopener noreferrer"><img className={classes.logoimg} src={logo} alt="Cotrader" /></a>
           </Typography>
 
