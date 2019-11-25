@@ -51,8 +51,7 @@ class Fund extends Component {
   componentDidUpdate = async (prevProps, prevState) => {
     // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
-      if(this.props.from)
-        if(this.state.directionAmount > 0){
+        if(Number(this.state.directionAmount) > 0){
           this.setState({ isLoadData:true })
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
           const BNTAmount = connectorsInfo[0]
