@@ -26,10 +26,10 @@ function TradePage(props) {
           <TradeForm/>
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} This page allows you to add and trade tokens in the Bancor Network.
+          {bull} This page allows you to use tokens in the Bancor Network.
           </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-        {bull} Our default lists include both Bancor official and CoTrader verified tokens.
+        {bull}  Our lists include Bancor official and CoTrader verified tokens.
         </Typography>
       <Typography variant="body1" className={'mb-2'} component="p">
       {bull} Please be careful when choosing unverified tokens.
