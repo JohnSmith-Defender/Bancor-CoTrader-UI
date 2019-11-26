@@ -48,10 +48,9 @@ class Fund extends Component {
     })
   }
 
-  // componentDidUpdate = async (prevState, prevProps) => {
-  calculate = async () => {
+  componentDidUpdate = async (prevProps, prevState) => {
     // Update connectors info by input change
-    //if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
+    if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
         if(Number(this.state.directionAmount) > 0 && this.props.from){
           this.setState({ isLoadData:true })
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
@@ -107,7 +106,7 @@ class Fund extends Component {
             isLoadData:false
           })
       }
-    //}
+    }
   }
 
   // return smart token supply (old and new with input) as BN,
@@ -314,10 +313,7 @@ class Fund extends Component {
       this.props.web3
       ?
       (
-        <>
         <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
-        <Button variant="contained" color="primary" onClick={() => this.calculate()}>Calculate</Button>
-        </>
       )
       :
       (
