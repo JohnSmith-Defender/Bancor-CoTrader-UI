@@ -92,18 +92,7 @@ class Fund extends Component {
         }else{
           this.setState({
             BNTAmount:0,
-            connectorAmount:0,
-            smartTokenAddress:undefined,
-            smartTokenSupplyOriginal:0,
-            newSmartTokenSupply:0,
-            newUserPercent:0,
-            tokenAddress:undefined,
-            smartTokenBalance:0,
-            currentUserPercent:0,
-            userBNTBalance:0,
-            userConnectorBalance:0,
-            tokenInfo:null,
-            isLoadData:false
+            payAmount:0
           })
       }
     }
