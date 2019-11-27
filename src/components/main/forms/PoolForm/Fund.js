@@ -425,7 +425,7 @@ class Fund extends Component {
           )
           :
           (
-            <Alert style={{ backgroundColor:"#F5F524" }}>Sorry this token can't use pool function</Alert>
+            <Alert style={{ backgroundColor:"#F5F524" }}>{this.props.from} &thinsp; converter needs an upgrade to enable pool</Alert>
           )
         }
         </Card.Body>
