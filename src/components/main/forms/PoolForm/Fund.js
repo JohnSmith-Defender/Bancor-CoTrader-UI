@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
 import { fromWeiByDecimals, fromWeiByDecimalsInput } from '../../../../service/weiByDecimals'
-
 import {
   ABISmartToken,
   BNTToken,
@@ -16,6 +15,8 @@ import { Alert, Form, Card } from "react-bootstrap"
 import Button from '@material-ui/core/Button'
 import Pending from '../../../templates/Spiners/Pending'
 import UserInfo from '../../../templates/UserInfo'
+import poolBlackList from '../../../../storage/poolBlackList'
+
 
 class Fund extends Component {
   constructor(props, context) {
@@ -36,7 +37,8 @@ class Fund extends Component {
     BancorConnectorType:null,
     payAmount:0,
     tokenInfo:null,
-    isLoadData:false
+    isLoadData:false,
+    isBlackListed:false
     }
   }
 
@@ -72,6 +74,9 @@ class Fund extends Component {
 
           const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
 
+          // check if pool converter in BlackList
+          const isBlackListed = this.checkBlackList(tokenInfo["converterAddress"])
+
           this.setState({
             tokenInfo,
             BNTAmount,
@@ -87,6 +92,7 @@ class Fund extends Component {
             userConnectorBalance,
             BancorConnectorType,
             payAmount,
+            isBlackListed,
             isLoadData:false
           })
         }else{
@@ -96,6 +102,11 @@ class Fund extends Component {
           })
       }
     }
+  }
+
+  checkBlackList = (converter) => {
+    const isBlackListed = poolBlackList.includes(converter)
+    return isBlackListed
   }
 
   // return smart token supply (old and new with input) as BN,
@@ -406,7 +417,17 @@ class Fund extends Component {
         <br/>
         <Card className="text-center">
         <Card.Body>
-        <Button variant="contained" color="primary" onClick={() => this.approveAndPool()}>Fund</Button>
+        {
+          !this.state.isBlackListed
+          ?
+          (
+            <Button variant="contained" color="primary" onClick={() => this.approveAndPool()}>Fund</Button>
+          )
+          :
+          (
+            <Alert style={{ backgroundColor:"#F5F524" }}>Sorry this token can't use pool function</Alert>
+          )
+        }
         </Card.Body>
         </Card>
         </React.Fragment>
