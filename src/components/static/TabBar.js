@@ -11,6 +11,7 @@ import Timeline from '@material-ui/icons/Timeline'
 import Create from '@material-ui/icons/Create'
 import Grid from '@material-ui/core/Grid'
 import Settings from '@material-ui/icons/Settings'
+import Add from '@material-ui/icons/Add'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,8 +46,9 @@ export default function TabBar(props) {
             ?
             (
               <>
-              <NavLink to="/create-converter"><Tab className={classes.tab_item} label="Create Converter" icon={<Create />} /></NavLink>
-              <NavLink to="/converter-settings"><Tab className={classes.tab_item} label="Converter Settings" icon={<Settings />} /></NavLink>
+              <NavLink to="/create-converter"><Tab className={classes.tab_item} label="Create" icon={<Create />} /></NavLink>
+              <NavLink to="/add-converter"><Tab className={classes.tab_item} label="Add" icon={<Add />} /></NavLink>
+              <NavLink to="/converter-settings"><Tab className={classes.tab_item} label="Settings" icon={<Settings />} /></NavLink>
               </>
             )
             :(null)

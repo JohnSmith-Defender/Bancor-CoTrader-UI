@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../config'
+import { ConvertersRegistryList, ConvertersRegistryListABI, ABIConverter } from '../../../config'
 import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -12,32 +12,45 @@ import Button from '@material-ui/core/Button';
 class AddConverter extends Component {
   state = {
   isFinish:false,
-  smartToken: '',
   converter: ''
   }
 
-  change = e => {
-     this.setState({
-       [e.target.name]: e.target.value
-     })
+
+  AddToList = async () => {
+     const web3 = this.props.MobXStorage.web3
+     const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+     const status = await this.isThisTypeConverter(web3, this.state.converter)
+
+     if(status){
+       registry.methods.addConverter(this.state.converter).send({
+         from:this.props.MobXStorage.accounts[0]
+       }).on('transactionHash', (hash) => {
+        this.setState({ isFinish:true })
+       })
+     }else{
+       alert('You are trying add wrong converter address or not workable converter')
+     }
   }
 
- AddToList = async () => {
-  const web3 = this.props.MobXStorage.web3
-  const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
-  console.log(this.state.converter)
+  isThisTypeConverter = async (web3, converterAddress) => {
+    let status = false
+    try{
+      const converter = new web3.eth.Contract(ABIConverter, converterAddress)
+      const connectorOne = await converter.methods.connectorTokens(0).call()
+      const connectorTwo = await converter.methods.connectorTokens(1).call()
 
-  registry.methods.addConverter(String(this.state.converter)).send({
-    from:this.props.MobXStorage.accounts[0]
-  }).on('transactionHash', (hash) => {
-   this.setState({ isFinish:true })
-  })
- }
+      if(web3.utils.isAddress(connectorOne) && web3.utils.isAddress(connectorTwo))
+      status = true
+    }catch(e){
+      console.log("error:", e)
+    }
+    return status
+  }
 
-render() {
-  return(
-    <React.Fragment>
-   {
+ render() {
+   return(
+     <React.Fragment>
+     {
      this.props.MobXStorage.web3
      ?
      (
@@ -48,17 +61,19 @@ render() {
               Add converter
             </Typography>
             <Typography variant="body1" className={'mb-2'} component="p">
-              To add your token to an unofficial list that will enable anyone to trade it, add it to this registry contract.
+              This page allows you add the converter to unofficial registry contract if you missed step 8
             </Typography>
             <Typography className={'mt-2 mb-2'} component="div">
             <hr/>
-            <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%'}}>
+
             <Form.Group>
+            <Form style={{margin: '10px 0', maxWidth: '350px', width:'100%', marginLeft: "auto", marginRight: "auto"}}>
              <Form.Label>Your converter address</Form.Label>
-             <Form.Control name="converter" placeholder="Your converter address" onChange={e => this.change(e)}/>
+             <Form.Control name="converter" placeholder="Your converter address" onChange={e => this.setState({ converter:e.target.value })}/>
+           </Form>
             </Form.Group>
             <Button variant="contained" color="primary" size="medium" onClick={() => this.AddToList()}>add to list</Button>
-            </Form>
+
             </Typography>
           </CardContent>
         </Card>

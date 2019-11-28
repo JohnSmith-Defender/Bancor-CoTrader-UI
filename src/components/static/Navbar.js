@@ -22,6 +22,7 @@ import Home from '@material-ui/icons/Home';
 import SwapHoriz from '@material-ui/icons/SwapHoriz'
 import Send from '@material-ui/icons/Send'
 import Pool from '@material-ui/icons/Pool'
+import Add from '@material-ui/icons/Add'
 import Timeline from '@material-ui/icons/Timeline'
 import Create from '@material-ui/icons/Create'
 import Settings from '@material-ui/icons/Settings'
@@ -238,17 +239,25 @@ export default function Navbar() {
 
 
         <NavLink to="/create-converter" onClick={() => handleDrawerClose()}>
-        <ListItem button key={"Create converter"}>
+        <ListItem button key={"Create"}>
           <ListItemIcon><Create/></ListItemIcon>
-          <ListItemText primary={'Create converter'} />
+          <ListItemText primary={'Create'} />
+        </ListItem>
+        </NavLink>
+
+
+        <NavLink to="/add-converter" onClick={() => handleDrawerClose()}>
+        <ListItem button key={"Add"}>
+          <ListItemIcon><Add /></ListItemIcon>
+          <ListItemText primary={'Add'} />
         </ListItem>
         </NavLink>
 
 
         <NavLink to="/converter-settings" onClick={() => handleDrawerClose()}>
-        <ListItem button key={"Converter settings"}>
+        <ListItem button key={"Settings"}>
           <ListItemIcon><Settings /></ListItemIcon>
-          <ListItemText primary={'Converter settings'} />
+          <ListItemText primary={'Settings'} />
         </ListItem>
         </NavLink>
 
