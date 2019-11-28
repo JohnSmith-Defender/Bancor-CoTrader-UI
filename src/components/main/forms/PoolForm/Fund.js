@@ -313,7 +313,7 @@ class Fund extends Component {
       this.props.web3
       ?
       (
-        <Form.Control name="directionAmount" placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
+        <Form.Control name="directionAmount" value={this.state.directionAmount} placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
       )
       :
       (
