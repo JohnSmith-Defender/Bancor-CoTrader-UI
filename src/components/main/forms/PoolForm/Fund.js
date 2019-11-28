@@ -53,7 +53,16 @@ class Fund extends Component {
   componentDidUpdate = async (prevProps, prevState) => {
     // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
-        if(Number(this.state.directionAmount) > 0 && this.props.from){
+      this.setState({
+        BNTAmount:0,
+        payAmount:0
+      })
+    }
+  }
+
+  calculate = async () => {
+    // Update connectors info by input change
+    if(Number(this.state.directionAmount) > 0 && this.props.from){
           this.setState({ isLoadData:true })
           const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
           const BNTAmount = connectorsInfo[0]
@@ -101,7 +110,6 @@ class Fund extends Component {
             payAmount:0
           })
       }
-    }
   }
 
   checkBlackList = (converter) => {
@@ -313,7 +321,21 @@ class Fund extends Component {
       this.props.web3
       ?
       (
-        <Form.Control name="directionAmount" value={this.state.directionAmount} placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
+        <>
+        {
+          !this.state.isLoadData
+          ?
+          (
+            <>
+            <Form.Control name="directionAmount" value={this.state.directionAmount} placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
+            <Button variant="contained" color="primary" onClick={() => this.calculate()}>Calculate</Button>
+            <br/>
+            </>
+          )
+          :
+          (null)
+        }
+        </>
       )
       :
       (
