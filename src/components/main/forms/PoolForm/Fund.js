@@ -70,7 +70,7 @@ class Fund extends Component {
             smartTokenBalance,
             userBNTBalance,
             userConnectorBalance
-          } = await this.getRelayInfo()
+          } = await this.getRelayInfo(BancorConnectorType)
 
           const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
 
@@ -111,7 +111,7 @@ class Fund extends Component {
 
   // return smart token supply (old and new with input) as BN,
   // and userPercent as number and token and relay address and smartTokenBalance
-  getRelayInfo = async () => {
+  getRelayInfo = async (BancorConnectorType) => {
     const info = this.props.getInfoBySymbol()
     const tokenAddress = info[2]
     const smartTokenAddress = info[3]
@@ -137,8 +137,8 @@ class Fund extends Component {
       currentUserPercent = await this.calculateUserPercentFromSupply(smartTokenBalanceBN, smartTokenSupplyOriginal)
       // add to input curent user balance
       share = share.plus(smartTokenBalanceBN)
-
-      userBNTBalance = await this.props.getTokenBalance(this.props.web3, BNTToken, this.props.accounts[0])
+      const BNT_type = BancorConnectorType === "USDB" ? USDBToken : BNTToken
+      userBNTBalance = await this.props.getTokenBalance(this.props.web3, BNT_type, this.props.accounts[0])
       userConnectorBalance = await this.props.getTokenBalance(this.props.web3, tokenAddress, this.props.accounts[0])
     }
 
