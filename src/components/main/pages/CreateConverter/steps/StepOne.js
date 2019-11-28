@@ -73,12 +73,12 @@ class StepOne extends Component {
          window.localStorage.setItem('userToken', tokenAddress)
          window.localStorage.setItem('tokenSymbol', symbol)
 
-         console.log("PARAMS: ", stname, stsymbol, decimals)
+         console.log("PARAMS: ", stname, stsymbol, 18)
          const gasPrice = this.props.MobXStorage.GasPrice
 
          contract.deploy({
              data: BYTECODESmartToken,
-             arguments: [stname, stsymbol, decimals]
+             arguments: [stname, stsymbol, 18]
          })
          .send({
            from: accounts[0],
