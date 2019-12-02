@@ -353,10 +353,8 @@ class Fund extends Component {
         <Alert variant="info">
         <small>You get {this.state.directionAmount}
         &thinsp;
-        <a href={EtherscanLink + "token/" + this.state.smartTokenAddress}target="_blank" rel="noopener noreferrer">{this.props.from}{this.state.tokenInfo['connectorType'] !== 'USDB' ? <>{this.state.tokenInfo['connectorType']}</> : null}</a>,
-        &thinsp;
-        which is the relay token for the
-        &thinsp;
+        <a href={EtherscanLink + "token/" + this.state.smartTokenAddress}target="_blank" rel="noopener noreferrer">{this.state.tokenInfo['smartTokenSymbol']}</a>,
+        &thinsp; which is the relay token for the &thinsp;
         <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}{this.state.tokenInfo['connectorType'] !== 'USDB' ? <>({this.state.tokenInfo['connectorType']})</> : null}</a>
         &thinsp;
         token</small>
@@ -367,7 +365,10 @@ class Fund extends Component {
           ?
           (
             <Alert variant="info">
-            <small>Pool earns trade fee {this.state.tokenInfo['conversionFee']}% ({<UserInfo label="?" info={`The pool relay token holders of ${this.props.from}/${this.state.tokenInfo['connectorType']} earn the x% converter fee of every trade of ${this.props.from}`}/>})</small>
+            <small>
+            Pool earns trade fee {this.state.tokenInfo['conversionFee']}% ({<UserInfo label="?" info={`The pool relay token holders of ${this.props.from}/${this.state.tokenInfo['connectorType']} earn the x% converter fee of every trade of ${this.props.from}`}/>})
+            from converter: {<a href={EtherscanLink + "address/" + this.state.tokenInfo['converterAddress']}target="_blank" rel="noopener noreferrer">{this.state.tokenInfo['converterAddress'].slice(0, -34)}...</a>}
+            </small>
             </Alert>
           )
           :
@@ -378,33 +379,30 @@ class Fund extends Component {
           ?
           (
             <Alert variant="info">
-            <small>Pool liquidity depth {this.props.from}: &nbsp; {fromWeiByDecimalsInput(this.state.tokenInfo["tokenDecimals"], String(this.state.tokenInfo["connectorOriginalReserve"]))} and {this.state.tokenInfo["connectorType"]}: &nbsp;{fromWei(String(this.state.tokenInfo["connectorBancorReserve"]))}(<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
+            <small>Pool liquidity depth:</small>
+            <br/>
+            <small>{this.props.from}: &nbsp; {fromWeiByDecimalsInput(this.state.tokenInfo["tokenDecimals"], String(this.state.tokenInfo["connectorOriginalReserve"]))}</small>
+            <br/>
+            <small>{this.state.tokenInfo["connectorType"]}: &nbsp;{fromWei(String(this.state.tokenInfo["connectorBancorReserve"]))}(<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
             </Alert>
           )
           :
           (null)
         }
         <Alert variant="warning">
-        <small>You will pay {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
+        <small>You will stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
         </Alert>
 
         <Alert variant="primary">
-        <small>Current supply of {this.props.from}{this.state.BancorConnectorType} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))},</small>
-        {
-          this.props.accounts
-          ?
-          (
-            <React.Fragment>
-            <small>Your share is {this.state.currentUserPercent} %</small>
-            </React.Fragment>
-          )
-          :
-          (null)
-        }
+        <small>Current supply of {this.props.from}{this.state.BancorConnectorType} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}</small>
+        <br/>
+        <small>Your share is {this.state.currentUserPercent} %</small>
         </Alert>
 
         <Alert variant="primary">
-        <small>Your share will be {this.state.newUserPercent} % of  {fromWei(String(this.state.newSmartTokenSupply.toFixed(0)))} new supply</small>
+        <small>Your share will be {this.state.newUserPercent} % from:</small>
+        <br/>
+        <small>new supply {fromWei(String(this.state.newSmartTokenSupply.toFixed(0)))}</small>
         </Alert>
 
         {
@@ -425,7 +423,7 @@ class Fund extends Component {
               Number(fromWei(String(this.state.BNTAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
               ?
               (
-                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.state.BancorConnectorType}</NavLink> you need ({fromWei(String(this.state.BNTAmount))}) </Alert></small>
+                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.state.tokenInfo["smartTokenSymbol"]}</NavLink> you need ({fromWei(String(this.state.BNTAmount))}) </Alert></small>
               )
               :
               (null)
@@ -435,6 +433,7 @@ class Fund extends Component {
           :
           (null)
         }
+
         {/* Buttons */}
         <br/>
         <Card className="text-center">
