@@ -350,8 +350,12 @@ class Fund extends Component {
       ?
       (
         <React.Fragment>
+        <Alert variant="warning">
+        <small>Stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
+        </Alert>
+
         <Alert variant="info">
-        <small>You get {this.state.directionAmount}
+        <small>Get {this.state.directionAmount}
         &thinsp;
         <a href={EtherscanLink + "token/" + this.state.smartTokenAddress}target="_blank" rel="noopener noreferrer">{this.state.tokenInfo['smartTokenSymbol']}</a>,
         &thinsp; which is the relay token for the &thinsp;
@@ -379,19 +383,16 @@ class Fund extends Component {
           ?
           (
             <Alert variant="info">
-            <small>Pool liquidity depth:</small>
+            <small>Pool liquidity depth:(<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
             <br/>
             <small>{this.props.from}: &nbsp; {fromWeiByDecimalsInput(this.state.tokenInfo["tokenDecimals"], String(this.state.tokenInfo["connectorOriginalReserve"]))}</small>
             <br/>
-            <small>{this.state.tokenInfo["connectorType"]}: &nbsp;{fromWei(String(this.state.tokenInfo["connectorBancorReserve"]))}(<UserInfo label="?" info="ROI per Trade per Liquidity Depth (LD): The higher your share (holding %) of the pool’s relay tokens, the larger your earnings-per-trade of the token. This explains what the ROI per Trade *would be* for the given LD now"/>)</small>
+            <small>{this.state.tokenInfo["connectorType"]}: &nbsp;{fromWei(String(this.state.tokenInfo["connectorBancorReserve"]))}</small>
             </Alert>
           )
           :
           (null)
         }
-        <Alert variant="warning">
-        <small>You will stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
-        </Alert>
 
         <Alert variant="primary">
         <small>Current supply of {this.props.from}{this.state.BancorConnectorType} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}</small>
