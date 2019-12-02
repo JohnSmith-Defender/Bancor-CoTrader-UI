@@ -395,7 +395,7 @@ class Fund extends Component {
         }
 
         <Alert variant="primary">
-        <small>Current supply of {this.props.from}{this.state.BancorConnectorType} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}</small>
+        <small>Current supply of {this.state.tokenInfo["smartTokenSymbol"]} is {fromWei(String(this.state.smartTokenSupplyOriginal.toFixed(0)))}</small>
         <br/>
         <small>Your share is {this.state.currentUserPercent} %</small>
         </Alert>
