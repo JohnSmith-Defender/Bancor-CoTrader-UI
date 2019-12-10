@@ -73,8 +73,9 @@ class PoolForm extends Component {
     const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
     const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
 
-    // delete BNT from pool
+    // delete BNT and ETH from pool
     officialSymbols = officialSymbols.filter(e => e !== 'BNT')
+    officialSymbols = officialSymbols.filter(e => e !== 'ETH')
 
     if(!this.unmounted)
     this.setState({
