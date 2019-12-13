@@ -37,7 +37,7 @@ class StepFour extends Component {
 
      converter.methods.setConversionFee(this.state.fee).send({
        from:accounts[0],
-       gas:1372732,
+       gas:1872732,
        gasPrice
      }).on('transactionHash', (hash) => {
       console.log("SetFee hash ", hash)

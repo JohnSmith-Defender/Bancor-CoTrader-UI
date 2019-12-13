@@ -263,7 +263,7 @@ class Fund extends Component {
        "value": "0x0",
        "data": approveBancorData,
        "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(85000),
+       "gas": web3.eth.utils.toHex(1872732),
      }
 
      const approveConnector = {
@@ -272,7 +272,7 @@ class Fund extends Component {
        "value": "0x0",
        "data": approveConnectorData,
        "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(85000),
+       "gas": web3.eth.utils.toHex(1872732),
      }
 
      const fund = {
@@ -281,7 +281,7 @@ class Fund extends Component {
        "value": "0x0",
        "data": poolData,
        "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(185000),
+       "gas": web3.eth.utils.toHex(1872732),
      }
 
      // add additional request reset approve for case if approved alredy BNT or USDB
@@ -301,7 +301,7 @@ class Fund extends Component {
            "value": "0x0",
            "data": resetApproveData,
            "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-           "gas": web3.eth.utils.toHex(85000),
+           "gas": web3.eth.utils.toHex(1872732),
          }
 
          batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))

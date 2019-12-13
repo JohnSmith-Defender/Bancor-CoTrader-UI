@@ -17,6 +17,7 @@ class StepSeven extends Component {
 
   registry.methods.acceptTokenOwnership().send({
     from:accounts[0],
+    gas:1872732,
     gasPrice
   }).on('transactionHash', (hash) => {
    console.log("acceptTokenOwnership hash ", hash)

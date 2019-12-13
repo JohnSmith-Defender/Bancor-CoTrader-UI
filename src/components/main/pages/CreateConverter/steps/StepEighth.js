@@ -33,6 +33,7 @@ class StepEighth extends Component {
 
   registry.methods.addConverter(converterAddress).send({
     from:accounts[0],
+    gas:1872732,
     gasPrice
   }).on('transactionHash', (hash) => {
    this.setState({ isFinish:true })

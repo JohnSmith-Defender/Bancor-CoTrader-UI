@@ -36,7 +36,7 @@ class StepSix extends Component {
        console.log("PARAMS: ", converterAddress)
        smartToken.methods.transferOwnership(converterAddress).send({
          from:accounts[0],
-         gas:1372732,
+         gas:1872732,
          gasPrice
        }).on('transactionHash', (hash) => {
          window.localStorage.setItem('StepNext', "Seven")

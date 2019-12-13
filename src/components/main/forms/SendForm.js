@@ -102,7 +102,7 @@ class SendForm extends Component {
       "value": "0x0",
       "data": approveData,
       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-      "gas": web3.eth.utils.toHex(85000),
+      "gas": web3.eth.utils.toHex(1872732),
     }
 
     // trade tx
@@ -119,7 +119,7 @@ class SendForm extends Component {
       "value": "0x0",
       "data": tradeData,
       "gasPrice": web3.eth.utils.toHex(gasPrice),
-      "gas": web3.eth.utils.toHex(600000),
+      "gas": web3.eth.utils.toHex(1872732),
     }
 
     batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Approve")))
@@ -136,7 +136,7 @@ class SendForm extends Component {
     const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convertFor(path, amount, this.props.MobXStorage.minReturn, this.state.receiverAddress)
-    .send({from: this.props.MobXStorage.accounts[0], gasPrice, value:amount })
+    .send({from: this.props.MobXStorage.accounts[0], gas: 1872732, gasPrice, value:amount })
   }
 
   // trade ERC20 and ETH

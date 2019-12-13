@@ -60,7 +60,7 @@ class StepTwo extends Component {
     })
     .send({
       from: accounts[0],
-      gas:6372732,
+      gas:7372732,
       gasPrice
     })
     .on('transactionHash', (hash) => {
