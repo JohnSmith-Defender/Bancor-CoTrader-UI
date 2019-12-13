@@ -96,7 +96,7 @@ class StepFive extends Component {
 
     converter.methods.issue(accounts[0], balance).send({
       from:accounts[0],
-      gas:2372732,
+      gas:1872732,
       gasPrice
     }).on('transactionHash', (hash) => {
      console.log("SetFee hash ", hash)

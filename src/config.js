@@ -4,30 +4,30 @@ export const StableSymbol = "USDB(USDB)"
 export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
 // MAINNET
-// export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
-// export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
-// export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
-// export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-// export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
-// // old // export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
-// export const BancorNetwork = "0x0e936B11c2e7b601055e58c7E32417187aF4de4a"
-// export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
-// export const EtherscanLink = "https://etherscan.io/"
-// export const gasPrice = 2000000000 // 2 gwei low gas price by default
-// export const netId = 1
+export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
+export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
+export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
+export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
+export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
+// old // export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
+export const BancorNetwork = "0x0e936B11c2e7b601055e58c7E32417187aF4de4a"
+export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
+export const EtherscanLink = "https://etherscan.io/"
+export const gasPrice = 2000000000 // 2 gwei low gas price by default
+export const netId = 1
 
 
 // ROPSTEN Bancor official
-export const BancorRegistry = "0x8a69A7d7507F8c4a9dD5dEB9B687B30D2b30A011"
-export const BNTToken = "0x9C7d1F4a027C64Af951858FD0F9CB3C91e008829"
-export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
-export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-export const ConvertersRegistryList = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
-export const BancorNetwork = "0x4dEdE3053e0085336a259961f58FcBbc23cf0ae5"
-export const BancorETH = "0xB3c7552F3A837Dc2B11624aE8f56bEAb41c8db0C"
-export const EtherscanLink = "https://ropsten.etherscan.io/"
-export const gasPrice = 5000000000 // 4 gwei
-export const netId = 3
+// export const BancorRegistry = "0x8a69A7d7507F8c4a9dD5dEB9B687B30D2b30A011"
+// export const BNTToken = "0x9C7d1F4a027C64Af951858FD0F9CB3C91e008829"
+// export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
+// export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
+// export const ConvertersRegistryList = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
+// export const BancorNetwork = "0x4dEdE3053e0085336a259961f58FcBbc23cf0ae5"
+// export const BancorETH = "0xB3c7552F3A837Dc2B11624aE8f56bEAb41c8db0C"
+// export const EtherscanLink = "https://ropsten.etherscan.io/"
+// export const gasPrice = 5000000000 // 4 gwei
+// export const netId = 3
 
 // ROPSTEN OLD (Not used)
 // export const BancorRegistry = "0xacbd1c5e8efae0387835841694f1c9e515052e54"

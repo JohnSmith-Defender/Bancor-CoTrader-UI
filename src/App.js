@@ -85,16 +85,15 @@ class App extends Component {
   initData = async () => {
     this.setState({ isDataLoad:true })
     // try get data from server for MAINNET case
-    // try{
-    //   await this.getDataFromServer()
-    //   console.log("Load data from server")
-    // }
-    // // if server not work get data form file and blockchain
-    // catch(e){
-    //   await this.getDataFromBlockchain()
-    //   console.log("Load data from blockchain and file")
-    // }
-    await this.getDataFromBlockchain()
+    try{
+      await this.getDataFromServer()
+      console.log("Load data from server")
+    }
+    // if server not work get data form file and blockchain
+    catch(e){
+      await this.getDataFromBlockchain()
+      console.log("Load data from blockchain and file")
+    }
   }
 
   // The main function for loading data
