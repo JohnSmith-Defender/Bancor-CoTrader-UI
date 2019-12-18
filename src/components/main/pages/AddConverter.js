@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI, ABIConverter } from '../../../config'
+import { BancorRegistryABI, BancorRegistryAddress, ABIConverter } from '../../../config'
 import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -18,7 +18,7 @@ class AddConverter extends Component {
 
   AddToList = async () => {
      const web3 = this.props.MobXStorage.web3
-     const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+     const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress )
      const status = await this.isThisTypeConverter(web3, this.state.converter)
 
      if(status){
@@ -61,7 +61,7 @@ class AddConverter extends Component {
               Add converter
             </Typography>
             <Typography variant="body1" className={'mb-2'} component="p">
-              This page allows you add the converter to unofficial registry contract if you missed step 8
+              This page allows you add the converter to official registry contract if you missed step 8
             </Typography>
             <Typography className={'mt-2 mb-2'} component="div">
             <hr/>
@@ -83,7 +83,8 @@ class AddConverter extends Component {
          (
           <React.Fragment>
           <Alert variant="info">
-          <p>Congratulations, after confirm transaction Your smart token will be added</p>
+          <p>Congratulations, after confirm transaction your converter will be added in official list</p>
+          <small>Note: this can take few minutes after confirm transaction in blockchain </small>
           </Alert>
           </React.Fragment>
          )

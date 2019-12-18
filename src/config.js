@@ -1,5 +1,6 @@
-//export const API_endpoint = "http://localhost:9003"
-export const API_endpoint = "https://api-bancor.cotrader.com"
+export const API_endpoint = "http://localhost:9003"
+//export const API_endpoint = "https://api-bancor.cotrader.com"
+
 export const StableSymbol = "USDB(USDB)"
 export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
@@ -8,11 +9,11 @@ export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
 export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
 export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
-// old // export const BancorNetwork = "0xeee90e509a639e95e3bb502b17a0eed6e014bfc0"
+export const BancorRegistryAddress = "0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518"
 export const BancorNetwork = "0x0e936B11c2e7b601055e58c7E32417187aF4de4a"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
 export const EtherscanLink = "https://etherscan.io/"
+export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
 export const gasPrice = 2000000000 // 2 gwei low gas price by default
 export const netId = 1
 
@@ -22,24 +23,623 @@ export const netId = 1
 // export const BNTToken = "0x9C7d1F4a027C64Af951858FD0F9CB3C91e008829"
 // export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
 // export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-// export const ConvertersRegistryList = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
+// export const BancorRegistryAddress = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
 // export const BancorNetwork = "0x4dEdE3053e0085336a259961f58FcBbc23cf0ae5"
 // export const BancorETH = "0xB3c7552F3A837Dc2B11624aE8f56bEAb41c8db0C"
+// export const ConvertersRegistryList = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
 // export const EtherscanLink = "https://ropsten.etherscan.io/"
 // export const gasPrice = 5000000000 // 4 gwei
 // export const netId = 3
 
-// ROPSTEN OLD (Not used)
-// export const BancorRegistry = "0xacbd1c5e8efae0387835841694f1c9e515052e54"
-// export const BNTToken = "0x68b71E7F2b5fd0b19E61c9f2b642c9C4015D3dd3"
-// export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
-// export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-// export const ConvertersRegistryList = "0xb858d5a0e682a3fd441964a3c6e47db90c79fd91"
-// export const BancorNetwork = "0x39Dd546F2DA1f6bb0fEa7A086cE04A519fCB6A1A"
-// export const BancorETH = "0xd43391b8fa168dcb34517877334672bcc3343ca1"
-// export const EtherscanLink = "https://ropsten.etherscan.io/"
-// export const gasPrice = 5000000000 // 4 gwei
-// export const netId = 3
+
+export const BancorRegistryABI = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_adminOnly",
+				"type": "bool"
+			}
+		],
+		"name": "restrictRegistryUpdate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getSmartTokens",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_smartTokens",
+				"type": "address[]"
+			}
+		],
+		"name": "getConvertersBySmartTokens",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isConvertibleToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isSmartToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "updateRegistry",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getConvertibleTokens",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "prevRegistry",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getConvertibleTokenCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_converter",
+				"type": "address"
+			}
+		],
+		"name": "addConverter",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isConvertibleTokenSmartToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "acceptOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getLiquidityPoolCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "registry",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getLiquidityPools",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveRatios",
+				"type": "uint256[]"
+			}
+		],
+		"name": "getLiquidityPoolByReserveConfig",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getConvertibleToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_converter",
+				"type": "address"
+			}
+		],
+		"name": "isConverterValid",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_converter",
+				"type": "address"
+			}
+		],
+		"name": "removeConverter",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getSmartToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			}
+		],
+		"name": "getConvertibleTokenSmartTokenCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getLiquidityPool",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "restoreRegistry",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "adminOnly",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "newOwner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getConvertibleTokenSmartToken",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getSmartTokenCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isLiquidityPool",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			}
+		],
+		"name": "getConvertibleTokenSmartTokens",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"name": "_registry",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "SmartTokenAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "SmartTokenRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_liquidityPool",
+				"type": "address"
+			}
+		],
+		"name": "LiquidityPoolAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_liquidityPool",
+				"type": "address"
+			}
+		],
+		"name": "LiquidityPoolRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "ConvertibleTokenAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "ConvertibleTokenRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_prevOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnerUpdate",
+		"type": "event"
+	}
+]
 
 export const ConvertersRegistryListABI = [
 	{

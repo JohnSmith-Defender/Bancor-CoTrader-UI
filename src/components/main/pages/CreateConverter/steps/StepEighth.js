@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ConvertersRegistryList, ConvertersRegistryListABI } from '../../../../../config'
+import { BancorRegistryABI, BancorRegistryAddress } from '../../../../../config'
 import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 
@@ -28,7 +28,7 @@ class StepEighth extends Component {
   const web3 = this.props.MobXStorage.web3
   const accounts = this.props.MobXStorage.accounts
   const converterAddress = window.localStorage.getItem('Converter')
-  const registry = new web3.eth.Contract(ConvertersRegistryListABI, ConvertersRegistryList)
+  const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
   const gasPrice = this.props.MobXStorage.GasPrice
 
   registry.methods.addConverter(converterAddress).send({
