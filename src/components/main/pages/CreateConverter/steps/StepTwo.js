@@ -17,7 +17,6 @@ import UserInfo from '../../../../templates/UserInfo'
 
 class StepTwo extends Component {
  state = {
-   maxFee:1000000,
    bancorConncectorAddress:null
  }
 
@@ -41,22 +40,19 @@ class StepTwo extends Component {
   const stHash = window.localStorage.getItem('txSmartToken')
 
   const stInfo = await web3.eth.getTransactionReceipt(stHash)
-  if(this.state.maxFee > 1000000 || this.state.maxFee < 1000){
-    alert("please set correct maxFee")
-  }
-  else if(stInfo !== null && stInfo !== "undefined"){
+  if(stInfo !== null && stInfo !== "undefined"){
     const smartToken = stInfo.contractAddress
     window.localStorage.setItem('smartToken', smartToken)
     const contract =  new web3.eth.Contract(ABIConverter, null)
 
     console.log("smartToken address ", smartToken)
-    console.log("PARAMS: ", smartToken, BancorRegistry, this.state.maxFee, this.state.bancorConncectorAddress, 500000)
+    console.log("PARAMS: ", smartToken, BancorRegistry, 50000, this.state.bancorConncectorAddress, 500000)
 
     const gasPrice = this.props.MobXStorage.GasPrice
 
     contract.deploy({
         data: BYTECODEConverter,
-        arguments: [smartToken, BancorRegistry, this.state.maxFee, this.state.bancorConncectorAddress, 500000]
+        arguments: [smartToken, BancorRegistry, 50000, this.state.bancorConncectorAddress, 500000]
     })
     .send({
       from: accounts[0],
@@ -91,15 +87,11 @@ render() {
         <strong>Create Converter</strong>
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          This <UserInfo label="Bancor documentation" info={`Smart token address from previos step, Bancor registry contract address, Max Fee:  ${this.state.maxFee}, Weight: 500,000 (50%`}/> step will be done
+          This <UserInfo label="Bancor documentation" info={`Smart token address from previos step, Bancor registry contract address, Max Fee: 5000​0 (5%), Weight: 500,000 (50%)`}/> step will be done
         </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
         <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
-        <Form.Control name="fee" value={this.state.maxFee} onChange={e => this.setState({maxFee:e.target.value})} type="number" min="1000" max="1000000"/>
-        <Form.Text className="text-muted">
-        Min fee 1000 (0.1%) max fee 1000000 (100%)
-        </Form.Text>
           <Button variant="contained" color="primary" size="medium" onClick={() => this.createConverter()}>create converter</Button>
         </Form>
         </Typography>
