@@ -36,8 +36,8 @@ class StepOne extends Component {
    let status = false
    try{
      const res = await axios.get(API_endpoint + '/official')
-     const tokens = res.data.result.map(item => item.tokenAddress)
-     status = tokens.includes(token)
+     const tokens = res.data.result.map(item => item.tokenAddress.toLowerCase())
+     status = tokens.includes(token.toLowerCase())
    }catch(e){
      alert("Can not check token status, please try latter")
    }
