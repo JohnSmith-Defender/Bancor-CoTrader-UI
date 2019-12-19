@@ -1,9 +1,9 @@
-import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI } from '../../../../../config'
+import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI, API_endpoint } from '../../../../../config'
 import { Form } from "react-bootstrap"
 //import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 import { toUtf8 } from 'web3-utils'
-
+import axios from 'axios'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -31,10 +31,27 @@ class StepOne extends Component {
     })
  }
 
+ // Return true if token alredy exist in official
+ checkToken = async (token) => {
+   let status = false
+   try{
+     const res = await axios.get(API_endpoint + '/official')
+     const tokens = res.data.result.map(item => item.tokenAddress)
+     status = tokens.includes(token)
+   }catch(e){
+     alert("Can not check token status, please try latter")
+   }
+   return status
+ }
+
  createSmartToken = async (tokenAddress) => {
    const web3 = this.props.MobXStorage.web3
    const accounts = this.props.MobXStorage.accounts
-   if(web3.utils.isAddress(tokenAddress)){
+   const isRegistered = await this.checkToken(tokenAddress)
+   if(isRegistered){
+     alert('Sorry, but this token alredy exists in the official registry')
+   }
+   else if(web3.utils.isAddress(tokenAddress)){
      // Get name for smart token from input tokenAddress
      // write txs in local storage
      let token = new web3.eth.Contract(ABISmartToken, tokenAddress)
