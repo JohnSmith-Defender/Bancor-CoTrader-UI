@@ -1,9 +1,16 @@
-import { ABISmartToken, BYTECODESmartToken, ERC20Bytes32ABI, API_endpoint } from '../../../../../config'
+import {
+  ABISmartToken,
+  BYTECODESmartToken,
+  ERC20Bytes32ABI,
+  BancorRegistryABI,
+  BancorRegistryAddress,
+  BNTToken,
+  USDBToken
+ } from '../../../../../config'
+
 import { Form } from "react-bootstrap"
-//import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 import { toUtf8 } from 'web3-utils'
-import axios from 'axios'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -31,14 +38,29 @@ class StepOne extends Component {
     })
  }
 
- // Return true if token alredy exist in official
+ // Return true if token alredy exist in official with the same connector time
  checkToken = async (token) => {
    let status = false
    try{
-     const res = await axios.get(API_endpoint + '/official')
-     const tokens = res.data.result.map(item => item.tokenAddress.toLowerCase())
-     status = tokens.includes(token.toLowerCase())
-   }catch(e){
+     let bancorConncectorAddress
+     const connectorType = window.localStorage.getItem('connectorType')
+
+     if(connectorType === "USDB" || connectorType === "BNT"){
+       bancorConncectorAddress = connectorType === "USDB" ? USDBToken : BNTToken
+     }
+     const web3 = this.props.MobXStorage.web3
+     const bancorregistry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
+
+     // check if token and connector exist or not
+     const sideOne = await bancorregistry.methods.getLiquidityPoolByReserveConfig([token, bancorConncectorAddress], [500000,500000]).call()
+     const sideTwo = await bancorregistry.methods.getLiquidityPoolByReserveConfig([bancorConncectorAddress, token], [500000,500000]).call()
+
+     console.log(sideOne, sideTwo)
+
+     if(sideOne !== '0x0000000000000000000000000000000000000000' || sideTwo !== '0x0000000000000000000000000000000000000000')
+        status = true
+   }
+   catch(e){
      alert("Can not check token status, please try latter")
    }
    return status
@@ -49,7 +71,10 @@ class StepOne extends Component {
    const accounts = this.props.MobXStorage.accounts
    const isRegistered = await this.checkToken(tokenAddress)
    if(isRegistered){
-     alert('Sorry, but this token alredy exists in the official registry')
+     const connectorType = window.localStorage.getItem('connectorType')
+     alert(`Sorry, but this token alredy exists in the official registry with ${connectorType} connector type`)
+     window.localStorage.clear()
+     window.location.reload()
    }
    else if(web3.utils.isAddress(tokenAddress)){
      // Get name for smart token from input tokenAddress
