@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Alert } from "react-bootstrap"
-import { toWei, fromWei } from 'web3-utils'
+import { toWeiByDecimalsInput, fromWeiByDecimalsInput } from '../../../../service/weiByDecimals'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 import Button from '@material-ui/core/Button'
 
@@ -8,7 +8,8 @@ import Button from '@material-ui/core/Button'
 class Liquidate extends Component {
   state = {
     directionAmount:0,
-    smartTokenBalance:0
+    smartTokenBalance:0,
+    decimals:18
   }
 
   componentDidUpdate = async (prevProps, prevState) => {
@@ -16,8 +17,10 @@ class Liquidate extends Component {
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
       if(this.props.from){
       const smarTokenAddress = this.props.getInfoBySymbol()[3]
+      const decimals = this.props.getInfoBySymbol()[5].tokenDecimals
       const smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smarTokenAddress, this.props.accounts[0])
-      this.setState({ smartTokenBalance })
+
+      this.setState({ smartTokenBalance, decimals })
       }
     }
   }
@@ -27,7 +30,7 @@ class Liquidate extends Component {
       const converter = this.props.getInfoBySymbol()[0]
       const gasPrice = await getBancorGasLimit()
 
-      converter.methods.liquidate(toWei(String(this.state.directionAmount)))
+      converter.methods.liquidate(toWeiByDecimalsInput(this.state.decimals, String(this.state.directionAmount)))
       .send({ from:this.props.accounts[0], gasPrice})
     }
     else {
@@ -62,7 +65,7 @@ class Liquidate extends Component {
         this.state.directionAmount > 0 && this.props.from
         ?
         (
-          <Alert variant="info">Your balance of {this.props.from}BNT is {fromWei(String(this.state.smartTokenBalance))}</Alert>
+          <Alert variant="info">Your balance of {this.props.from}BNT is {fromWeiByDecimalsInput(this.state.decimals, String(this.state.smartTokenBalance))}</Alert>
         )
         :
         (null)
