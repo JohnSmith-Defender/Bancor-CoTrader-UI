@@ -44,7 +44,7 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
-    console.log("version 30/10/19")
+    console.log("version 21/12/19")
     // init curent step for create converter
     this.props.MobXStorage.updateStep()
     // load tokens data
