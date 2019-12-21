@@ -26,8 +26,8 @@ class StepFour extends Component {
    const accounts = this.props.MobXStorage.accounts
    const converterAddress = window.localStorage.getItem('Converter')
 
-   if(this.state.fee < 1000 || this.state.fee > 1000000){
-     alert('Incorrect fee number, min should be 1000, max 1000000')
+   if(this.state.fee < 1000 || this.state.fee > 500000){
+     alert('Incorrect fee number, min should be 1000, max 500000')
    }
    else{
    if(converterAddress !== null && converterAddress !== "undefined"){
