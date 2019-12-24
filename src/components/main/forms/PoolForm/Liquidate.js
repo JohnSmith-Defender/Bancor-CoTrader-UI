@@ -50,7 +50,7 @@ class Liquidate extends Component {
           <React.Fragment>
           <Form.Control name="directionAmount" placeholder="Enter relay amount to liguidate" onChange={e => this.setState({directionAmount:e.target.value})} type="number" min="1"/>
           <br/>
-          <Button variant="contained" color="primary" onClick={() => this.liquidate()}>Liguidate</Button>
+          <Button variant="contained" color="primary" onClick={() => this.liquidate()}>Liquidate</Button>
           </React.Fragment>
         )
         :
