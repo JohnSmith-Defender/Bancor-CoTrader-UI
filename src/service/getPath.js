@@ -5,7 +5,8 @@ import {
   BNTToken,
   BancorETH,
   USDBToken,
-  USDBBNTToken
+  USDBBNTToken,
+  ETHBNT
 } from '../config'
 
 // calculate path depending on the selected symbols and token or smart token
@@ -22,7 +23,8 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     case 'BNT':
     if(to === "ETH"){
       // BNT, BNT, ETH
-      path = [BNTToken, BNTToken, BancorETH]
+      path = [BNTToken, ETHBNT, BancorETH]
+      console.log("Path: ", path)
     }
     else if(to === "USDB(USDB)"){
       // BNT, USDB Relay, USDB
@@ -44,7 +46,7 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     case 'ETH':
     if(to === "BNT"){
       // ETH, BNT, BNT
-      path = [BancorETH, BNTToken, BNTToken]
+      path = [BancorETH, ETHBNT, BNTToken]
     }
     else if(to === "USDB(USDB)"){
       // ETH wrapper, BNT, BNT, USDB Realy, USDB
