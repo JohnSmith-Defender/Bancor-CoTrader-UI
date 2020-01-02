@@ -22,7 +22,7 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
   switch (from) {
     case 'BNT':
     if(to === "ETH"){
-      // BNT, BNT, ETH
+      // BNT, ETHBNT, ETH
       path = [BNTToken, ETHBNT, BancorETH]
       console.log("Path: ", path)
     }
@@ -45,7 +45,7 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
 
     case 'ETH':
     if(to === "BNT"){
-      // ETH, BNT, BNT
+      // ETH, ETHBNT, BNT
       path = [BancorETH, ETHBNT, BNTToken]
     }
     else if(to === "USDB(USDB)"){
@@ -55,13 +55,13 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     else{
       // form USDB connector
       if (tokenInfoTo.connectorType && tokenInfoTo.connectorType === "USDB"){
-        // ETH, BNT, BNT, USDBBNT, USDB, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
-        path = [BancorETH, BNTToken, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+        // ETH, BNT, ETHBNT, USDBBNT, USDB, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
+        path = [BancorETH, ETHBNT, BNTToken, USDBBNTToken, USDBToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
       }
       // form BNT connecor
       else{
-        // ETH, BNT, BNT, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
-        path = [BancorETH, BNTToken, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
+        // ETH, BNT, ETHBNT, TO_ERC20_SmartToken, TO_ERC_OR_SmartToken
+        path = [BancorETH, ETHBNT, BNTToken, tokenInfoTo.smartTokenAddress, tokenInfoTo[toProp]]
       }
     }
     break
@@ -105,13 +105,13 @@ const getPath = (from, to, bancorTokensStorageJson, _fromProp = 'symbol', _toPro
     else if (to === "ETH") {
       // form USDB connector
       if (tokenInfoFrom.connectorType && tokenInfoFrom.connectorType === "USDB"){
-        // FROM_ERC_OR_SmartToken, FROM_smartToken, USDB, USDBBNT, BNT, BNT, BancorETH
-        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, BNTToken, BancorETH,]
+        // FROM_ERC_OR_SmartToken, FROM_smartToken, USDB, USDBBNT, BNT, ETHBNT, BancorETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, USDBToken, USDBBNTToken, BNTToken, ETHBNT, BancorETH,]
       }
       // from BNT connector
       else{
-        // FROM_ERC_OR_SmartToken, FROM_ERC20_SmartToken, BNT, BNT, ETH
-        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, BNTToken, BancorETH]
+        // FROM_ERC_OR_SmartToken, FROM_ERC20_SmartToken, BNT, ETHBNT, ETH
+        path = [tokenInfoFrom[fromProp], tokenInfoFrom.smartTokenAddress, BNTToken, ETHBNT, BancorETH]
       }
     }
 
