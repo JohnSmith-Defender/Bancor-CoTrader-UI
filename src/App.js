@@ -84,7 +84,7 @@ class App extends Component {
 
   initData = async () => {
     this.setState({ isDataLoad:true })
-    // try get data from server for MAINNET case
+    // try get data from server
     try{
       await this.getDataFromServer()
       console.log("Load data from server")
@@ -101,7 +101,7 @@ class App extends Component {
     let official = await axios.get(API_endpoint + '/official')
     official = official.data.result
     let officialSymbols = official.map(item => item.symbol)
-    // officialSymbols = officialSymbols.concat("ETH")
+    //officialSymbols = officialSymbols.concat("ETH")
 
     const officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
 

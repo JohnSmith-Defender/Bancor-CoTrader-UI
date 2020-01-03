@@ -6,7 +6,7 @@ export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
 // MAINNET
 export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
-export const BancorRegistry = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
+export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
 export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
 export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
@@ -20,8 +20,8 @@ export const netId = 1
 
 
 // ROPSTEN Bancor official
-// export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
-// export const BancorRegistry = "0x8a69A7d7507F8c4a9dD5dEB9B687B30D2b30A011"
+// export const ETHBNT = "0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA"
+// export const BancorRegistryMAIN = "0x8a69A7d7507F8c4a9dD5dEB9B687B30D2b30A011"
 // export const BNTToken = "0x9C7d1F4a027C64Af951858FD0F9CB3C91e008829"
 // export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
 // export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"

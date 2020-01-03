@@ -5,12 +5,8 @@ import { Alert } from "react-bootstrap"
 import StepZero from "./steps/StepZero"
 import StepOne from "./steps/StepOne"
 import StepTwo from "./steps/StepTwo"
-import StepThree from "./steps/StepThree"
-import StepFour from "./steps/StepFour"
-import StepFive from "./steps/StepFive"
-import StepSix from "./steps/StepSix"
-import StepSeven from "./steps/StepSeven"
-import StepEighth from "./steps/StepEighth"
+import StepBatch from "./steps/StepBatch"
+
 
 import Pending from "../../../templates/Spiners/Pending"
 import ConverterSettings from "./ConverterSettings"
@@ -19,12 +15,7 @@ const componentList = {
   Zero:StepZero,
   One: StepOne,
   Two: StepTwo,
-  Three: StepThree,
-  Four: StepFour,
-  Five: StepFive,
-  Six: StepSix,
-  Seven: StepSeven,
-  Eighth: StepEighth
+  Three: StepBatch
 }
 
 class CreateConverter extends Component {

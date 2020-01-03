@@ -83,7 +83,8 @@ class SendForm extends Component {
     const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from )[0]
     const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const gasPrice = await getBancorGasLimit()
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
     const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
     let batch = new web3.BatchRequest()
 
@@ -93,16 +94,13 @@ class SendForm extends Component {
     amountSend
     ).encodeABI({from: this.props.MobXStorage.accounts[0]})
 
-    // approve gas should be more than in trade
-    const approveGasPrice = Number(gasPrice) + 2000000000
-
     const approve = {
       "from": this.props.MobXStorage.accounts[0],
       "to": tokenInfoFrom.tokenAddress,
       "value": "0x0",
       "data": approveData,
-      "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-      "gas": web3.eth.utils.toHex(1872732),
+      "gasPrice": web3.eth.utils.toHex(gasPrice),
+      "gas": web3.eth.utils.toHex(85000),
     }
 
     // trade tx
@@ -119,7 +117,7 @@ class SendForm extends Component {
       "value": "0x0",
       "data": tradeData,
       "gasPrice": web3.eth.utils.toHex(gasPrice),
-      "gas": web3.eth.utils.toHex(1872732),
+      "gas": web3.eth.utils.toHex(950000),
     }
 
     batch.add(web3.eth.sendTransaction.request(approve, () => console.log("Approve")))
@@ -136,7 +134,7 @@ class SendForm extends Component {
     const gasPrice = await getBancorGasLimit()
 
     bancorNetworkContract.methods.convertFor(path, amount, this.props.MobXStorage.minReturn, this.state.receiverAddress)
-    .send({from: this.props.MobXStorage.accounts[0], gas: 1872732, gasPrice, value:amount })
+    .send({from: this.props.MobXStorage.accounts[0], gas: 950000, gasPrice, value:amount })
   }
 
   // trade ERC20 and ETH

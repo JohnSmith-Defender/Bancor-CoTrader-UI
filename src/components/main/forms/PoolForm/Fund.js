@@ -228,7 +228,8 @@ class Fund extends Component {
      const tokenInfo = this.props.getInfoBySymbol()
      const converter = tokenInfo[0]
      const converterAddress = tokenInfo[1]
-     const gasPrice = await getBancorGasLimit()
+     const bancorGasLimit = await getBancorGasLimit()
+     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
      const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
      const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
      const connectorAddress = tokenInfo[2]
@@ -254,16 +255,14 @@ class Fund extends Component {
      const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
      .encodeABI({from: this.props.accounts[0]})
 
-     // approve gas should be more than in trade
-     const approveGasPrice = Number(gasPrice) + 2000000000
 
      const approveBancor = {
        "from": this.props.accounts[0],
        "to": bancorConnectorAddress,
        "value": "0x0",
        "data": approveBancorData,
-       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(1872732),
+       "gasPrice": web3.eth.utils.toHex(gasPrice),
+       "gas": web3.eth.utils.toHex(85000),
      }
 
      const approveConnector = {
@@ -271,8 +270,8 @@ class Fund extends Component {
        "to": connectorAddress,
        "value": "0x0",
        "data": approveConnectorData,
-       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(1872732),
+       "gasPrice": web3.eth.utils.toHex(gasPrice),
+       "gas": web3.eth.utils.toHex(85000),
      }
 
      const fund = {
@@ -280,8 +279,8 @@ class Fund extends Component {
        "to": converterAddress,
        "value": "0x0",
        "data": poolData,
-       "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-       "gas": web3.eth.utils.toHex(1872732),
+       "gasPrice": web3.eth.utils.toHex(gasPrice),
+       "gas": web3.eth.utils.toHex(950000),
      }
 
      // add additional request reset approve for case if approved alredy BNT or USDB
@@ -300,8 +299,8 @@ class Fund extends Component {
            "to": bancorConnectorAddress,
            "value": "0x0",
            "data": resetApproveData,
-           "gasPrice": web3.eth.utils.toHex(approveGasPrice),
-           "gas": web3.eth.utils.toHex(1872732),
+           "gasPrice": web3.eth.utils.toHex(gasPrice),
+           "gas": web3.eth.utils.toHex(85000),
          }
 
          batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))

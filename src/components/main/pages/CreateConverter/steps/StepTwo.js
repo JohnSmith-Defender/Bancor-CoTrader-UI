@@ -1,7 +1,7 @@
 import {
   ABIConverter,
   BYTECODEConverter,
-  BancorRegistry,
+  BancorRegistryMAIN,
   BNTToken,
   USDBToken
 } from '../../../../../config'
@@ -46,13 +46,13 @@ class StepTwo extends Component {
     const contract =  new web3.eth.Contract(ABIConverter, null)
 
     console.log("smartToken address ", smartToken)
-    console.log("PARAMS: ", smartToken, BancorRegistry, 50000, this.state.bancorConncectorAddress, 500000)
+    console.log("PARAMS: ", smartToken, BancorRegistryMAIN, 50000, this.state.bancorConncectorAddress, 500000)
 
     const gasPrice = this.props.MobXStorage.GasPrice
 
     contract.deploy({
         data: BYTECODEConverter,
-        arguments: [smartToken, BancorRegistry, 50000, this.state.bancorConncectorAddress, 500000]
+        arguments: [smartToken, BancorRegistryMAIN, 50000, this.state.bancorConncectorAddress, 500000]
     })
     .send({
       from: accounts[0],
@@ -65,9 +65,10 @@ class StepTwo extends Component {
      this.props.MobXStorage.setPending(true)
      window.localStorage.setItem('StepNext', "Three")
      window.localStorage.setItem('txLatest', hash)
+     this.props.MobXStorage.txFinish()
     })
     .on('confirmation', (confirmationNumber, receipt) => {
-      this.props.MobXStorage.txFinish()
+      //this.props.MobXStorage.txFinish()
     })
   }
   else{
@@ -81,7 +82,7 @@ render() {
     <Card style={{backgroundColor:'rgba(255,255,255,0.1)'}}>
       <CardContent>
         <Typography variant="h4" gutterBottom component="h4">
-          Step 2
+          Step 2 of 3
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
         <strong>Create Converter</strong>

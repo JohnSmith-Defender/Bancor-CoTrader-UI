@@ -151,7 +151,7 @@ render() {
     <Card style={{backgroundColor:'rgba(255,255,255,0.1)'}}>
       <CardContent>
         <Typography variant="h4" gutterBottom component="h4">
-          Step 1
+          Step 1 of 3
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
           <strong>Create Relay Token (aka SmartToken)</strong>
