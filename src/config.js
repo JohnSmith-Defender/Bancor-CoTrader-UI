@@ -1,6 +1,5 @@
 // export const API_endpoint = "http://localhost:9003"
 export const API_endpoint = "https://api-bancor.cotrader.com"
-
 export const StableSymbol = "USDB(USDB)"
 export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
@@ -14,24 +13,8 @@ export const BancorRegistryAddress = "0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518
 export const BancorNetwork = "0x0e936B11c2e7b601055e58c7E32417187aF4de4a"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
 export const EtherscanLink = "https://etherscan.io/"
-export const ConvertersRegistryList = "0x7bdb720af9c0da53744aa007984031ceca528ad0"
 export const gasPrice = 2000000000 // 2 gwei low gas price by default
 export const netId = 1
-
-
-// ROPSTEN Bancor official
-// export const ETHBNT = "0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA"
-// export const BancorRegistryMAIN = "0x8a69A7d7507F8c4a9dD5dEB9B687B30D2b30A011"
-// export const BNTToken = "0x9C7d1F4a027C64Af951858FD0F9CB3C91e008829"
-// export const USDBToken = "0x30884a0e6c1ae494667b834dc45ef5f5a70775ed"
-// export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-// export const BancorRegistryAddress = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
-// export const BancorNetwork = "0x4dEdE3053e0085336a259961f58FcBbc23cf0ae5"
-// export const BancorETH = "0xB3c7552F3A837Dc2B11624aE8f56bEAb41c8db0C"
-// export const ConvertersRegistryList = "0x8af1601624f0ea30b137f0172fb8deef86408f3d"
-// export const EtherscanLink = "https://ropsten.etherscan.io/"
-// export const gasPrice = 5000000000 // 4 gwei
-// export const netId = 3
 
 
 export const BancorRegistryABI = [
@@ -640,70 +623,6 @@ export const BancorRegistryABI = [
 		],
 		"name": "OwnerUpdate",
 		"type": "event"
-	}
-]
-
-export const ConvertersRegistryListABI = [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_converter",
-				"type": "address"
-			}
-		],
-		"name": "addConverter",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "converters",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getAllConverters",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalConverters",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
 	}
 ]
 

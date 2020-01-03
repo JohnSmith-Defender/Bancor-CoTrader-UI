@@ -9,9 +9,7 @@ class MOBXStorage {
   pending = JSON.parse(window.localStorage.getItem('Pending'))
   step = "Zero"
   officialSymbols = null
-  unofficialSymbols = null
   officialSmartTokenSymbols = null
-  unofficialSmartTokenSymbols = null
   bancorTokensStorageJson = null
   timer = 0
   GasPrice = gasPrice
@@ -71,7 +69,6 @@ class MOBXStorage {
     window.localStorage.setItem('Pending', _bool)
   }
 
-
   checkTxStatus = async (hash) => {
     const res = await this.web3.eth.getTransaction(hash)
     const status = res ? res.blockNumber : null
@@ -93,24 +90,16 @@ class MOBXStorage {
     this.updateStep()
   }
 
-  initBancorStorage = (official, unoficial) => {
-    this.bancorTokensStorageJson = official.concat(unoficial)
+  initBancorStorage = (official) => {
+    this.bancorTokensStorageJson = official
   }
 
   initOfficialSymbols = (data) => {
     this.officialSymbols = data
   }
 
-  initUnofficialSymbols = (data) => {
-    this.unofficialSymbols = data
-  }
-
   initOfficialSmartTokenSymbols = (data) => {
     this.officialSmartTokenSymbols = data
-  }
-
-  initUnofficialSmartTokenSymbols = (data) => {
-    this.unofficialSmartTokenSymbols = data
   }
 
 }
@@ -121,9 +110,7 @@ decorate(MOBXStorage, {
     pending: observable,
     step: observable,
     officialSymbols:observable,
-    unofficialSymbols:observable,
     officialSmartTokenSymbols:observable,
-    unofficialSmartTokenSymbols:observable,
     bancorTokensStorageJson:observable,
     GasPrice:observable,
     minReturn:observable,
@@ -141,10 +128,8 @@ decorate(MOBXStorage, {
     updateStep:action,
     txFinish:action,
     initOfficialSymbols:action,
-    initUnofficialSymbols:action,
     initBancorStorage:action,
     initOfficialSmartTokenSymbols:action,
-    initUnofficialSmartTokenSymbols:action,
     updateGasPrice:action
 })
 

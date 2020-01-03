@@ -12,7 +12,6 @@ import Navbar from './components/static/Navbar'
 import Routes from './components/static/Routes'
 
 import getOfficialData from "./service/getOfficialData"
-import getUnofficialData from "./service/getUnofficialData"
 
 import { Alert } from "react-bootstrap"
 import Container from '@material-ui/core/Container'
@@ -91,8 +90,8 @@ class App extends Component {
     }
     // if server not work get data form file and blockchain
     catch(e){
-      await this.getDataFromBlockchain()
-      console.log("Load data from blockchain and file")
+      await this.getDataFromFile()
+      console.log("Load data from file")
     }
   }
 
@@ -100,39 +99,22 @@ class App extends Component {
   getDataFromServer = async () => {
     let official = await axios.get(API_endpoint + '/official')
     official = official.data.result
-    let officialSymbols = official.map(item => item.symbol)
-    //officialSymbols = officialSymbols.concat("ETH")
-
+    const officialSymbols = official.map(item => item.symbol)
     const officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
-
-    let unofficial = await axios.get(API_endpoint + '/unofficial')
-    unofficial = unofficial.data.result
-    const unofficialSymbols = unofficial.map(item => item.symbol)
-    const unofficialSmartTokenSymbols = unofficial.map(item => item.smartTokenSymbol)
-
 
     this.props.MobXStorage.initOfficialSymbols(officialSymbols)
     this.props.MobXStorage.initOfficialSmartTokenSymbols(officialSmartTokenSymbols)
-
-    this.props.MobXStorage.initUnofficialSymbols(unofficialSymbols)
-    this.props.MobXStorage.initUnofficialSmartTokenSymbols(unofficialSmartTokenSymbols)
-
-    this.props.MobXStorage.initBancorStorage(official, unofficial)
+    this.props.MobXStorage.initBancorStorage(official)
   }
 
   // A second function for loading data in case the server does not respond,
-  // app get data from contracts and file
-  getDataFromBlockchain = async () => {
+  // app get data from file
+  getDataFromFile = async () => {
     const officialData = getOfficialData()
-    const unoficialData = await getUnofficialData(null)
 
     this.props.MobXStorage.initOfficialSymbols(officialData[0])
     this.props.MobXStorage.initOfficialSmartTokenSymbols(officialData[1])
-
-    this.props.MobXStorage.initUnofficialSymbols(unoficialData[0])
-    this.props.MobXStorage.initUnofficialSmartTokenSymbols(unoficialData[1])
-
-    this.props.MobXStorage.initBancorStorage(officialData[2], unoficialData[2])
+    this.props.MobXStorage.initBancorStorage(officialData[2])
   }
 
 

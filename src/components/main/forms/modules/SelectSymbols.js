@@ -1,15 +1,3 @@
-// Description
-// This component update selected symbols and useERC20AsSelect global state in mobxStorage class
-// in components Relay, Send and Trade
-
-// TODO make this component as modal
-
-// props
-// this props.symbolDirection FROM or TO
-// this.props.useSmartTokenSymbols (for relay case)
-
-// Note: props Symbol by default can be added for task popup-url
-
 import React, { Component } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { inject, observer } from 'mobx-react'
@@ -24,7 +12,6 @@ class SelectSymbols extends Component {
     from:undefined,
     ShowModal:false,
     officialSmartTokenSymbols:null,
-    unofficialSmartTokenSymbols:null,
     bancorTokensStorageJson:null,
     selectFromOficial:true,
     useERC20AsSelect: this.props.from ? this.props.MobXStorage.useERC20AsSelectFrom : this.props.MobXStorage.useERC20AsSelectTo,
@@ -33,27 +20,22 @@ class SelectSymbols extends Component {
 
   componentDidMount(){
     // Update state with tokens data
-      const officialSymbols = this.props.MobXStorage.officialSymbols
-      const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
-      let officialSmartTokenSymbols = this.props.MobXStorage.officialSmartTokenSymbols
+    const officialSymbols = this.props.MobXStorage.officialSymbols
+    let officialSmartTokenSymbols = this.props.MobXStorage.officialSmartTokenSymbols
+    // delete BNT from smart tokens
+    officialSmartTokenSymbols = officialSmartTokenSymbols.filter(e => e !== 'BNT')
+    const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
+    
+    this.setState({
+      officialSymbols,
+      officialSmartTokenSymbols,
+      bancorTokensStorageJson,
+      useERC20AsSelect:true
+    })
 
-      // delete BNT from smart tokens
-      officialSmartTokenSymbols = officialSmartTokenSymbols.filter(e => e !== 'BNT')
-
-      const unofficialSmartTokenSymbols = this.props.MobXStorage.unofficialSmartTokenSymbols
-      const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
-      this.setState({
-        officialSymbols,
-        unofficialSymbols,
-        officialSmartTokenSymbols,
-        unofficialSmartTokenSymbols,
-        bancorTokensStorageJson,
-        useERC20AsSelect:true
-      })
-
-      // reset smart tokens select
-      this.props.MobXStorage.updateSelectType("to", true)
-      this.props.MobXStorage.updateSelectType("from", true)
+    // reset smart tokens select
+    this.props.MobXStorage.updateSelectType("to", true)
+    this.props.MobXStorage.updateSelectType("from", true)
   }
 
   updateMobxSelect = (value) => {
@@ -75,11 +57,6 @@ class SelectSymbols extends Component {
         ?
         (
           <React.Fragment>
-          <FormControlLabel
-              control={<Checkbox onChange={e => this.setState({ selectFromOficial: !this.state.selectFromOficial })}
-              name="selectFromOficial" className="custom_check" color="primary" />}
-              label="Show unofficial"
-          />
           {
             this.props.useSmartTokenSymbols
             ?
@@ -94,31 +71,15 @@ class SelectSymbols extends Component {
             :
             (null)
           }
-          {
-            this.state.selectFromOficial
-            ?
-            (
-              <Typeahead
-                  labelKey="fromOfficialTokens"
-                  multiple={false}
-                  id="officialTokens"
-                  options={this.state.useERC20AsSelect ? this.state.officialSymbols :this.state.officialSmartTokenSymbols}
-                  onChange={(s) => this.updateMobxSelect(s[0])}
-                  placeholder={`Choose token to ${this.props.symbolDirection === 'from' ? 'send' :'receive'}`}
-              />
-            )
-            :
-            (
-              <Typeahead
-                  labelKey="fromUnofficialTokens"
-                  multiple={false}
-                  id="unofficialTokens"
-                  options={this.state.useERC20AsSelect ? this.state.unofficialSymbols : this.state.unofficialSmartTokenSymbols}
-                  onChange={(s) => this.updateMobxSelect(s[0])}
-                  placeholder={`Choose token to ${this.props.symbolDirection  === 'from' ? 'send' :'receive'}`}
-              />
-            )
-          }
+          <br/>
+          <Typeahead
+              labelKey="fromOfficialTokens"
+              multiple={false}
+              id="officialTokens"
+              options={this.state.useERC20AsSelect ? this.state.officialSymbols :this.state.officialSmartTokenSymbols}
+              onChange={(s) => this.updateMobxSelect(s[0])}
+              placeholder={`Choose token to ${this.props.symbolDirection === 'from' ? 'send' :'receive'}`}
+          />
           </React.Fragment>
         )
         :

@@ -16,8 +16,8 @@ import Fund from './Fund'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
 import Chip from '@material-ui/core/Chip';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Checkbox from '@material-ui/core/Checkbox';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 class PoolForm extends Component {
   constructor(props, context) {
@@ -28,7 +28,6 @@ class PoolForm extends Component {
     bancorTokensStorageJson:null,
     selectFromOficial:true,
     officialSymbols:undefined,
-    unofficialSymbols:undefined,
     selectAction:'Add liquidity'
     }
   }
@@ -70,7 +69,6 @@ class PoolForm extends Component {
 
   initData(){
     let officialSymbols = this.props.MobXStorage.officialSymbols
-    const unofficialSymbols = this.props.MobXStorage.unofficialSymbols
     const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
 
     // delete BNT and ETH from pool
@@ -80,7 +78,6 @@ class PoolForm extends Component {
     if(!this.unmounted)
     this.setState({
       officialSymbols,
-      unofficialSymbols,
       bancorTokensStorageJson
     })
   }
@@ -123,7 +120,7 @@ class PoolForm extends Component {
         (
           <div style={!isMobile ? {textAlign:"left", maxWidth: "550px", margin:"auto", padding:"20px", border:"1px solid #eee", borderRadius:"10px"}: null}>
             {
-              this.state.officialSymbols && this.state.unofficialSymbols
+              this.state.officialSymbols
               ?
               (
                 <React.Fragment>
@@ -135,36 +132,14 @@ class PoolForm extends Component {
                 <option>Remove liquidity</option>
                 </Form.Control>
                 </Form.Group>
-
-                <FormControlLabel
-                    control={<Checkbox onChange={e => this.change(e)} name="selectFromOficial" className="custom_check" color="primary" />}
-                    label="Show unofficial"
+                <Typeahead
+                    labelKey="fromOfficialTokens"
+                    multiple={false}
+                    id="officialTokens"
+                    options={this.state.officialSymbols}
+                    onChange={(s) => this.setState({from: s[0]})}
+                    placeholder="Choose a symbol for send"
                 />
-                {
-                  this.state.selectFromOficial
-                  ?
-                  (
-                    <Typeahead
-                        labelKey="fromOfficialTokens"
-                        multiple={false}
-                        id="officialTokens"
-                        options={this.state.officialSymbols}
-                        onChange={(s) => this.setState({from: s[0]})}
-                        placeholder="Choose a symbol for send"
-                    />
-                  )
-                  :
-                  (
-                    <Typeahead
-                        labelKey="fromUnofficialTokens"
-                        multiple={false}
-                        id="unofficialTokens"
-                        options={this.state.unofficialSymbols}
-                        onChange={(s) => this.setState({from: s[0]})}
-                        placeholder="Choose a symbol for send"
-                    />
-                  )
-                }
                 <br/>
                 {
                   this.state.selectAction === "Add liquidity"
