@@ -14,7 +14,7 @@ class SelectSymbols extends Component {
     officialSmartTokenSymbols:null,
     bancorTokensStorageJson:null,
     selectFromOficial:true,
-    useERC20AsSelect: this.props.from ? this.props.MobXStorage.useERC20AsSelectFrom : this.props.MobXStorage.useERC20AsSelectTo,
+    useERC20AsSelect: this.props.useSmartTokenSymbols ? false : true,
     }
   }
 
@@ -25,23 +25,21 @@ class SelectSymbols extends Component {
     // delete BNT from smart tokens
     officialSmartTokenSymbols = officialSmartTokenSymbols.filter(e => e !== 'BNT')
     const bancorTokensStorageJson = this.props.MobXStorage.bancorTokensStorageJson
-    
+
     this.setState({
       officialSymbols,
       officialSmartTokenSymbols,
-      bancorTokensStorageJson,
-      useERC20AsSelect:true
+      bancorTokensStorageJson
     })
 
-    // reset smart tokens select
-    this.props.MobXStorage.updateSelectType("to", true)
-    this.props.MobXStorage.updateSelectType("from", true)
+    this.props.MobXStorage.updateSelectType("to", this.state.useERC20AsSelect)
+    this.props.MobXStorage.updateSelectType("from", this.state.useERC20AsSelect)
   }
+
 
   updateMobxSelect = (value) => {
     this.props.MobXStorage.updateSymbolSelector(this.props.symbolDirection, value)
   }
-
 
   updateMobxSelectType = () => {
     this.props.MobXStorage.updateSelectType(this.props.symbolDirection, !this.state.useERC20AsSelect)

@@ -28,7 +28,8 @@ class Liquidate extends Component {
   liquidate = async() => {
     if(this.state.directionAmount > 0){
       const converter = this.props.getInfoBySymbol()[0]
-      const gasPrice = await getBancorGasLimit()
+      const bancorGasLimit = await getBancorGasLimit()
+      const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
 
       converter.methods.liquidate(toWeiByDecimalsInput(this.state.decimals, String(this.state.directionAmount)))
       .send({ from:this.props.accounts[0], gasPrice})

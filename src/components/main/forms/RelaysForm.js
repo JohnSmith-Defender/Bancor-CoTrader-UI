@@ -164,7 +164,8 @@ class RelaysForm extends Component {
     const { tokenInfoFrom, objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson, objPropsFrom, objPropsTo)
-    const gasPrice = await getBancorGasLimit()
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
     const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
 
     converterContract.methods.quickConvert(
@@ -181,7 +182,8 @@ class RelaysForm extends Component {
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson, objPropsFrom, objPropsTo)
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
-    const gasPrice = await getBancorGasLimit()
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
 
     bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
     .send({from: this.props.MobXStorage.accounts[0], gas: 950000, gasPrice, value:amount })

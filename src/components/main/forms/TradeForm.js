@@ -131,7 +131,8 @@ class TradeForm extends Component {
     const web3 = this.props.MobXStorage.web3
     const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from)[0]
     const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
-    const gasPrice = await getBancorGasLimit()
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
     const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
 
@@ -148,7 +149,8 @@ class TradeForm extends Component {
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
-    const gasPrice = await getBancorGasLimit()
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
 
     bancorNetworkContract.methods.convert(path, amount, this.props.MobXStorage.minReturn)
     .send({from: this.props.MobXStorage.accounts[0], gas:950000, gasPrice, value:amount })
