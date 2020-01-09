@@ -12,11 +12,12 @@ import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 import SelectSymbols from './modules/SelectSymbols'
 import { isMobile } from 'react-device-detect'
+import getBancorContractByName from '../../../service/getBancorContractByName'
+
 
 import {
   ABISmartToken,
   ABIBancorNetwork,
-  BancorNetwork,
   ABIConverter,
   netId
 } from '../../../config'
@@ -83,6 +84,7 @@ class TradeForm extends Component {
     const web3 = this.props.MobXStorage.web3
     const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from)[0]
     const token = new web3.eth.Contract(ABISmartToken, tokenInfoFrom.tokenAddress)
+    const BancorNetwork = await getBancorContractByName("BancorNetwork")
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
@@ -146,6 +148,7 @@ class TradeForm extends Component {
   // in case if from === ETH
   convertFromETH = async () => {
     const web3 = this.props.MobXStorage.web3
+    const BancorNetwork = await getBancorContractByName("BancorNetwork")
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)

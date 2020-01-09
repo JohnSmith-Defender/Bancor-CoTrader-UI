@@ -1,9 +1,9 @@
 import getWeb3ForRead from './getWeb3ForRead'
 import { fromWeiByDecimals } from './weiByDecimals'
+import getBancorContractByName from '../service/getBancorContractByName'
 
 import {
   ABIBancorNetwork,
-  BancorNetwork,
 } from '../config'
 
 
@@ -12,6 +12,7 @@ import {
 
 const getRateByPath = async (path, amountSend, _web3) => {
   const web3 = getWeb3ForRead(_web3)
+  const BancorNetwork = await getBancorContractByName("BancorNetwork")
   const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
   let fee = 0
 

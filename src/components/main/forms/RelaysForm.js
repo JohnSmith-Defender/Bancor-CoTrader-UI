@@ -8,12 +8,12 @@ import { inject, observer } from 'mobx-react'
 import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
+import getBancorContractByName from '../../../service/getBancorContractByName'
 
 import {
   ABISmartToken,
   ABIConverter,
   ABIBancorNetwork,
-  BancorNetwork,
   netId
 } from '../../../config'
 
@@ -103,6 +103,7 @@ class RelaysForm extends Component {
 
   // Batch requset for case when from === ERC20
   approveAndTradeRelay = async () => {
+    const BancorNetwork = await getBancorContractByName("BancorNetwork")
     const web3 = this.props.MobXStorage.web3
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
 
@@ -177,6 +178,7 @@ class RelaysForm extends Component {
 
   // in case if from === ETH
   convertFromETH = async () => {
+    const BancorNetwork = await getBancorContractByName("BancorNetwork")
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()

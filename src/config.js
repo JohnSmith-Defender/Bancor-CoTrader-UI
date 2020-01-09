@@ -9,7 +9,6 @@ export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
 export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
 export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-export const BancorNetwork = "0x0e936B11c2e7b601055e58c7E32417187aF4de4a"
 export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
 export const EtherscanLink = "https://etherscan.io/"
 export const gasPrice = 2000000000 // 2 gwei low gas price by default

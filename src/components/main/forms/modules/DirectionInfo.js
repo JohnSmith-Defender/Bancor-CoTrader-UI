@@ -6,7 +6,6 @@ import {
   ABISmartToken,
   EtherscanLink,
   ABIBancorNetwork,
-  BancorNetwork,
   StableSymbol
 } from '../../../../config'
 
@@ -14,6 +13,8 @@ import getDirectionData from '../../../../service/getDirectionData'
 import getDecimals from '../../../../service/getDecimals'
 import getPath from '../../../../service/getPath'
 import getWeb3ForRead from '../../../../service/getWeb3ForRead'
+import getBancorContractByName from '../../../../service/getBancorContractByName'
+
 
 import Pending from '../../../templates/Spiners/Pending'
 import Paper from '@material-ui/core/Paper'
@@ -81,6 +82,8 @@ class DirectionInfo extends Component {
   // return rate from Bancor network and convert result from wei
   // take into account decimals
   getReturnByPath = async (path, amount, web3, fromDecimals, toDecimals) => {
+    const BancorNetwork = await getBancorContractByName("BancorNetwork")
+    console.log("BancorNetwork", BancorNetwork)
     const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const amountSend = toWeiByDecimalsInput(fromDecimals, String(parseFloat(amount).toFixed(6)))
 
