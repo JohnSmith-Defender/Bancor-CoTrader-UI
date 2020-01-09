@@ -83,7 +83,6 @@ class DirectionInfo extends Component {
   // take into account decimals
   getReturnByPath = async (path, amount, web3, fromDecimals, toDecimals) => {
     const BancorNetwork = await getBancorContractByName("BancorNetwork")
-    console.log("BancorNetwork", BancorNetwork)
     const bancorNetwork = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const amountSend = toWeiByDecimalsInput(fromDecimals, String(parseFloat(amount).toFixed(6)))
 

@@ -1,11 +1,10 @@
 // export const API_endpoint = "http://localhost:9003"
 export const API_endpoint = "https://api-bancor.cotrader.com"
 export const StableSymbol = "USDB(USDB)"
-export const BancorGasLimit = "0x607a5C47978e2Eb6d59C6C6f51bc0bF411f4b85a"
 
 // MAINNET
-export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
 export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
+export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
 export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
 export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
 export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
