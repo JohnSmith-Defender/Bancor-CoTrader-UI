@@ -3,10 +3,11 @@ import {
   BYTECODESmartToken,
   ERC20Bytes32ABI,
   BancorRegistryABI,
-  BancorRegistryAddress,
   BNTToken,
   USDBToken
  } from '../../../../../config'
+
+import getBancorContractByName from '../../../../../service/getBancorContractByName'
 
 import { Form } from "react-bootstrap"
 import React, { Component } from 'react'
@@ -49,6 +50,7 @@ class StepOne extends Component {
        bancorConncectorAddress = connectorType === "USDB" ? USDBToken : BNTToken
      }
      const web3 = this.props.MobXStorage.web3
+     const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
      const bancorregistry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
 
      // check if token and connector exist or not

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BancorRegistryABI, BancorRegistryAddress, ABIConverter } from '../../../config'
+import { BancorRegistryABI, ABIConverter } from '../../../config'
 import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -8,6 +8,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import getBancorContractByName from '../../../service/getBancorContractByName'
+
 
 class AddConverter extends Component {
   state = {
@@ -18,6 +20,8 @@ class AddConverter extends Component {
 
   AddToList = async () => {
      const web3 = this.props.MobXStorage.web3
+     const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
+     console.log("BancorRegistryAddress", BancorRegistryAddress);
      const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress )
      const status = await this.isThisTypeConverter(web3, this.state.converter)
 

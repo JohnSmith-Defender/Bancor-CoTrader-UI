@@ -3,8 +3,7 @@ import {
   ABISmartToken,
   USDBToken,
   BNTToken,
-  BancorRegistryABI,
-  BancorRegistryAddress
+  BancorRegistryABI
 
 } from '../../../../../config'
 import React, { Component } from 'react'
@@ -16,7 +15,7 @@ import Button from '@material-ui/core/Button'
 import Pending from "../../../../templates/Spiners/Pending"
 import { Form } from "react-bootstrap"
 import UserInfo from '../../../../templates/UserInfo'
-
+import getBancorContractByName from '../../../../../service/getBancorContractByName'
 
 class StepBatch extends Component {
  constructor(props, context) {
@@ -147,6 +146,7 @@ class StepBatch extends Component {
         console.log("PARAMS step 7 (no need params)")
 
         // add to registry tx 6 (step 8)
+        const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
         const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
         const addConverterData = registry.methods.addConverter(converterAddress)
         .encodeABI({from: this.props.MobXStorage.accounts[0]})
