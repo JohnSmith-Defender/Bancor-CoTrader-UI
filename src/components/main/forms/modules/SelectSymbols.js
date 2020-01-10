@@ -22,11 +22,9 @@ class SelectSymbols extends Component {
     // Update state with tokens data
     let officialSymbols = this.props.MobXStorage.officialSymbols
 
-    // USDB missed in Mainnet, BNT missed in Ropsten
+    // BNT missed in Ropsten
     if(netId !== 1){
       officialSymbols = officialSymbols.concat("BNT")
-    }else{
-      officialSymbols = officialSymbols.concat("USDB")
     }
 
     let officialSmartTokenSymbols = this.props.MobXStorage.officialSmartTokenSymbols
