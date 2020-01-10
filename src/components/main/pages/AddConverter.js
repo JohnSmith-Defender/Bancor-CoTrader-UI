@@ -21,8 +21,8 @@ class AddConverter extends Component {
   AddToList = async () => {
      const web3 = this.props.MobXStorage.web3
      const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
-     console.log("BancorRegistryAddress", BancorRegistryAddress);
-     const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress )
+     console.log("BancorRegistryAddress", BancorRegistryAddress)
+     const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
      const status = await this.isThisTypeConverter(web3, this.state.converter)
 
      if(status){

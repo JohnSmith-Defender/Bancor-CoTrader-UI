@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { inject, observer } from 'mobx-react'
-
+import { netId } from '../../../../config'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 
@@ -20,7 +20,15 @@ class SelectSymbols extends Component {
 
   componentDidMount(){
     // Update state with tokens data
-    const officialSymbols = this.props.MobXStorage.officialSymbols
+    let officialSymbols = this.props.MobXStorage.officialSymbols
+
+    // USDB missed in Mainnet, BNT missed in Ropsten
+    if(netId !== 1){
+      officialSymbols = officialSymbols.concat("BNT")
+    }else{
+      officialSymbols = officialSymbols.concat("USDB")
+    }
+
     let officialSmartTokenSymbols = this.props.MobXStorage.officialSmartTokenSymbols
     // delete BNT from smart tokens
     officialSmartTokenSymbols = officialSmartTokenSymbols.filter(e => e !== 'BNT')

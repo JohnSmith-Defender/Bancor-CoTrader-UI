@@ -1,5 +1,5 @@
-// export const API_endpoint = "http://localhost:9003"
-export const API_endpoint = "https://api-bancor.cotrader.com"
+export const API_endpoint = "http://localhost:9003"
+// export const API_endpoint = "https://api-bancor.cotrader.com"
 export const StableSymbol = "USDB(USDB)"
 
 // MAINNET
@@ -12,6 +12,18 @@ export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
 export const EtherscanLink = "https://etherscan.io/"
 export const gasPrice = 2000000000 // 2 gwei low gas price by default
 export const netId = 1
+
+// ROPSTEN
+// export const BancorRegistryMAIN = "0xFD95E724962fCfC269010A0c6700Aa09D5de3074"
+// export const ETHBNT = "0xDD78D22F53441b6B6216cE69E6dCAe6F7c9252b6"
+// export const BNTToken = "0x62bd9D98d4E188e281D7B78e29334969bbE1053c"
+// export const USDBToken = ""
+// export const USDBBNTToken = ""
+// export const BancorETH = "0xD368b98d03855835E2923Dc000b3f9c2EBF1b27b"
+// export const EtherscanLink = "https://ropsten.etherscan.io/"
+// export const gasPrice = 2000000000 // 2 gwei low gas price by default
+// export const netId = 3
+
 
 export const ABIBancorRegistryMAIN = [
 	{"constant":true,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"getAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"unregisterAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"contractNames","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractName","type":"bytes32"},{"name":"_contractAddress","type":"address"}],"name":"registerAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"itemCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"addressOf","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_contractName","type":"bytes32"},{"indexed":false,"name":"_contractAddress","type":"address"}],"name":"AddressUpdate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_prevOwner","type":"address"},{"indexed":true,"name":"_newOwner","type":"address"}],"name":"OwnerUpdate","type":"event"}]

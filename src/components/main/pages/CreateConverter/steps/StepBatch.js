@@ -105,8 +105,9 @@ class StepBatch extends Component {
      const BNTConnectorBalance = await bancorConnectorContract.methods.balanceOf(converterAddress).call()
      const сonnectorToken = new web3.eth.Contract(ABISmartToken, connectorTokenAddress)
      const connectorBalance = await сonnectorToken.methods.balanceOf(converterAddress).call()
-
-     console.log(connectorTokenAddress)
+     const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
+     console.log("BancorRegistryAddress: ", BancorRegistryAddress)
+     console.log("connectorTokenAddress ", connectorTokenAddress)
 
      // check if user makes deposit
      if(fromWei(String(BNTConnectorBalance)) > 0 && fromWei(String(connectorBalance)) > 0){
@@ -146,7 +147,7 @@ class StepBatch extends Component {
         console.log("PARAMS step 7 (no need params)")
 
         // add to registry tx 6 (step 8)
-        const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
+
         const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
         const addConverterData = registry.methods.addConverter(converterAddress)
         .encodeABI({from: this.props.MobXStorage.accounts[0]})
@@ -157,7 +158,7 @@ class StepBatch extends Component {
         const txThree = this.getTxObject(this.props.MobXStorage.accounts[0], smartTokenAddress, issueData, gasPrice, gas)
         const txFour = this.getTxObject(this.props.MobXStorage.accounts[0], smartTokenAddress, transferOwnershipData, gasPrice, gas)
         const txFive = this.getTxObject(this.props.MobXStorage.accounts[0], converterAddress, acceptTokenOwnershipData, gasPrice, gas)
-        const txSix = this.getTxObject(this.props.MobXStorage.accounts[0], BancorRegistryAddress, addConverterData, gasPrice, gas)
+        const txSix = this.getTxObject(this.props.MobXStorage.accounts[0], BancorRegistryAddress, addConverterData, 800000, gas)
 
 
         batch.add(web3.eth.sendTransaction.request(txOne, () => console.log("tx 1")))
