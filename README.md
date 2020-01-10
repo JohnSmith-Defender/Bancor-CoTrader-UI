@@ -6,4 +6,7 @@ REACT_APP_API=COTRADER_API_ENDPOINT
 
 yarn install
 yarn start
+
+TODO
+Update src/service/getPath.js with Bancor path finder contract 
 ```
