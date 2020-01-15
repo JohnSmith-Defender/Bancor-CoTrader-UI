@@ -158,7 +158,7 @@ class StepBatch extends Component {
         const txThree = this.getTxObject(this.props.MobXStorage.accounts[0], smartTokenAddress, issueData, gasPrice, gas)
         const txFour = this.getTxObject(this.props.MobXStorage.accounts[0], smartTokenAddress, transferOwnershipData, gasPrice, gas)
         const txFive = this.getTxObject(this.props.MobXStorage.accounts[0], converterAddress, acceptTokenOwnershipData, gasPrice, gas)
-        const txSix = this.getTxObject(this.props.MobXStorage.accounts[0], BancorRegistryAddress, addConverterData, 800000, gas)
+        const txSix = this.getTxObject(this.props.MobXStorage.accounts[0], BancorRegistryAddress, addConverterData, gasPrice, 800000)
 
 
         batch.add(web3.eth.sendTransaction.request(txOne, () => console.log("tx 1")))

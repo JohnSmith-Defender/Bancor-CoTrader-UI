@@ -62,7 +62,16 @@ class CreateConverter extends Component {
 
   render() {
     // get curent step component
-    let StepComponent = componentList[this.props.MobXStorage.step]
+    let StepComponent
+    // Version compatibility check, application no longer support 8 steps
+    if(this.props.MobXStorage.step in componentList){
+      StepComponent = componentList[this.props.MobXStorage.step]
+    }
+    else{
+      alert("You are trying to use the old version of the application, we will have to clear your local storage for compatibility with the new version.")
+      window.localStorage.clear()
+      window.location.reload()
+    }
 
     return(
       <React.Fragment>
