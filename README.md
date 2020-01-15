@@ -8,5 +8,6 @@ yarn install
 yarn start
 
 TODO
-Update src/service/getPath.js with Bancor path finder contract 
+Update src/service/getPath.js with Bancor path finder contract
+Remove trade from converter and work directly with network
 ```
