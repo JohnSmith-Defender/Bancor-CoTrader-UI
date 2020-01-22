@@ -8,6 +8,11 @@ yarn install
 yarn start
 
 TODO
-Update src/service/getPath.js with Bancor path finder contract
+1) Update src/service/getPath.js with Bancor path finder contract
 Remove trade from converter and work directly with network
+
+2) Remove directly trade from converter
+
+3) Update pool calculation with CoTrader contract
+PoolPortal.getBancorConnectorsAmountByRelayAmount()
 ```
