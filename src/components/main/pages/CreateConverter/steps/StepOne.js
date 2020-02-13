@@ -156,7 +156,7 @@ render() {
           Step 1 of 3
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
-          <strong>Create Relay Token (aka SmartToken)</strong>
+          <strong>Add a new token to the Bancor network</strong>
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
           If your token is called AAA, a relay token called AAA{this.state.connectorType} will be created.
@@ -171,7 +171,7 @@ render() {
         <hr/>
         <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
         <Form.Group>
-         <Form.Label>Enter Address of the Token You'd Like to Create a Relay For:</Form.Label>
+         <Form.Label>Enter the Address of your token - the token you want to add to Bancor:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
         </Form.Group>
         <Button variant="contained" color="primary" size="medium" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
