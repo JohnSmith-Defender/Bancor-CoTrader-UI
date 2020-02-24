@@ -214,9 +214,13 @@ class Fund extends Component {
       let bigAmount = new BigNumber(amount)
       let bigConnectorBalance = new BigNumber(connectorBalance)
       let bigSupply = new BigNumber(supply)
-      connectorAmount = bigAmount.multipliedBy(bigConnectorBalance).dividedBy(bigSupply).toFixed(0)
+      connectorAmount = parseFloat(bigAmount.multipliedBy(bigConnectorBalance).dividedBy(bigSupply)).toFixed()
+      connectorAmount = new BigNumber(Math.round(connectorAmount))
 
-      connectorsAmount.push(connectorAmount)
+      // add 5% slippage
+      const connectorAmountWithSlippage = parseFloat(connectorAmount.dividedBy(100).multipliedBy(105)).toFixed()
+
+      connectorsAmount.push(connectorAmountWithSlippage)
     }
 
     return connectorsAmount
