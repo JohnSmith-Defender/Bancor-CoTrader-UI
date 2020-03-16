@@ -25,12 +25,6 @@ function HomePage(props) {
           {bull} Add new tokens in the "create converter" tab.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} Please be careful when choosing unverified tokens.
-          </Typography>
-          <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} Ask us to verify new tokens in "Chat & Support" below.
-          </Typography>
-          <Typography variant="body1" className={'mb-2'} component="p">
           {bull} More updates coming soon.
         </Typography>
         <Typography className={classes.modal} component="div">

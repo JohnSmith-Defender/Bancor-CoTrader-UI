@@ -27,13 +27,7 @@ function TradePage(props) {
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
           {bull} This page allows you to use tokens in the Bancor Network.
-          </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-        {bull}  Our lists include Bancor official and CoTrader verified tokens.
         </Typography>
-      <Typography variant="body1" className={'mb-2'} component="p">
-      {bull} Please be careful when choosing unverified tokens.
-    </Typography>
     <Typography variant="body1" className={'mb-2'} component="p">
     {bull} More updates coming soon.
   </Typography>

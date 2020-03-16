@@ -30,9 +30,6 @@ function SendPage(props) {
           {bull} This page allows trade and send to any ETH address.
           </Typography>
           <Typography variant="body1" className={'mb-2'} component="p">
-          {bull} Please be careful when choosing unverified tokens.
-          </Typography>
-          <Typography variant="body1" className={'mb-2'} component="p">
           {bull} More updates coming soon.
         </Typography>
 
