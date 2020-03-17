@@ -6,7 +6,9 @@ import {
   ABISmartToken,
   BNTToken,
   USDBToken,
-  EtherscanLink
+  EtherscanLink,
+  CoTraderPoolPortal,
+  CoTraderPoolPortalABI
 } from '../../../../config'
 
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
@@ -23,7 +25,7 @@ class Fund extends Component {
    super(props, context)
     this.state = {
     directionAmount:0,
-    BNTAmount:0,
+    bancorAmount:0,
     connectorAmount:0,
     smartTokenAddress:undefined,
     smartTokenSupplyOriginal:0,
@@ -54,7 +56,7 @@ class Fund extends Component {
     // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
       this.setState({
-        BNTAmount:0,
+        bancorAmount:0,
         payAmount:0
       })
     }
@@ -64,9 +66,8 @@ class Fund extends Component {
     // Update connectors info by input change
     if(Number(this.state.directionAmount) > 0 && this.props.from){
           this.setState({ isLoadData:true })
-          const connectorsInfo = await this.calculateConnectorBySmartTokenAmount()
-          const BNTAmount = connectorsInfo[0]
-          const connectorAmount = connectorsInfo[1]
+          const { bancorAmount, connectorAmount } = await this.calculateConnectorBySmartTokenAmount()
+          console.log(bancorAmount, connectorAmount)
           const BancorConnectorType = await this.getBancorConnectorType()
           const {
             tokenInfo,
@@ -88,7 +89,7 @@ class Fund extends Component {
 
           this.setState({
             tokenInfo,
-            BNTAmount,
+            bancorAmount,
             connectorAmount,
             smartTokenAddress,
             smartTokenSupplyOriginal,
@@ -106,7 +107,7 @@ class Fund extends Component {
           })
         }else{
           this.setState({
-            BNTAmount:0,
+            bancorAmount:0,
             payAmount:0
           })
       }
@@ -191,39 +192,18 @@ class Fund extends Component {
 
   // return BNT(or USDB) and ERC20 connectors amount calculated by smart token amount
   calculateConnectorBySmartTokenAmount = async () => {
+    const tokenData = this.props.getInfoBySymbol()
+    const smartTokenAddress = tokenData[3]
     const amount = toWei(String(this.state.directionAmount))
-    const converterInfo = this.props.getInfoBySymbol()
-    const token = converterInfo[4]
-    const converter = converterInfo[0]
-    const connectorCount = await converter.methods.connectorTokenCount().call()
+    const poolPortal = new this.props.web3.eth.Contract(CoTraderPoolPortalABI,CoTraderPoolPortal)
+    let { bancorAmount,  connectorAmount } = await poolPortal.methods.getBancorConnectorsAmountByRelayAmount(
+      amount,
+      smartTokenAddress
+    ).call()
 
-    let supply = await token.methods.totalSupply().call()
-    supply = hexToNumberString(supply._hex)
-
-    let connectorsAmount = []
-    let connectorAmount
-    let connectorToken
-    let connectorBalance
-
-    for(let i = 0; i < connectorCount; i++){
-      connectorToken = await converter.methods.connectorTokens(i).call()
-      connectorBalance = await converter.methods.getConnectorBalance(connectorToken).call()
-      connectorBalance = hexToNumberString(connectorBalance._hex)
-      // Bancor calculation
-      // _amount.mul(connectorBalance).div(supply);
-      let bigAmount = new BigNumber(amount)
-      let bigConnectorBalance = new BigNumber(connectorBalance)
-      let bigSupply = new BigNumber(supply)
-      connectorAmount = parseFloat(bigAmount.multipliedBy(bigConnectorBalance).dividedBy(bigSupply)).toFixed()
-      connectorAmount = new BigNumber(Math.round(connectorAmount))
-
-      // add 5% slippage
-      const connectorAmountWithSlippage = parseFloat(connectorAmount.dividedBy(100).multipliedBy(105)).toFixed()
-
-      connectorsAmount.push(connectorAmountWithSlippage)
-    }
-
-    return connectorsAmount
+    bancorAmount = hexToNumberString(bancorAmount._hex)
+    connectorAmount = hexToNumberString(connectorAmount._hex)
+    return { bancorAmount,  connectorAmount }
   }
 
   // Batch request
@@ -244,7 +224,7 @@ class Fund extends Component {
      // approve tx 1
      const approveBancorData = bnt.methods.approve(
        converterAddress,
-       this.state.BNTAmount
+       this.state.bancorAmount
      ).encodeABI({from: this.props.accounts[0]})
 
 
@@ -349,12 +329,12 @@ class Fund extends Component {
     }
     <br/>
     {
-      this.state.BNTAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData
+      this.state.bancorAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData
       ?
       (
         <React.Fragment>
         <Alert variant="warning">
-        <small>Stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.BNTAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
+        <small>Stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.bancorAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
         </Alert>
 
         <Alert variant="info">
@@ -424,10 +404,10 @@ class Fund extends Component {
               (null)
             }
             {
-              Number(fromWei(String(this.state.BNTAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
+              Number(fromWei(String(this.state.bancorAmount))) > Number(fromWei(String(this.state.userBNTBalance)))
               ?
               (
-                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.state.tokenInfo["smartTokenSymbol"]}</NavLink> you need ({fromWei(String(this.state.BNTAmount))}) </Alert></small>
+                <small><Alert variant="danger">Get the <NavLink to="/trade">{this.state.tokenInfo["smartTokenSymbol"]}</NavLink> you need ({fromWei(String(this.state.bancorAmount))}) </Alert></small>
               )
               :
               (null)
