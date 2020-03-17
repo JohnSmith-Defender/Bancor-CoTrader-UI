@@ -196,14 +196,22 @@ class Fund extends Component {
     const smartTokenAddress = tokenData[3]
     const amount = toWei(String(this.state.directionAmount))
     const poolPortal = new this.props.web3.eth.Contract(CoTraderPoolPortalABI,CoTraderPoolPortal)
-    let { bancorAmount,  connectorAmount } = await poolPortal.methods.getBancorConnectorsAmountByRelayAmount(
-      amount,
-      smartTokenAddress
-    ).call()
 
-    bancorAmount = hexToNumberString(bancorAmount._hex)
-    connectorAmount = hexToNumberString(connectorAmount._hex)
-    return { bancorAmount,  connectorAmount }
+    try{
+       let { bancorAmount,  connectorAmount } = await poolPortal.methods.getBancorConnectorsAmountByRelayAmount(
+        amount,
+        smartTokenAddress
+       ).call()
+
+       bancorAmount = hexToNumberString(bancorAmount._hex)
+       connectorAmount = hexToNumberString(connectorAmount._hex)
+       return { bancorAmount,  connectorAmount }
+     }catch(e){
+       alert("Please try less amount for this pool token")
+       return {bancorAmount:0, connectorAmount:0}
+    }
+
+
   }
 
   // Batch request
