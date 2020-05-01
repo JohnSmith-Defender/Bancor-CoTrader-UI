@@ -86,7 +86,7 @@ class CreateConverter extends Component {
             (
               <div className="full-width">
               <br />
-              <Alert variant="warning"><small>Attention: this application uses local storage for storing parameters. Please <strong className="text_blue">do not delete your browser history</strong> before completing all steps. Please <strong className="text_blue"> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong className="text_blue">do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
+              <Alert variant="warning"><small> <strong style={{color:"red"}}>Attention:</strong> this application uses local storage for storing parameters. Please <strong style={{color:"red"}}>do not delete your browser history</strong> before completing all steps. Please <strong style={{color:"red"}}> do not switch your wallet accounts</strong> until all steps are completed. Please <strong style={{color:"red"}}> do not proceed to the next step</strong> until your current transaction is confirmed in your wallet. Please <strong style={{color:"red"}}>do not speed up transactions</strong> after confirming them in your wallet.</small></Alert>
               {
                 this.state.userAddress && this.state.userAddress !== this.props.MobXStorage.accounts[0]
                 ?
