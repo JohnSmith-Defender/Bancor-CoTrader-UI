@@ -102,6 +102,13 @@ class App extends Component {
     const officialSymbols = official.map(item => item.symbol)
     const officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
 
+    official.push({
+    "tokenAddress": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    "symbol": "ETH"
+    })
+
+    officialSymbols.push('ETH')
+
     this.props.MobXStorage.initOfficialSymbols(officialSymbols)
     this.props.MobXStorage.initOfficialSmartTokenSymbols(officialSmartTokenSymbols)
     this.props.MobXStorage.initBancorStorage(official)

@@ -1,5 +1,9 @@
 const officialTokens = [
 {
+"tokenAddress": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+"symbol": "ETH"
+},
+{
 "tokenAddress": "0x83cee9e086A77e492eE0bB93C2B0437aD6fdECCc",
 "symbol": "MNTP",
 "smartTokenSymbol": "MNTPBNT",
@@ -2581,7 +2585,7 @@ const officialTokens = [
 },
 {
 "tokenAddress": "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315",
-"symbol": "ETH",
+"symbol": "ETHWrapper",
 "smartTokenSymbol": "ETHBNT",
 "converterAddress": "0xd3ec78814966Ca1Eb4c923aF4Da86BF7e6c743bA",
 "smartTokenAddress": "0xb1CD6e4153B2a390Cf00A6556b0fC1458C4A5533",

@@ -67,8 +67,15 @@ class TradeForm extends Component {
     if(this.props.MobXStorage.from && this.props.MobXStorage.to && this.state.directionAmount > 0){
     if(this.props.MobXStorage.from !== this.props.MobXStorage.to){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
-      const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
+
+      const path = await getPath(
+        this.props.MobXStorage.from,
+        this.props.MobXStorage.to,
+        this.props.MobXStorage.bancorTokensStorageJson,
+        web3)
+
       const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
+
       const { amountReturn, fee } = await getRateByPath(path, amountSend, web3)
 
       this.setState({
@@ -108,7 +115,12 @@ class TradeForm extends Component {
     }
 
     // trade tx
-    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
+    const path = await getPath(
+      this.props.MobXStorage.from,
+      this.props.MobXStorage.to,
+      this.props.MobXStorage.bancorTokensStorageJson,
+      web3)
+
     const tradeData = bancorNetworkContract.methods.claimAndConvert(path,
       amountSend,
       this.props.MobXStorage.minReturn
@@ -132,7 +144,13 @@ class TradeForm extends Component {
   quickConvert = async () => {
     const web3 = this.props.MobXStorage.web3
     const tokenInfoFrom = findByProps(this.props.MobXStorage.bancorTokensStorageJson, "symbol", this.props.MobXStorage.from)[0]
-    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
+
+    const path = await getPath(
+      this.props.MobXStorage.from,
+      this.props.MobXStorage.to,
+      this.props.MobXStorage.bancorTokensStorageJson,
+      web3)
+
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
@@ -150,7 +168,13 @@ class TradeForm extends Component {
     const web3 = this.props.MobXStorage.web3
     const BancorNetwork = await getBancorContractByName("BancorNetwork")
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
-    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson)
+
+    const path = await getPath(
+      this.props.MobXStorage.from,
+      this.props.MobXStorage.to,
+      this.props.MobXStorage.bancorTokensStorageJson,
+      web3)
+
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default

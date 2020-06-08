@@ -82,10 +82,11 @@ class RelaysForm extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       // for detect in path this smart token or not
       const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
-      const path = getPath(
+      const path = await getPath(
         this.props.MobXStorage.from,
         this.props.MobXStorage.to,
         this.props.MobXStorage.bancorTokensStorageJson,
+        web3,
         objPropsFrom,
         objPropsTo
       )
@@ -112,10 +113,11 @@ class RelaysForm extends Component {
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
 
-    const path = getPath(
+    const path = await getPath(
       this.props.MobXStorage.from,
       this.props.MobXStorage.to,
       this.props.MobXStorage.bancorTokensStorageJson,
+      web3,
       objPropsFrom,
       objPropsTo
     )
@@ -164,7 +166,14 @@ class RelaysForm extends Component {
     const web3 = this.props.MobXStorage.web3
     const { tokenInfoFrom, objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
     const converterContract = new web3.eth.Contract(ABIConverter, tokenInfoFrom.converterAddress)
-    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+    const path = await getPath(
+      this.props.MobXStorage.from,
+      this.props.MobXStorage.to,
+      this.props.MobXStorage.bancorTokensStorageJson,
+      web3,
+      objPropsFrom,
+      objPropsTo)
+
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
     const amountSend = await toWeiByDecimals(tokenInfoFrom.tokenAddress, this.state.directionAmount, web3)
@@ -182,7 +191,15 @@ class RelaysForm extends Component {
     const web3 = this.props.MobXStorage.web3
     const bancorNetworkContract = new web3.eth.Contract(ABIBancorNetwork, BancorNetwork)
     const { objPropsFrom, objPropsTo } = this.overrideGetDirectionData()
-    const path = getPath(this.props.MobXStorage.from, this.props.MobXStorage.to, this.props.MobXStorage.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+
+    const path = await getPath(
+      this.props.MobXStorage.from,
+      this.props.MobXStorage.to,
+      this.props.MobXStorage.bancorTokensStorageJson,
+      web3,
+      objPropsFrom,
+      objPropsTo)
+
     const amount = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default

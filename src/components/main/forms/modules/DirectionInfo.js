@@ -100,9 +100,9 @@ class DirectionInfo extends Component {
 
   // return rate in USDB(USDB) total trade value, slippage, average
   getRateInfo = async (objPropsFrom, objPropsTo, directionAmount, amountReturn, fromDecimals, toDecimals, web3) => {
-    const pathFrom = getPath(this.props.from, StableSymbol, this.props.bancorTokensStorageJson, objPropsFrom)
+    const pathFrom = await getPath(this.props.from, StableSymbol, this.props.bancorTokensStorageJson, web3, objPropsFrom)
     // const pathTo = getPath(this.props.to, "DAI", this.props.bancorTokensStorageJson, objPropsTo)
-    const pathFromTo = getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, objPropsFrom, objPropsTo)
+    const pathFromTo = await getPath(this.props.from, this.props.to, this.props.bancorTokensStorageJson, web3, objPropsFrom, objPropsTo)
     // get rate for from in DAI
     const amountReturnFrom = await this.getReturnByPath(pathFrom, directionAmount, web3, fromDecimals, 18)
     // get rate for from/to
