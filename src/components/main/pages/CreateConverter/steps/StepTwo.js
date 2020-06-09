@@ -39,9 +39,8 @@ class StepTwo extends Component {
   const stInfo = await web3.eth.getTransactionReceipt(stHash)
   if(stInfo){
     const contractAddress = stInfo.contractAddress
-    window.localStorage.setItem('smartToken', contractAddress)
-    const contract =  new web3.eth.Contract(ABIConverter, null)
-
+    console.log("contractAddress", contractAddress, stInfo)
+    const contract =  new web3.eth.Contract(ABIConverter, contractAddress)
     const gasPrice = this.props.MobXStorage.GasPrice
 
     contract.methods.AcceptOwnership()
@@ -51,9 +50,10 @@ class StepTwo extends Component {
       gasPrice
     })
     .on('transactionHash', (hash) => {
-     console.log("converter hash ", hash)
-     window.localStorage.setItem('txLatest', hash)
-     window.localStorage.setItem('StepNext', "Finish")
+      this.props.MobXStorage.setPending(true)
+      console.log("converter hash ", hash)
+      window.localStorage.setItem('txLatest', hash)
+      window.localStorage.setItem('StepNext', "Finish")
     })
     .on('confirmation', (confirmationNumber, receipt) => {
       //this.props.MobXStorage.txFinish()
