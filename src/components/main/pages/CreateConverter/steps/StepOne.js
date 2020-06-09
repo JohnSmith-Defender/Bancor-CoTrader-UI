@@ -1,8 +1,7 @@
 import {
   ABISmartToken,
-  BYTECODESmartToken,
   ERC20Bytes32ABI,
-  BancorRegistryABI,
+  BancorConverterRegistryABI,
   BNTToken,
   USDBToken
  } from '../../../../../config'
@@ -12,20 +11,19 @@ import getBancorContractByName from '../../../../../service/getBancorContractByN
 import { Form } from "react-bootstrap"
 import React, { Component } from 'react'
 import { toUtf8 } from 'web3-utils'
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 
-import UserInfo from '../../../../templates/UserInfo'
 
 class StepOne extends Component {
  constructor(props, context) {
  super(props, context)
- this.state = {
-  address:null,
-  connectorType:''
- }
+   this.state = {
+    address:null,
+    connectorType:''
+   }
  }
 
  componentDidMount() {
@@ -51,7 +49,7 @@ class StepOne extends Component {
      }
      const web3 = this.props.MobXStorage.web3
      const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
-     const bancorregistry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
+     const bancorregistry = new web3.eth.Contract(BancorConverterRegistryABI, BancorRegistryAddress)
 
      // check if token and connector exist or not
      const sideOne = await bancorregistry.methods.getLiquidityPoolByReserveConfig([token, bancorConncectorAddress], [500000,500000]).call()
@@ -64,11 +62,12 @@ class StepOne extends Component {
    }
    catch(e){
      alert("Can not check token status, please try latter")
+     console.log("error :", e)
    }
    return status
  }
 
- createSmartToken = async (tokenAddress) => {
+ createNewPool = async (tokenAddress) => {
    const web3 = this.props.MobXStorage.web3
    const accounts = this.props.MobXStorage.accounts
    const isRegistered = await this.checkToken(tokenAddress)
@@ -109,10 +108,14 @@ class StepOne extends Component {
      else{
        const conf = window.confirm(`Your token name is ${name} your decimals is ${decimals}`)
        if(conf){
-         const contract = new web3.eth.Contract(ABISmartToken, null)
+         const BancorConverterRegistryAddress = await getBancorContractByName('BancorConverterRegistry')
+         const BancorConverterRegistry = new web3.eth.Contract(BancorConverterRegistryABI, BancorConverterRegistryAddress)
+
          const connectorSymbol = this.state.connectorType
          const stname = name + " Smart Relay Token"
          const stsymbol = symbol+connectorSymbol
+         const connectorType = window.localStorage.getItem('connectorType')
+         const bancorConncectorAddress = connectorType === "USDB" ? USDBToken : BNTToken
 
          window.localStorage.setItem('userToken', tokenAddress)
          window.localStorage.setItem('tokenSymbol', symbol)
@@ -120,18 +123,23 @@ class StepOne extends Component {
          console.log("PARAMS: ", stname, stsymbol, 18)
          const gasPrice = this.props.MobXStorage.GasPrice
 
-         contract.deploy({
-             data: BYTECODESmartToken,
-             arguments: [stname, stsymbol, 18]
-         })
+         BancorConverterRegistry.methods.newConverter(
+           1,
+           stname,
+           stsymbol,
+           18,
+           500000,
+           [bancorConncectorAddress, tokenAddress],
+           [500000,500000]
+         )
          .send({
            from: accounts[0],
            gas:3372732,
            gasPrice
          })
          .on('transactionHash', (hash) => {
-          console.log("smart token hash ", hash)
-          window.localStorage.setItem('txSmartToken', hash)
+          console.log("step one hash ", hash)
+          window.localStorage.setItem('txConverter', hash)
           this.props.MobXStorage.setPending(true)
           window.localStorage.setItem('StepNext', "Two")
           window.localStorage.setItem('txLatest', hash)
@@ -153,7 +161,7 @@ render() {
     <Card style={{backgroundColor:'rgba(255,255,255,0.1)'}}>
       <CardContent>
         <Typography variant="h4" gutterBottom component="h4">
-          Step 1 of 3
+          Step 1 of 2
         </Typography>
         <Typography variant="body1" className={'mb-2'} component="p">
           <strong>Add a new token to the Bancor network</strong>
@@ -164,9 +172,6 @@ render() {
         <Typography variant="body1" className={'mb-2'} component="p">
           Relay tokens are a bridge between your token and the Bancor BNT trade network.
         </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          This <UserInfo label="Bancor documentation" info={`Name: AAA Smart Relay Token, Symbol: AAA${this.state.connectorType}, Decimals: Your decimals number`}/> step will be done
-        </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
         <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
@@ -174,7 +179,7 @@ render() {
          <Form.Label>Enter the Address of your token - the token you want to add to Bancor:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
         </Form.Group>
-        <Button variant="contained" color="primary" size="medium" onClick={() => this.createSmartToken(this.state.address)}>create smart token</Button>
+        <Button variant="contained" color="primary" size="medium" onClick={() => this.createNewPool(this.state.address)}>create new pool</Button>
         </Form>
         </Typography>
       </CardContent>

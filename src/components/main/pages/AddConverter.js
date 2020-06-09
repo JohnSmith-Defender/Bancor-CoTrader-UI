@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BancorRegistryABI, ABIConverter } from '../../../config'
+import { BancorConverterRegistryABI, ABIConverter } from '../../../config'
 import { Form } from "react-bootstrap"
 import { Alert } from "react-bootstrap"
 import { inject } from 'mobx-react'
@@ -22,7 +22,7 @@ class AddConverter extends Component {
      const web3 = this.props.MobXStorage.web3
      const BancorRegistryAddress = await getBancorContractByName("BancorConverterRegistry")
      console.log("BancorRegistryAddress", BancorRegistryAddress)
-     const registry = new web3.eth.Contract(BancorRegistryABI, BancorRegistryAddress)
+     const registry = new web3.eth.Contract(BancorConverterRegistryABI, BancorRegistryAddress)
      const status = await this.isThisTypeConverter(web3, this.state.converter)
 
      if(status){

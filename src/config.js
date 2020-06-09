@@ -19,7 +19,7 @@ export const ETHAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 export const CoTraderPoolPortal = "0x427564A5Cc6E7402F97759C7B5d6A91974a82621"
 export const BancorRegistryMAIN = "0xE3a1C8765CD17f786dC668AaC59424d67ba67Fd1"
 export const ETHBNT = "0xDD78D22F53441b6B6216cE69E6dCAe6F7c9252b6"
-export const BNTToken = "0x62bd9D98d4E188e281D7B78e29334969bbE1053c"
+export const BNTToken = "0xc74bE418ADf788a04dB7d23E3916f332B74A9617"
 export const USDBToken = ""
 export const USDBBNTToken = ""
 export const BancorETH = "0xD368b98d03855835E2923Dc000b3f9c2EBF1b27b"
@@ -31,12 +31,12 @@ export const netId = 3
 export const ABIBancorRegistryMAIN = [
 	{"constant":true,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"getAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"unregisterAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"contractNames","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractName","type":"bytes32"},{"name":"_contractAddress","type":"address"}],"name":"registerAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"itemCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_contractName","type":"bytes32"}],"name":"addressOf","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_contractName","type":"bytes32"},{"indexed":false,"name":"_contractAddress","type":"address"}],"name":"AddressUpdate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_prevOwner","type":"address"},{"indexed":true,"name":"_newOwner","type":"address"}],"name":"OwnerUpdate","type":"event"}]
 
-export const BancorRegistryABI = [
+export const BancorConverterRegistryABI = [
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_adminOnly",
+				"name": "_onlyOwnerCanUpdateRegistry",
 				"type": "bool"
 			}
 		],
@@ -64,6 +64,25 @@ export const BancorRegistryABI = [
 		"constant": true,
 		"inputs": [
 			{
+				"name": "_convertibleToken",
+				"type": "address"
+			}
+		],
+		"name": "getConvertibleTokenAnchors",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "_smartTokens",
 				"type": "address[]"
 			}
@@ -77,6 +96,63 @@ export const BancorRegistryABI = [
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "onlyOwnerCanUpdateRegistry",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint8"
+			},
+			{
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"name": "_symbol",
+				"type": "string"
+			},
+			{
+				"name": "_decimals",
+				"type": "uint8"
+			},
+			{
+				"name": "_maxConversionFee",
+				"type": "uint32"
+			},
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveWeights",
+				"type": "uint32[]"
+			}
+		],
+		"name": "newConverter",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -118,6 +194,52 @@ export const BancorRegistryABI = [
 		"type": "function"
 	},
 	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint8"
+			},
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveWeights",
+				"type": "uint32[]"
+			}
+		],
+		"name": "getLiquidityPoolByConfig",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			}
+		],
+		"name": "getConvertibleTokenAnchorCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [],
 		"name": "updateRegistry",
@@ -128,8 +250,69 @@ export const BancorRegistryABI = [
 	},
 	{
 		"constant": true,
+		"inputs": [
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getAnchor",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [],
 		"name": "getConvertibleTokens",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"name": "_index",
+				"type": "uint256"
+			}
+		],
+		"name": "getConvertibleTokenAnchor",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_anchors",
+				"type": "address[]"
+			}
+		],
+		"name": "getConvertersByAnchors",
 		"outputs": [
 			{
 				"name": "",
@@ -260,29 +443,6 @@ export const BancorRegistryABI = [
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_reserveTokens",
-				"type": "address[]"
-			},
-			{
-				"name": "_reserveRatios",
-				"type": "uint256[]"
-			}
-		],
-		"name": "getLiquidityPoolByReserveConfig",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
 				"name": "_index",
 				"type": "uint256"
 			}
@@ -306,6 +466,25 @@ export const BancorRegistryABI = [
 			{
 				"name": "",
 				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_converter",
+				"type": "address"
+			}
+		],
+		"name": "isSimilarLiquidityPoolRegistered",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -413,12 +592,80 @@ export const BancorRegistryABI = [
 	},
 	{
 		"constant": true,
-		"inputs": [],
-		"name": "adminOnly",
+		"inputs": [
+			{
+				"name": "_convertibleToken",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isConvertibleTokenAnchor",
 		"outputs": [
 			{
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveWeights",
+				"type": "uint32[]"
+			}
+		],
+		"name": "getLiquidityPoolByReserveConfig",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "safeTransfer",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getAnchorCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -464,6 +711,51 @@ export const BancorRegistryABI = [
 	},
 	{
 		"constant": true,
+		"inputs": [
+			{
+				"name": "_value",
+				"type": "address"
+			}
+		],
+		"name": "isAnchor",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [],
 		"name": "getSmartTokenCount",
 		"outputs": [
@@ -489,6 +781,42 @@ export const BancorRegistryABI = [
 			{
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "safeApprove",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getAnchors",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address[]"
 			}
 		],
 		"payable": false,
@@ -544,11 +872,11 @@ export const BancorRegistryABI = [
 		"inputs": [
 			{
 				"indexed": true,
-				"name": "_smartToken",
+				"name": "_anchor",
 				"type": "address"
 			}
 		],
-		"name": "SmartTokenAdded",
+		"name": "ConverterAnchorAdded",
 		"type": "event"
 	},
 	{
@@ -556,11 +884,11 @@ export const BancorRegistryABI = [
 		"inputs": [
 			{
 				"indexed": true,
-				"name": "_smartToken",
+				"name": "_anchor",
 				"type": "address"
 			}
 		],
-		"name": "SmartTokenRemoved",
+		"name": "ConverterAnchorRemoved",
 		"type": "event"
 	},
 	{
@@ -619,6 +947,30 @@ export const BancorRegistryABI = [
 			}
 		],
 		"name": "ConvertibleTokenRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "SmartTokenAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_smartToken",
+				"type": "address"
+			}
+		],
+		"name": "SmartTokenRemoved",
 		"type": "event"
 	},
 	{
