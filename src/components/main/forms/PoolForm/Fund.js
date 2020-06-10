@@ -228,6 +228,16 @@ class Fund extends Component {
      const connectorAddress = tokenInfo[2]
      const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
 
+     let converterVersion
+
+     try{
+       converterVersion = await converter.methods.version().call()
+     }catch(e){
+       converterVersion = 0
+     }
+
+     console.log("converterVersion", converterVersion, typeof converterVersion)
+
      let batch = new web3.BatchRequest()
 
      // approve tx 1
