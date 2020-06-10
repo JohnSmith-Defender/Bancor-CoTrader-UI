@@ -18,7 +18,7 @@ const getRateByPath = async (path, amountSend, _web3) => {
 
   let amountReturn = await bancorNetworkContract.methods.getReturnByPath(
   path,
-  amountSend
+  String(amountSend)
   ).call()
 
   if(amountReturn){

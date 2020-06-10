@@ -74,7 +74,7 @@ class TradeForm extends Component {
         this.props.MobXStorage.bancorTokensStorageJson,
         web3)
 
-      const amountSend = await toWeiByDecimals(path[0], this.state.directionAmount, web3)
+      const amountSend = await toWeiByDecimals(path[0], String(this.state.directionAmount), web3)
 
       const { amountReturn, fee } = await getRateByPath(path, amountSend, web3)
 
