@@ -221,7 +221,6 @@ class Fund extends Component {
   getConverterVersion = async () => {
     const tokenInfo = this.props.getInfoBySymbol()
     const converter = tokenInfo[0]
-
     let converterVersion
 
     try{
@@ -230,10 +229,9 @@ class Fund extends Component {
       converterVersion = 0
     }
     this.setState({ converterVersion  })
-    console.log("converterVersion", converterVersion, typeof converterVersion)
   }
 
-  // Batch request for fund
+  // Batch request for fund for version < 28
   approveAndFund = async () => {
      const web3 = this.props.web3
      const tokenInfo = this.props.getInfoBySymbol()
@@ -324,10 +322,89 @@ class Fund extends Component {
      batch.execute()
   }
 
-  // batch request for addLiquidity)
-
+  // batch request for addLiquidity for version >= 28
   approveAndAddLiquidity = async () => {
-    console.log(this.state.bancorAmount, this.state.connectorAmount)
+    const web3 = this.props.web3
+    const tokenInfo = this.props.getInfoBySymbol()
+    const converterAddress = tokenInfo[1]
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
+    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+    const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
+    const connectorAddress = tokenInfo[2]
+    const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
+
+    let batch = new web3.BatchRequest()
+
+    // approve tx 1
+    const approveBancorData = bnt.methods.approve(
+      converterAddress,
+      this.state.bancorAmount
+    ).encodeABI({from: this.props.accounts[0]})
+
+
+    // approve tx 2
+    const approveConnectorData = connector.methods.approve(
+      converterAddress,
+      this.state.connectorAmount
+    ).encodeABI({from: this.props.accounts[0]})
+
+
+    // pool
+    const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
+    .encodeABI({from: this.props.accounts[0]})
+
+
+    const commonData = {
+      "from": this.props.accounts[0],
+      "value": "0x0",
+      "gasPrice": web3.eth.utils.toHex(gasPrice),
+      "gas": web3.eth.utils.toHex(85000)
+    }
+
+    const approveBancor = {
+      "data": approveBancorData,
+      "to": bancorConnectorAddress,
+      ...commonData
+    }
+
+    const approveConnector = {
+      "data": approveConnectorData,
+      "to": connectorAddress,
+      ...commonData
+    }
+
+    const fund = {
+      "data": poolData,
+      "to": converterAddress,
+      ...commonData
+    }
+
+    // add additional request reset approve for case if approved alredy BNT or USDB
+    if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
+      let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
+      bancorApproved = hexToNumberString(bancorApproved._hex)
+      console.log("bancorApproved", bancorApproved)
+      if(bancorApproved > 0){
+        const resetApproveData = bnt.methods.approve(
+          converterAddress,
+          0
+        ).encodeABI({from: this.props.accounts[0]})
+
+        const resetApprove = {
+          "data": resetApproveData,
+          "to": bancorConnectorAddress,
+          ...commonData
+        }
+
+        batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
+      }
+    }
+
+    batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
+    batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
+    batch.add(web3.eth.sendTransaction.request(fund, () => console.log("Pool")))
+    batch.execute()
   }
 
   render(){
@@ -348,6 +425,9 @@ class Fund extends Component {
               ?
               (
                 <>
+                <Form.Text className="text-muted">
+                  Enter BNT amount
+                </Form.Text>
                 <Form.Control
                 name="bancorAmount"
                 value={this.state.bancorAmount}
@@ -355,6 +435,10 @@ class Fund extends Component {
                 onChange={e => this.change(e)}
                 type="number" min="1"
                 />
+                <br/>
+                <Form.Text className="text-muted">
+                  Enter ERC amount
+                </Form.Text>
                 <Form.Control
                 name="connectorAmount"
                 value={this.state.connectorAmount}
@@ -369,6 +453,9 @@ class Fund extends Component {
               :
               (
                 <>
+                <Form.Text className="text-muted">
+                  Enter pool amount
+                </Form.Text>
                 <Form.Control
                 name="directionAmount"
                 value={this.state.directionAmount}
@@ -397,20 +484,30 @@ class Fund extends Component {
     }
     <br/>
     {
+      /* Render additional info and fund button for versions < 28 */
       this.state.bancorAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData && this.state.converterVersion < 28
       ?
       (
         <React.Fragment>
         <Alert variant="warning">
-        <small>Stake {this.state.BancorConnectorType}: &nbsp; {fromWei(String(this.state.bancorAmount))}, &nbsp; {this.props.from}: &nbsp; {this.state.payAmount}</small>
+        <small>Stake {this.state.BancorConnectorType}:
+        &nbsp;
+        {fromWei(String(this.state.bancorAmount))},
+        &nbsp;
+        {this.props.from}:
+        &nbsp;
+        {this.state.payAmount}
+        </small>
         </Alert>
 
         <Alert variant="info">
         <small>Get {this.state.directionAmount}
         &thinsp;
-        <a href={EtherscanLink + "token/" + this.state.smartTokenAddress}target="_blank" rel="noopener noreferrer">{this.state.tokenInfo['smartTokenSymbol']}</a>,
+        <a href={EtherscanLink + "token/" + this.state.smartTokenAddress}target="_blank" rel="noopener noreferrer">
+        {this.state.tokenInfo['smartTokenSymbol']}</a>,
         &thinsp; which is the relay token for the &thinsp;
-        <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">{this.props.from}{this.state.tokenInfo['connectorType'] !== 'USDB' ? <>({this.state.tokenInfo['connectorType']})</> : null}</a>
+        <a href={EtherscanLink + "token/" + this.state.tokenAddress} target="_blank" rel="noopener noreferrer">
+        {this.props.from}{this.state.tokenInfo['connectorType'] !== 'USDB' ? <>({this.state.tokenInfo['connectorType']})</> : null}</a>
         &thinsp;
         token</small>
         </Alert>
