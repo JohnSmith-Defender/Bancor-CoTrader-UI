@@ -38,12 +38,16 @@ class StepTwo extends Component {
 
   const stInfo = await web3.eth.getTransactionReceipt(stHash)
   if(stInfo){
-    const contractAddress = stInfo.contractAddress
-    console.log("contractAddress", contractAddress, stInfo)
-    const contract =  new web3.eth.Contract(ABIConverter, contractAddress)
+    // get anchor address from hash logs
+    const anchorAddress = stInfo.logs[2].address
+    const anchor = new web3.eth.Contract(ABIConverter, anchorAddress)
+    // get converter from anchor
+    const converterAddress = await anchor.methods.owner().call()
+    const converter = new web3.eth.Contract(ABIConverter, converterAddress)
+
     const gasPrice = this.props.MobXStorage.GasPrice
 
-    contract.methods.AcceptOwnership()
+    converter.methods.acceptOwnership()
     .send({
       from: accounts[0],
       gas:7372732,
@@ -53,6 +57,7 @@ class StepTwo extends Component {
       this.props.MobXStorage.setPending(true)
       console.log("converter hash ", hash)
       window.localStorage.setItem('txLatest', hash)
+      window.localStorage.setItem('converterAddress', converterAddress)
       window.localStorage.setItem('StepNext', "Finish")
     })
     .on('confirmation', (confirmationNumber, receipt) => {
