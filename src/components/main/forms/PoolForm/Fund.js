@@ -207,7 +207,8 @@ class Fund extends Component {
        connectorAmount = hexToNumberString(connectorAmount._hex)
        return { bancorAmount,  connectorAmount }
      }catch(e){
-       alert("Please try less amount for this pool token")
+       alert("Error, check the console")
+       console.log("error ", e)
        return {bancorAmount:0, connectorAmount:0}
     }
 
