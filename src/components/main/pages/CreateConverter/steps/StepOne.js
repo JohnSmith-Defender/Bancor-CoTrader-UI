@@ -165,17 +165,11 @@ render() {
         <Typography variant="body1" className={'mb-2'} component="p">
           <strong>Add a new token to the Bancor network</strong>
         </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          If your token is called AAA, a relay token called AAA{this.state.connectorType} will be created.
-        </Typography>
-        <Typography variant="body1" className={'mb-2'} component="p">
-          Relay tokens are a bridge between your token and the Bancor BNT trade network.
-        </Typography>
         <Typography className={'mt-2 mb-2'} component="div">
         <hr/>
         <Form style={{margin: '10px auto', maxWidth: '350px', width:'100%'}}>
         <Form.Group>
-         <Form.Label>Enter the Address of your token - the token you want to add to Bancor:</Form.Label>
+         <Form.Label>Enter the address of your token - the token you want to add to Bancor:</Form.Label>
          <Form.Control name="address" placeholder="0x..." onChange={e => this.change(e)}/>
         </Form.Group>
         <Button variant="contained" color="primary" size="medium" onClick={() => this.createNewPool(this.state.address)}>create new pool</Button>
