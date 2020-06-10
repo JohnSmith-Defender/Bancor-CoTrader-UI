@@ -8,7 +8,8 @@ import {
   USDBToken,
   EtherscanLink,
   CoTraderPoolPortal,
-  CoTraderPoolPortalABI
+  CoTraderPoolPortalABI,
+  ABILiquidityPoolV1Converter
 } from '../../../../config'
 
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
@@ -333,6 +334,7 @@ class Fund extends Component {
     const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
     const connectorAddress = tokenInfo[2]
     const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
+    const converter = new web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
 
     let batch = new web3.BatchRequest()
 
@@ -349,9 +351,16 @@ class Fund extends Component {
       this.state.connectorAmount
     ).encodeABI({from: this.props.accounts[0]})
 
+    // TODO CONVERT IN WEI in APPOVE ALSO 
+    bancorAmountWEI = this.state.bancorAmount
+    connectorAmountWEI = this.state.connectorAmount
 
     // pool
-    const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
+    const poolData = converter.methods.addLiquidity(
+      [bancorConnectorAddress, connectorAddress],
+      [bancorAmountWEI, connectorAmountWEI],
+      1
+    )
     .encodeABI({from: this.props.accounts[0]})
 
 
