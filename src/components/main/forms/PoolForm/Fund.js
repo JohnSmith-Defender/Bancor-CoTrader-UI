@@ -40,7 +40,8 @@ class Fund extends Component {
     payAmount:0,
     tokenInfo:null,
     isLoadData:false,
-    isBlackListed:false
+    isBlackListed:false,
+    converterVersion : null
     }
   }
 
@@ -59,6 +60,10 @@ class Fund extends Component {
         bancorAmount:0,
         payAmount:0
       })
+    }
+
+    if(prevProps.from !== this.props.from && this.props.from){
+       this.getConverterVersion()
     }
   }
 
@@ -211,12 +216,25 @@ class Fund extends Component {
        console.log("error ", e)
        return {bancorAmount:0, connectorAmount:0}
     }
-
-
   }
 
-  // Batch request
-  approveAndPool = async () => {
+  getConverterVersion = async () => {
+    const tokenInfo = this.props.getInfoBySymbol()
+    const converter = tokenInfo[0]
+
+    let converterVersion
+
+    try{
+      converterVersion = await converter.methods.version().call()
+    }catch(e){
+      converterVersion = 0
+    }
+    this.setState({ converterVersion  })
+    console.log("converterVersion", converterVersion, typeof converterVersion)
+  }
+
+  // Batch request for fund
+  approveAndFund = async () => {
      const web3 = this.props.web3
      const tokenInfo = this.props.getInfoBySymbol()
      const converter = tokenInfo[0]
@@ -227,16 +245,6 @@ class Fund extends Component {
      const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
      const connectorAddress = tokenInfo[2]
      const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
-
-     let converterVersion
-
-     try{
-       converterVersion = await converter.methods.version().call()
-     }catch(e){
-       converterVersion = 0
-     }
-
-     console.log("converterVersion", converterVersion, typeof converterVersion)
 
      let batch = new web3.BatchRequest()
 
@@ -316,6 +324,12 @@ class Fund extends Component {
      batch.execute()
   }
 
+  // batch request for addLiquidity)
+
+  approveAndAddLiquidity = async () => {
+    console.log(this.state.bancorAmount, this.state.connectorAmount)
+  }
+
   render(){
     return(
     <React.Fragment>
@@ -325,13 +339,48 @@ class Fund extends Component {
       (
         <>
         {
-          !this.state.isLoadData
+          !this.state.isLoadData && this.state.converterVersion
           ?
           (
             <>
-            <Form.Control name="directionAmount" value={this.state.directionAmount} placeholder="Enter relay amount" onChange={e => this.change(e)} type="number" min="1"/>
-            <Button variant="contained" color="primary" onClick={() => this.calculate()}>Calculate</Button>
-            <br/>
+            {
+              this.state.converterVersion >= 28
+              ?
+              (
+                <>
+                <Form.Control
+                name="bancorAmount"
+                value={this.state.bancorAmount}
+                placeholder="Enter BNT amount"
+                onChange={e => this.change(e)}
+                type="number" min="1"
+                />
+                <Form.Control
+                name="connectorAmount"
+                value={this.state.connectorAmount}
+                placeholder="Enter ERC amount"
+                onChange={e => this.change(e)}
+                type="number" min="1"
+                />
+
+                <Button variant="contained" color="primary" onClick={() => this.approveAndAddLiquidity()}>Add Liquidity</Button>
+                </>
+              )
+              :
+              (
+                <>
+                <Form.Control
+                name="directionAmount"
+                value={this.state.directionAmount}
+                placeholder="Enter relay amount"
+                onChange={e => this.change(e)}
+                type="number" min="1"
+                />
+                <Button variant="contained" color="primary" onClick={() => this.calculate()}>Calculate</Button>
+                <br/>
+                </>
+              )
+            }
             </>
           )
           :
@@ -348,7 +397,7 @@ class Fund extends Component {
     }
     <br/>
     {
-      this.state.bancorAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData
+      this.state.bancorAmount > 0 && this.state.connectorAmount > 0 && !this.state.isLoadData && this.state.converterVersion < 28
       ?
       (
         <React.Fragment>
@@ -445,7 +494,7 @@ class Fund extends Component {
           !this.state.isBlackListed
           ?
           (
-            <Button variant="contained" color="primary" onClick={() => this.approveAndPool()}>Fund</Button>
+            <Button variant="contained" color="primary" onClick={() => this.approveAndFund()}>Fund</Button>
           )
           :
           (
