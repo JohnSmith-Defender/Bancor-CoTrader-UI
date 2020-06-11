@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
-import { fromWeiByDecimals, fromWeiByDecimalsInput } from '../../../../service/weiByDecimals'
+
+import {
+  fromWeiByDecimals,
+  fromWeiByDecimalsInput,
+  toWeiByDecimals
+} from '../../../../service/weiByDecimals'
+
 import {
   ABISmartToken,
   BNTToken,
@@ -28,6 +34,8 @@ class Fund extends Component {
     directionAmount:0,
     bancorAmount:0,
     connectorAmount:0,
+    customBancorAmount:0,
+    customConnectorAmount:0,
     smartTokenAddress:undefined,
     smartTokenSupplyOriginal:0,
     newSmartTokenSupply:0,
@@ -68,6 +76,7 @@ class Fund extends Component {
     }
   }
 
+  // Calculate connectors amount by pool amount
   calculate = async () => {
     // Update connectors info by input change
     if(Number(this.state.directionAmount) > 0 && this.props.from){
@@ -119,6 +128,7 @@ class Fund extends Component {
       }
   }
 
+  // return bool if converter black listed or not
   checkBlackList = (converter) => {
     const isBlackListed = poolBlackList.includes(converter)
     return isBlackListed
@@ -219,6 +229,7 @@ class Fund extends Component {
     }
   }
 
+  // return version of current selected converter  address
   getConverterVersion = async () => {
     const tokenInfo = this.props.getInfoBySymbol()
     const converter = tokenInfo[0]
@@ -338,22 +349,22 @@ class Fund extends Component {
 
     let batch = new web3.BatchRequest()
 
+    const bancorAmountWEI = await toWeiByDecimals(bancorConnectorAddress, this.state.customBancorAmount)
+    const connectorAmountWEI = await toWeiByDecimals(connectorAddress, this.state.customConnectorAmount)
+
     // approve tx 1
     const approveBancorData = bnt.methods.approve(
       converterAddress,
-      this.state.bancorAmount
+      bancorAmountWEI
     ).encodeABI({from: this.props.accounts[0]})
 
 
     // approve tx 2
     const approveConnectorData = connector.methods.approve(
       converterAddress,
-      this.state.connectorAmount
+      connectorAmountWEI
     ).encodeABI({from: this.props.accounts[0]})
 
-    // TODO CONVERT IN WEI in APPOVE ALSO 
-    bancorAmountWEI = this.state.bancorAmount
-    connectorAmountWEI = this.state.connectorAmount
 
     // pool
     const poolData = converter.methods.addLiquidity(
@@ -368,7 +379,6 @@ class Fund extends Component {
       "from": this.props.accounts[0],
       "value": "0x0",
       "gasPrice": web3.eth.utils.toHex(gasPrice),
-      "gas": web3.eth.utils.toHex(85000)
     }
 
     const approveBancor = {
@@ -438,8 +448,8 @@ class Fund extends Component {
                   Enter BNT amount
                 </Form.Text>
                 <Form.Control
-                name="bancorAmount"
-                value={this.state.bancorAmount}
+                name="customBancorAmount"
+                value={this.state.customBancorAmount}
                 placeholder="Enter BNT amount"
                 onChange={e => this.change(e)}
                 type="number" min="1"
@@ -449,8 +459,8 @@ class Fund extends Component {
                   Enter ERC amount
                 </Form.Text>
                 <Form.Control
-                name="connectorAmount"
-                value={this.state.connectorAmount}
+                name="customConnectorAmount"
+                value={this.state.customConnectorAmount}
                 placeholder="Enter ERC amount"
                 onChange={e => this.change(e)}
                 type="number" min="1"
