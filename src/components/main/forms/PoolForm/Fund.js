@@ -245,11 +245,15 @@ class Fund extends Component {
     this.setState({ converterVersion  })
   }
 
-  // Batch request for fund for version < 28
-  approveAndFund = async () => {
+  // Batch request for approve connectors and add reserve
+  // NOTE: param isV2 for version < 28 should be always false, for version >= can be both true or false
+  approveAndFund = async (isV2) => {
+     // get web3 and create batch
      const web3 = this.props.web3
+     let batch = new web3.BatchRequest()
+
+     // get additional info
      const tokenInfo = this.props.getInfoBySymbol()
-     const converter = tokenInfo[0]
      const converterAddress = tokenInfo[1]
      const bancorGasLimit = await getBancorGasLimit()
      const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
@@ -258,32 +262,52 @@ class Fund extends Component {
      const connectorAddress = tokenInfo[2]
      const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
 
-     let batch = new web3.BatchRequest()
+     // get converter contract dependse isV2 true or false
+     let converter = isV2
+     ? new web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
+     : tokenInfo[0]
+
+
+     // get amount, dependse of type (fund or add custom liquidity)
+     const bancorAmountWEI = isV2
+     ? await toWeiByDecimals(bancorConnectorAddress, this.state.customBancorAmount)
+     : this.state.bancorAmount
+
+     const connectorAmountWEI = isV2
+     ? await toWeiByDecimals(connectorAddress, this.state.customConnectorAmount)
+     : this.state.connectorAmount
 
      // approve tx 1
      const approveBancorData = bnt.methods.approve(
        converterAddress,
-       this.state.bancorAmount
+       bancorAmountWEI
      ).encodeABI({from: this.props.accounts[0]})
 
 
      // approve tx 2
      const approveConnectorData = connector.methods.approve(
        converterAddress,
-       this.state.connectorAmount
+       connectorAmountWEI
      ).encodeABI({from: this.props.accounts[0]})
 
 
-     // pool
-     const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
-     .encodeABI({from: this.props.accounts[0]})
+     // select fund or addAiquidity dependse of isV2 conditional
+     const poolData = isV2
+      ? converter.methods.addLiquidity(
+        [bancorConnectorAddress, connectorAddress],
+        [bancorAmountWEI, connectorAmountWEI],
+        1).encodeABI({from: this.props.accounts[0]})
 
+      : converter.methods.fund(toWei(String(this.state.directionAmount)))
+        .encodeABI({from: this.props.accounts[0]})
+
+
+     // Prepare transaction data
      const commonData = {
        "from": this.props.accounts[0],
        "value": "0x0",
        "gasPrice": web3.eth.utils.toHex(gasPrice)
      }
-
 
      const approveBancor = {
        "to": bancorConnectorAddress,
@@ -304,10 +328,11 @@ class Fund extends Component {
      }
 
      // add additional request reset approve for case if approved alredy BNT or USDB
+     // because BNT not allow do new approve, if alredy approved
      if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
        let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
        bancorApproved = hexToNumberString(bancorApproved._hex)
-       console.log("bancorApproved", bancorApproved)
+
        if(bancorApproved > 0){
          const resetApproveData = bnt.methods.approve(
            converterAddress,
@@ -324,103 +349,13 @@ class Fund extends Component {
        }
      }
 
+     // execude batch
      batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
      batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
      batch.add(web3.eth.sendTransaction.request(fund, () => console.log("Pool")))
      batch.execute()
   }
 
-  // batch request for addLiquidity for version >= 28
-  approveAndAddLiquidity = async () => {
-    const web3 = this.props.web3
-    const tokenInfo = this.props.getInfoBySymbol()
-    const converterAddress = tokenInfo[1]
-    const bancorGasLimit = await getBancorGasLimit()
-    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
-    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
-    const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
-    const connectorAddress = tokenInfo[2]
-    const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
-    const converter = new web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
-
-    let batch = new web3.BatchRequest()
-
-    const bancorAmountWEI = await toWeiByDecimals(bancorConnectorAddress, this.state.customBancorAmount)
-    const connectorAmountWEI = await toWeiByDecimals(connectorAddress, this.state.customConnectorAmount)
-
-    // approve tx 1
-    const approveBancorData = bnt.methods.approve(
-      converterAddress,
-      bancorAmountWEI
-    ).encodeABI({from: this.props.accounts[0]})
-
-
-    // approve tx 2
-    const approveConnectorData = connector.methods.approve(
-      converterAddress,
-      connectorAmountWEI
-    ).encodeABI({from: this.props.accounts[0]})
-
-
-    // pool
-    const poolData = converter.methods.addLiquidity(
-      [bancorConnectorAddress, connectorAddress],
-      [bancorAmountWEI, connectorAmountWEI],
-      1
-    )
-    .encodeABI({from: this.props.accounts[0]})
-
-
-    const commonData = {
-      "from": this.props.accounts[0],
-      "value": "0x0",
-      "gasPrice": web3.eth.utils.toHex(gasPrice),
-    }
-
-    const approveBancor = {
-      "data": approveBancorData,
-      "to": bancorConnectorAddress,
-      ...commonData
-    }
-
-    const approveConnector = {
-      "data": approveConnectorData,
-      "to": connectorAddress,
-      ...commonData
-    }
-
-    const fund = {
-      "data": poolData,
-      "to": converterAddress,
-      ...commonData
-    }
-
-    // add additional request reset approve for case if approved alredy BNT or USDB
-    if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
-      let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
-      bancorApproved = hexToNumberString(bancorApproved._hex)
-
-      if(bancorApproved > 0){
-        const resetApproveData = bnt.methods.approve(
-          converterAddress,
-          0
-        ).encodeABI({from: this.props.accounts[0]})
-
-        const resetApprove = {
-          "data": resetApproveData,
-          "to": bancorConnectorAddress,
-          ...commonData
-        }
-
-        batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
-      }
-    }
-
-    batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
-    batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
-    batch.add(web3.eth.sendTransaction.request(fund, () => console.log("Pool")))
-    batch.execute()
-  }
 
   render(){
     return(
@@ -462,7 +397,7 @@ class Fund extends Component {
                 type="number" min="1"
                 />
 
-                <Button variant="contained" color="primary" onClick={() => this.approveAndAddLiquidity()}>Add Liquidity</Button>
+                <Button variant="contained" color="primary" onClick={() => this.approveAndFund(true)}>Add Liquidity</Button>
                 </>
               )
               :
@@ -606,7 +541,7 @@ class Fund extends Component {
           !this.state.isBlackListed
           ?
           (
-            <Button variant="contained" color="primary" onClick={() => this.approveAndFund()}>Fund</Button>
+            <Button variant="contained" color="primary" onClick={() => this.approveAndFund(false)}>Fund</Button>
           )
           :
           (
