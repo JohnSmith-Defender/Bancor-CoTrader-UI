@@ -1,3 +1,5 @@
+// TODO DRY
+
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { hexToNumberString, toWei, fromWei } from 'web3-utils'
@@ -80,52 +82,52 @@ class Fund extends Component {
   calculate = async () => {
     // Update connectors info by input change
     if(Number(this.state.directionAmount) > 0 && this.props.from){
-          this.setState({ isLoadData:true })
-          const { bancorAmount, connectorAmount } = await this.calculateConnectorBySmartTokenAmount()
-          console.log(bancorAmount, connectorAmount)
-          const BancorConnectorType = await this.getBancorConnectorType()
-          const {
-            tokenInfo,
-            smartTokenSupplyOriginal,
-            newSmartTokenSupply,
-            newUserPercent,
-            smartTokenAddress,
-            tokenAddress,
-            currentUserPercent,
-            smartTokenBalance,
-            userBNTBalance,
-            userConnectorBalance
-          } = await this.getRelayInfo(BancorConnectorType)
+      this.setState({ isLoadData:true })
+      const { bancorAmount, connectorAmount } = await this.calculateConnectorBySmartTokenAmount()
 
-          const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
+      const BancorConnectorType = await this.getBancorConnectorType()
+      const {
+        tokenInfo,
+        smartTokenSupplyOriginal,
+        newSmartTokenSupply,
+        newUserPercent,
+        smartTokenAddress,
+        tokenAddress,
+        currentUserPercent,
+        smartTokenBalance,
+        userBNTBalance,
+        userConnectorBalance } = await this.getRelayInfo(BancorConnectorType)
 
-          // check if pool converter in BlackList
-          const isBlackListed = this.checkBlackList(tokenInfo["converterAddress"])
+      const payAmount = await fromWeiByDecimals(tokenAddress, connectorAmount, this.props.web3)
 
-          this.setState({
-            tokenInfo,
-            bancorAmount,
-            connectorAmount,
-            smartTokenAddress,
-            smartTokenSupplyOriginal,
-            newSmartTokenSupply,
-            newUserPercent,
-            tokenAddress,
-            currentUserPercent,
-            smartTokenBalance,
-            userBNTBalance,
-            userConnectorBalance,
-            BancorConnectorType,
-            payAmount,
-            isBlackListed,
-            isLoadData:false
-          })
-        }else{
-          this.setState({
-            bancorAmount:0,
-            payAmount:0
-          })
+      // check if pool converter in BlackList
+      const isBlackListed = this.checkBlackList(tokenInfo["converterAddress"])
+
+      this.setState({
+        tokenInfo,
+        bancorAmount,
+        connectorAmount,
+        smartTokenAddress,
+        smartTokenSupplyOriginal,
+        newSmartTokenSupply,
+        newUserPercent,
+        tokenAddress,
+        currentUserPercent,
+        smartTokenBalance,
+        userBNTBalance,
+        userConnectorBalance,
+        BancorConnectorType,
+        payAmount,
+        isBlackListed,
+        isLoadData:false
+      })
       }
+    else{
+       this.setState({
+       bancorAmount:0,
+       payAmount:0
+       })
+    }
   }
 
   // return bool if converter black listed or not
@@ -276,32 +278,29 @@ class Fund extends Component {
      const poolData = converter.methods.fund(toWei(String(this.state.directionAmount)))
      .encodeABI({from: this.props.accounts[0]})
 
+     const commonData = {
+       "from": this.props.accounts[0],
+       "value": "0x0",
+       "gasPrice": web3.eth.utils.toHex(gasPrice)
+     }
+
 
      const approveBancor = {
-       "from": this.props.accounts[0],
        "to": bancorConnectorAddress,
-       "value": "0x0",
        "data": approveBancorData,
-       "gasPrice": web3.eth.utils.toHex(gasPrice),
-       "gas": web3.eth.utils.toHex(85000),
+       ...commonData
      }
 
      const approveConnector = {
-       "from": this.props.accounts[0],
        "to": connectorAddress,
-       "value": "0x0",
        "data": approveConnectorData,
-       "gasPrice": web3.eth.utils.toHex(gasPrice),
-       "gas": web3.eth.utils.toHex(85000),
+       ...commonData
      }
 
      const fund = {
-       "from": this.props.accounts[0],
        "to": converterAddress,
-       "value": "0x0",
        "data": poolData,
-       "gasPrice": web3.eth.utils.toHex(gasPrice),
-       "gas": web3.eth.utils.toHex(950000),
+       ...commonData
      }
 
      // add additional request reset approve for case if approved alredy BNT or USDB
@@ -316,12 +315,9 @@ class Fund extends Component {
          ).encodeABI({from: this.props.accounts[0]})
 
          const resetApprove = {
-           "from": this.props.accounts[0],
            "to": bancorConnectorAddress,
-           "value": "0x0",
            "data": resetApproveData,
-           "gasPrice": web3.eth.utils.toHex(gasPrice),
-           "gas": web3.eth.utils.toHex(85000),
+           ...commonData
          }
 
          batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
@@ -403,7 +399,7 @@ class Fund extends Component {
     if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
       let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
       bancorApproved = hexToNumberString(bancorApproved._hex)
-      console.log("bancorApproved", bancorApproved)
+
       if(bancorApproved > 0){
         const resetApproveData = bnt.methods.approve(
           converterAddress,
