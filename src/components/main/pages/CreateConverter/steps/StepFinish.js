@@ -21,13 +21,16 @@ function StepFinish(props) {
       <Card className={classes.card}>
         <CardContent>
           <Typography className={classes.title} gutterBottom>
-            Congratulations now your token in the Bancor network
+            Congratulations after confirming the transaction, your token will be added in Bancor Network.
           </Typography>
 
           <Typography variant="body1" className={'mb-2'} component="p">
-            Now you need to add a reserve, please go to the "Pool page"
+            After confirming you can go to the "Pool page", find your token and add reserve.
           </Typography>
 
+          <Typography variant="body1" className={'mb-2'} component="p">
+            It usually takes 10 to 15 minutes after confirmation.
+          </Typography>
 
           <Button onClick={() => clearStorageAndRefreshPage()}>Add new another token</Button>
 
