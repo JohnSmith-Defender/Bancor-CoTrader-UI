@@ -11,7 +11,7 @@ const useStyles = pageStyles
 
 function clearStorageAndRefreshPage(){
   window.localStorage.clear()
-  document.location.reload(true)
+  window.location.reload()
 }
 
 function StepFinish(props) {
