@@ -4,28 +4,28 @@ export const StableSymbol = "USDB(USDB)"
 export const ETHAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 
 // MAINNET
-// export const CoTraderPoolPortal = "0x3f49fEddB3c63E36552679BC972857312dC8b4b7"
-// export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
-// export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
-// export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
-// export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
-// export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
-// export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
-// export const EtherscanLink = "https://etherscan.io/"
-// export const gasPrice = 2000000000 // 2 gwei low gas price by default
-// export const netId = 1
+export const CoTraderPoolPortal = "0x3f49fEddB3c63E36552679BC972857312dC8b4b7"
+export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
+export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
+export const BNTToken = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
+export const USDBToken = "0x309627af60f0926daa6041b8279484312f2bf060"
+export const USDBBNTToken = "0xd1146B08e8104EeDBa44a73B7bda1d102c6ceDC9"
+export const BancorETH = "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315"
+export const EtherscanLink = "https://etherscan.io/"
+export const gasPrice = 2000000000 // 2 gwei low gas price by default
+export const netId = 1
 
 // ROPSTEN
-export const CoTraderPoolPortal = "0x427564A5Cc6E7402F97759C7B5d6A91974a82621"
-export const BancorRegistryMAIN = "0xE3a1C8765CD17f786dC668AaC59424d67ba67Fd1"
-export const ETHBNT = "0xDD78D22F53441b6B6216cE69E6dCAe6F7c9252b6"
-export const BNTToken = "0xc74bE418ADf788a04dB7d23E3916f332B74A9617"
-export const USDBToken = ""
-export const USDBBNTToken = ""
-export const BancorETH = "0xD368b98d03855835E2923Dc000b3f9c2EBF1b27b"
-export const EtherscanLink = "https://ropsten.etherscan.io/"
-export const gasPrice = 2000000000 // 2 gwei low gas price by default
-export const netId = 3
+// export const CoTraderPoolPortal = "0x427564A5Cc6E7402F97759C7B5d6A91974a82621"
+// export const BancorRegistryMAIN = "0xE3a1C8765CD17f786dC668AaC59424d67ba67Fd1"
+// export const ETHBNT = "0xDD78D22F53441b6B6216cE69E6dCAe6F7c9252b6"
+// export const BNTToken = "0xc74bE418ADf788a04dB7d23E3916f332B74A9617"
+// export const USDBToken = ""
+// export const USDBBNTToken = ""
+// export const BancorETH = "0xD368b98d03855835E2923Dc000b3f9c2EBF1b27b"
+// export const EtherscanLink = "https://ropsten.etherscan.io/"
+// export const gasPrice = 2000000000 // 2 gwei low gas price by default
+// export const netId = 3
 
 
 export const ABIBancorRegistryMAIN = [

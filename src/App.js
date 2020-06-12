@@ -99,8 +99,13 @@ class App extends Component {
   getDataFromServer = async () => {
     let official = await axios.get(API_endpoint + '/official')
     official = official.data.result
-    const officialSymbols = official.map(item => item.symbol)
-    const officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
+    let officialSymbols = official.map(item => item.symbol)
+    // remove null 
+    officialSymbols = officialSymbols.filter((el) => el)
+
+    let officialSmartTokenSymbols = official.map(item => item.smartTokenSymbol)
+    // remove null
+    officialSmartTokenSymbols.filter((el) => el)
 
     official.push({
     "tokenAddress": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
