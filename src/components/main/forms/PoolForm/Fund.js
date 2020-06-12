@@ -38,7 +38,7 @@ class Fund extends Component {
     connectorAmount:0,
     customBancorAmount:0,
     customConnectorAmount:0,
-    smartTokenAddress:undefined,
+    smartTokenAddress:null,
     smartTokenSupplyOriginal:0,
     newSmartTokenSupply:0,
     newUserPercent:0,
@@ -52,7 +52,11 @@ class Fund extends Component {
     tokenInfo:null,
     isLoadData:false,
     isBlackListed:false,
-    converterVersion : null
+    converterVersion : null,
+    isRequireApproval:false,
+    isBNTUnlocked:false,
+    isConnectorUnlocked:false,
+    stopCheckApprove:false
     }
   }
 
@@ -64,8 +68,8 @@ class Fund extends Component {
     })
   }
 
+  // Update info by input change
   componentDidUpdate = async (prevProps, prevState) => {
-    // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
       this.setState({
         bancorAmount:0,
@@ -75,11 +79,13 @@ class Fund extends Component {
 
     if(prevProps.from !== this.props.from && this.props.from){
        this.getConverterVersion()
+       this.checkRequireApproval()
+       this.setState({ stopCheckApprove:true })
     }
   }
 
   // Calculate connectors amount by pool amount
-  calculate = async () => {
+  calculateCostByPoolAmount = async () => {
     // Update connectors info by input change
     if(Number(this.state.directionAmount) > 0 && this.props.from){
       this.setState({ isLoadData:true })
@@ -186,7 +192,7 @@ class Fund extends Component {
     }
   }
 
-  // return % of total supply
+  // return user pool % of total pool supply
   calculateUserPercentFromSupply = (share, smartTokenSupply) => {
     const percent = smartTokenSupply.dividedBy(100)
     const partPercent = percent.dividedBy(share)
@@ -242,12 +248,50 @@ class Fund extends Component {
     }catch(e){
       converterVersion = 0
     }
-    this.setState({ converterVersion  })
+    this.setState({ converterVersion })
   }
 
-  // Batch request for approve connectors and add reserve
-  // NOTE: param isV2 for version < 28 should be always false, for version >= can be both true or false
-  approveAndFund = async (isV2) => {
+
+  checkRequireApproval = async () => {
+    // no need call this function, if user not connected
+    if(this.props.accounts){
+      const web3 = this.props.web3
+      // get additional info
+      const tokenInfo = this.props.getInfoBySymbol()
+      const converterAddress = tokenInfo[1]
+      const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+      const connectorAddress = tokenInfo[2]
+      // get contracts
+      const bntContract = new web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
+      const connectorContract = new web3.eth.Contract(ABISmartToken, connectorAddress)
+      // get allowance
+      const bntAllowance = await bntContract.methods.allowance(this.props.accounts[0], converterAddress).call()
+      const connectorAllowance = await connectorContract.methods.allowance(this.props.accounts[0], converterAddress).call()
+
+      // check if BNT and Connectors unlocked
+      const isBNTUnlocked = Number(fromWei(bntAllowance.toString())) > 10000000000000 ? true : false
+      const isConnectorUnlocked = Number(fromWei(connectorAllowance.toString())) > 10000000000000 ? true : false
+
+      // update states
+      if(isBNTUnlocked && isConnectorUnlocked){
+        this.setState({
+          isRequireApproval:false,
+          isBNTUnlocked,
+          isConnectorUnlocked
+        })
+      }else{
+        this.setState({
+          isRequireApproval:true,
+          isBNTUnlocked,
+          isConnectorUnlocked
+        })
+      }
+    }
+  }
+
+  // Batch request for unlock connectors and add reserve
+  // Approvewith max AMOUNT
+  batchApprove = async () => {
      // get web3 and create batch
      const web3 = this.props.web3
      let batch = new web3.BatchRequest()
@@ -262,46 +306,6 @@ class Fund extends Component {
      const connectorAddress = tokenInfo[2]
      const connector = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
 
-     // get converter contract dependse isV2 true or false
-     let converter = isV2
-     ? new web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
-     : tokenInfo[0]
-
-
-     // get amount, dependse of type (fund or add custom liquidity)
-     const bancorAmountWEI = isV2
-     ? await toWeiByDecimals(bancorConnectorAddress, this.state.customBancorAmount)
-     : this.state.bancorAmount
-
-     const connectorAmountWEI = isV2
-     ? await toWeiByDecimals(connectorAddress, this.state.customConnectorAmount)
-     : this.state.connectorAmount
-
-     // approve tx 1
-     const approveBancorData = bnt.methods.approve(
-       converterAddress,
-       bancorAmountWEI
-     ).encodeABI({from: this.props.accounts[0]})
-
-
-     // approve tx 2
-     const approveConnectorData = connector.methods.approve(
-       converterAddress,
-       connectorAmountWEI
-     ).encodeABI({from: this.props.accounts[0]})
-
-
-     // select fund or addAiquidity dependse of isV2 conditional
-     const poolData = isV2
-      ? converter.methods.addLiquidity(
-        [bancorConnectorAddress, connectorAddress],
-        [bancorAmountWEI, connectorAmountWEI],
-        1).encodeABI({from: this.props.accounts[0]})
-
-      : converter.methods.fund(toWei(String(this.state.directionAmount)))
-        .encodeABI({from: this.props.accounts[0]})
-
-
      // Prepare transaction data
      const commonData = {
        "from": this.props.accounts[0],
@@ -309,51 +313,99 @@ class Fund extends Component {
        "gasPrice": web3.eth.utils.toHex(gasPrice)
      }
 
-     const approveBancor = {
-       "to": bancorConnectorAddress,
-       "data": approveBancorData,
-       ...commonData
-     }
+     // Approve BNT if BNT not unlocked
+     if(!this.state.isBNTUnlocked){
+       const approveBancorData = bnt.methods.approve(
+         converterAddress,
+         toWei("10000000000000000000000000000000000000")
+       ).encodeABI({from: this.props.accounts[0]})
 
-     const approveConnector = {
-       "to": connectorAddress,
-       "data": approveConnectorData,
-       ...commonData
-     }
-
-     const fund = {
-       "to": converterAddress,
-       "data": poolData,
-       ...commonData
-     }
-
-     // add additional request reset approve for case if approved alredy BNT or USDB
-     // because BNT not allow do new approve, if alredy approved
-     if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
-       let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
-       bancorApproved = hexToNumberString(bancorApproved._hex)
-
-       if(bancorApproved > 0){
-         const resetApproveData = bnt.methods.approve(
-           converterAddress,
-           0
-         ).encodeABI({from: this.props.accounts[0]})
-
-         const resetApprove = {
-           "to": bancorConnectorAddress,
-           "data": resetApproveData,
-           ...commonData
-         }
-
-         batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
+       const approveBancor = {
+         "to": bancorConnectorAddress,
+         "data": approveBancorData,
+         ...commonData
        }
+
+       // add additional request reset approve for case if approved alredy BNT or USDB
+       // because BNT not allow do new approve, if alredy approved
+       if(bancorConnectorAddress === BNTToken || bancorConnectorAddress === USDBToken){
+         let bancorApproved = await bnt.methods.allowance(this.props.accounts[0], converterAddress).call()
+         bancorApproved = fromWei(bancorApproved.toString())
+
+         if(bancorApproved > 0){
+           const resetApproveData = bnt.methods.approve(
+             converterAddress,
+             0
+           ).encodeABI({from: this.props.accounts[0]})
+
+           const resetApprove = {
+             "to": bancorConnectorAddress,
+             "data": resetApproveData,
+             ...commonData
+           }
+           // add reset approve
+           batch.add(web3.eth.sendTransaction.request(resetApprove, () => console.log("ResetBancorApprove")))
+         }
+       }
+       // add approve BNT
+       batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
      }
 
-     // execude batch
-     batch.add(web3.eth.sendTransaction.request(approveBancor, () => console.log("Approve Bancor")))
-     batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
-     batch.add(web3.eth.sendTransaction.request(fund, () => console.log("Pool")))
+     // Approve Connector if Connector not unlocked
+     if(!this.state.isConnectorUnlocked){
+       const approveConnectorData = connector.methods.approve(
+         converterAddress,
+         toWei("10000000000000000000000000000000000000")
+       ).encodeABI({from: this.props.accounts[0]})
+
+       const approveConnector = {
+         "to": connectorAddress,
+         "data": approveConnectorData,
+         ...commonData
+       }
+       // add approve connector
+       batch.add(web3.eth.sendTransaction.request(approveConnector, () => console.log("Approve connector")))
+     }
+
+     // execude batch request
      batch.execute()
+
+     const interval = setInterval(() => {
+       console.log("Start check")
+       this.checkRequireApproval()
+       if(!this.state.isRequireApproval || this.setState.stopCheckApprove)
+        clearInterval(interval)
+     }, 10000)
+  }
+
+
+  // for version < 28
+  fund = async () => {
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
+    const tokenInfo = this.props.getInfoBySymbol()
+    const converter = tokenInfo[0]
+
+    converter.methods.fund(toWei(String(this.state.directionAmount)))
+    .send({from: this.props.accounts[0], gasPrice})
+  }
+
+  // for versions >= 28
+  addLiquidity = async () => {
+    const tokenInfo = this.props.getInfoBySymbol()
+    const converterAddress = tokenInfo[1]
+    const bancorGasLimit = await getBancorGasLimit()
+    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
+    const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
+    const connectorAddress = tokenInfo[2]
+    const converter = new this.props.web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
+    const bancorAmountWEI = await toWeiByDecimals(bancorConnectorAddress, this.state.customBancorAmount)
+    const connectorAmountWEI = await toWeiByDecimals(connectorAddress, this.state.customConnectorAmount)
+
+    converter.methods.addLiquidity(
+      [bancorConnectorAddress, connectorAddress],
+      [bancorAmountWEI, connectorAmountWEI],
+      1).send({from: this.props.accounts[0], gasPrice})
   }
 
 
@@ -396,8 +448,17 @@ class Fund extends Component {
                 onChange={e => this.change(e)}
                 type="number" min="1"
                 />
-
-                <Button variant="contained" color="primary" onClick={() => this.approveAndFund(true)}>Add Liquidity</Button>
+                {
+                  this.state.isRequireApproval
+                  ?
+                  (
+                    <Button variant="contained" color="primary" onClick={() => this.batchApprove()}>Unlock Assets</Button>
+                  )
+                  :
+                  (
+                    <Button variant="contained" color="primary" onClick={() => this.addLiquidity()}>Add Liquidity</Button>
+                  )
+                }
                 </>
               )
               :
@@ -413,7 +474,7 @@ class Fund extends Component {
                 onChange={e => this.change(e)}
                 type="number" min="1"
                 />
-                <Button variant="contained" color="primary" onClick={() => this.calculate()}>Calculate</Button>
+                <Button variant="contained" color="primary" onClick={() => this.calculateCostByPoolAmount()}>Calculate</Button>
                 <br/>
                 </>
               )
@@ -541,7 +602,19 @@ class Fund extends Component {
           !this.state.isBlackListed
           ?
           (
-            <Button variant="contained" color="primary" onClick={() => this.approveAndFund(false)}>Fund</Button>
+            <>
+            {
+              this.state.isRequireApproval
+              ?
+              (
+                <Button variant="contained" color="primary" onClick={() => this.batchApprove()}>Unlock Assets</Button>
+              )
+              :
+              (
+                <Button variant="contained" color="primary" onClick={() => this.fund()}>Fund</Button>
+              )
+            }
+            </>
           )
           :
           (
