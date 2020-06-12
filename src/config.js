@@ -1,5 +1,5 @@
-export const API_endpoint = "http://localhost:9003"
-// export const API_endpoint = "https://api-bancor.cotrader.com"
+// export const API_endpoint = "http://localhost:9003"
+export const API_endpoint = "https://api-bancor.cotrader.com"
 export const StableSymbol = "USDB(USDB)"
 export const ETHAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 
