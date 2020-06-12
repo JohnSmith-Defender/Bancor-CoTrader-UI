@@ -80,7 +80,8 @@ class Fund extends Component {
     if(prevProps.from !== this.props.from && this.props.from){
        this.getConverterVersion()
        this.checkRequireApproval()
-       this.setState({ stopCheckApprove:true })
+       const BancorConnectorType = await this.getBancorConnectorType()
+       this.setState({ stopCheckApprove:true, BancorConnectorType })
     }
   }
 
@@ -428,23 +429,21 @@ class Fund extends Component {
               (
                 <>
                 <Form.Text className="text-muted">
-                  Enter BNT amount
+                  Enter { this.state.BancorConnectorType } amount
                 </Form.Text>
                 <Form.Control
                 name="customBancorAmount"
                 value={this.state.customBancorAmount}
-                placeholder="Enter BNT amount"
                 onChange={e => this.change(e)}
                 type="number" min="1"
                 />
                 <br/>
                 <Form.Text className="text-muted">
-                  Enter ERC amount
+                  Enter { this.props.from } amount
                 </Form.Text>
                 <Form.Control
                 name="customConnectorAmount"
                 value={this.state.customConnectorAmount}
-                placeholder="Enter ERC amount"
                 onChange={e => this.change(e)}
                 type="number" min="1"
                 />

@@ -45,13 +45,10 @@ class StepTwo extends Component {
     const converterAddress = await anchor.methods.owner().call()
     const converter = new web3.eth.Contract(ABIConverter, converterAddress)
 
-    const gasPrice = this.props.MobXStorage.GasPrice
-
     converter.methods.acceptOwnership()
     .send({
       from: accounts[0],
-      gas:7372732,
-      gasPrice
+      gas:7372732
     })
     .on('transactionHash', (hash) => {
       this.props.MobXStorage.setPending(true)

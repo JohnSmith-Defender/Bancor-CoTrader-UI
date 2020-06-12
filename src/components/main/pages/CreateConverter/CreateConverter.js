@@ -9,7 +9,6 @@ import StepFinish from "./steps/StepFinish"
 
 
 import Pending from "../../../templates/Spiners/Pending"
-import ConverterSettings from "./ConverterSettings"
 
 const componentList = {
   Zero:StepZero,
@@ -119,7 +118,6 @@ class CreateConverter extends Component {
           <Alert variant="warning">Please connect to web3</Alert>
         )
       }
-      <ConverterSettings MobXStorage={this.props.MobXStorage}/>
 
       <div className="container-fluid" align="center">
       <small><a href="https://drive.google.com/open?id=1y5jJz8B4fpub-skJCun3FmYAMUMVnUUN" target="_blank" rel="noopener noreferrer">Bancor Documentation</a></small>

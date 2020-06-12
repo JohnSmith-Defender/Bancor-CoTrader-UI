@@ -121,7 +121,6 @@ class StepOne extends Component {
          window.localStorage.setItem('tokenSymbol', symbol)
 
          console.log("PARAMS: ", stname, stsymbol, 18)
-         const gasPrice = this.props.MobXStorage.GasPrice
 
          BancorConverterRegistry.methods.newConverter(
            1,
@@ -134,7 +133,6 @@ class StepOne extends Component {
          )
          .send({
            from: accounts[0],
-           gasPrice
          })
          .on('transactionHash', (hash) => {
           console.log("step one hash ", hash)
