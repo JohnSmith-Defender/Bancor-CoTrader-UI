@@ -238,17 +238,10 @@ class Fund extends Component {
     }
   }
 
-  // return version of current selected converter  address
+  // update version of current selected converter address
   getConverterVersion = async () => {
     const tokenInfo = this.props.getInfoBySymbol()
-    const converter = tokenInfo[0]
-    let converterVersion
-
-    try{
-      converterVersion = await converter.methods.version().call()
-    }catch(e){
-      converterVersion = 0
-    }
+    const converterVersion = tokenInfo[5].converterVersion
     this.setState({ converterVersion })
   }
 
