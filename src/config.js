@@ -83,6 +83,33 @@ export const BancorConverterRegistryABI = [
 		"constant": true,
 		"inputs": [
 			{
+				"name": "_type",
+				"type": "uint16"
+			},
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveWeights",
+				"type": "uint32[]"
+			}
+		],
+		"name": "getLiquidityPoolByConfig",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "_smartTokens",
 				"type": "address[]"
 			}
@@ -110,49 +137,6 @@ export const BancorConverterRegistryABI = [
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_type",
-				"type": "uint8"
-			},
-			{
-				"name": "_name",
-				"type": "string"
-			},
-			{
-				"name": "_symbol",
-				"type": "string"
-			},
-			{
-				"name": "_decimals",
-				"type": "uint8"
-			},
-			{
-				"name": "_maxConversionFee",
-				"type": "uint32"
-			},
-			{
-				"name": "_reserveTokens",
-				"type": "address[]"
-			},
-			{
-				"name": "_reserveWeights",
-				"type": "uint32[]"
-			}
-		],
-		"name": "newConverter",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -187,33 +171,6 @@ export const BancorConverterRegistryABI = [
 			{
 				"name": "",
 				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_type",
-				"type": "uint8"
-			},
-			{
-				"name": "_reserveTokens",
-				"type": "address[]"
-			},
-			{
-				"name": "_reserveWeights",
-				"type": "uint32[]"
-			}
-		],
-		"name": "getLiquidityPoolByConfig",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
 			}
 		],
 		"payable": false,
@@ -265,6 +222,49 @@ export const BancorConverterRegistryABI = [
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint16"
+			},
+			{
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"name": "_symbol",
+				"type": "string"
+			},
+			{
+				"name": "_decimals",
+				"type": "uint8"
+			},
+			{
+				"name": "_maxConversionFee",
+				"type": "uint32"
+			},
+			{
+				"name": "_reserveTokens",
+				"type": "address[]"
+			},
+			{
+				"name": "_reserveWeights",
+				"type": "uint32[]"
+			}
+		],
+		"name": "newConverter",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
