@@ -441,7 +441,15 @@ class Fund extends Component {
                   this.state.isRequireApproval
                   ?
                   (
+                    <>
+                    <UserInfo
+                    label="Issue with MetaMask? click here"
+                    info={`If you see message like this: "Allow to spend your UNDEFINED?", and you can not press "Confirm" or "Reject", then just close or hide this incorrect MetaMask page, and confirm next MetaMask page`}
+                    />
+                    <br/>
+                    <br/>
                     <Button variant="contained" color="primary" onClick={() => this.batchApprove()}>Unlock Assets</Button>
+                    </>
                   )
                   :
                   (
