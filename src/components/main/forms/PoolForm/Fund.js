@@ -293,8 +293,6 @@ class Fund extends Component {
      // get additional info
      const tokenInfo = this.props.getInfoBySymbol()
      const converterAddress = tokenInfo[1]
-     const bancorGasLimit = await getBancorGasLimit()
-     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
      const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
      const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
      const connectorAddress = tokenInfo[2]
@@ -303,8 +301,7 @@ class Fund extends Component {
      // Prepare transaction data
      const commonData = {
        "from": this.props.accounts[0],
-       "value": "0x0",
-       "gasPrice": web3.eth.utils.toHex(gasPrice)
+       "value": "0x0"
      }
 
      // Approve BNT if BNT not unlocked
@@ -389,7 +386,7 @@ class Fund extends Component {
     const tokenInfo = this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
     const bancorGasLimit = await getBancorGasLimit()
-    const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
+    const gasPrice = Number(bancorGasLimit) < 30000000000 ? bancorGasLimit : 30000000000 // 30 gwei by default
     const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
     const connectorAddress = tokenInfo[2]
     const converter = new this.props.web3.eth.Contract(ABILiquidityPoolV1Converter, converterAddress)
