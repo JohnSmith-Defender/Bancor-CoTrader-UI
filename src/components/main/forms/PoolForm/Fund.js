@@ -146,7 +146,7 @@ class Fund extends Component {
   // return smart token supply (old and new with input) as BN,
   // and userPercent as number and token and relay address and smartTokenBalance
   getRelayInfo = async (BancorConnectorType) => {
-    const info = this.props.getInfoBySymbol()
+    const info = await this.props.getInfoBySymbol()
     const tokenAddress = info[2]
     const smartTokenAddress = info[3]
     const smartTokenContract = info[4]
@@ -206,7 +206,7 @@ class Fund extends Component {
 
   // Return Bancor connector symbol (BNT or USDB)
   getBancorConnectorType = async () => {
-    const converterInfo = this.props.getInfoBySymbol()
+    const converterInfo = await this.props.getInfoBySymbol()
     const converter = converterInfo[0]
     const connectorAddress = await converter.methods.connectorTokens(0).call()
     const contract = new this.props.web3.eth.Contract(ABISmartToken, connectorAddress)
@@ -217,7 +217,7 @@ class Fund extends Component {
 
   // return BNT(or USDB) and ERC20 connectors amount calculated by smart token amount
   calculateConnectorBySmartTokenAmount = async () => {
-    const tokenData = this.props.getInfoBySymbol()
+    const tokenData = await this.props.getInfoBySymbol()
     const smartTokenAddress = tokenData[3]
     const amount = toWei(String(this.state.directionAmount))
     const poolPortal = new this.props.web3.eth.Contract(CoTraderPoolPortalABI,CoTraderPoolPortal)
@@ -240,7 +240,7 @@ class Fund extends Component {
 
   // update version of current selected converter address
   getConverterVersion = async () => {
-    const tokenInfo = this.props.getInfoBySymbol()
+    const tokenInfo = await this.props.getInfoBySymbol()
     const converterVersion = tokenInfo[5].converterVersion
     this.setState({ converterVersion })
   }
@@ -251,7 +251,7 @@ class Fund extends Component {
     if(this.props.accounts){
       const web3 = this.props.web3
       // get additional info
-      const tokenInfo = this.props.getInfoBySymbol()
+      const tokenInfo = await this.props.getInfoBySymbol()
       const converterAddress = tokenInfo[1]
       const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
       const connectorAddress = tokenInfo[2]
@@ -291,7 +291,7 @@ class Fund extends Component {
      let batch = new web3.BatchRequest()
 
      // get additional info
-     const tokenInfo = this.props.getInfoBySymbol()
+     const tokenInfo = await this.props.getInfoBySymbol()
      const converterAddress = tokenInfo[1]
      const bancorConnectorAddress = this.state.BancorConnectorType === "USDB" ? USDBToken : BNTToken
      const bnt = new this.props.web3.eth.Contract(ABISmartToken, bancorConnectorAddress)
@@ -374,7 +374,7 @@ class Fund extends Component {
   fund = async () => {
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
-    const tokenInfo = this.props.getInfoBySymbol()
+    const tokenInfo = await this.props.getInfoBySymbol()
     const converter = tokenInfo[0]
 
     converter.methods.fund(toWei(String(this.state.directionAmount)))
@@ -383,7 +383,7 @@ class Fund extends Component {
 
   // for versions >= 28
   addLiquidity = async () => {
-    const tokenInfo = this.props.getInfoBySymbol()
+    const tokenInfo = await this.props.getInfoBySymbol()
     const converterAddress = tokenInfo[1]
     const bancorGasLimit = await getBancorGasLimit()
     const gasPrice = Number(bancorGasLimit) < 30000000000 ? bancorGasLimit : 30000000000 // 30 gwei by default

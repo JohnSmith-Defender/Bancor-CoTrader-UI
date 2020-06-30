@@ -16,8 +16,9 @@ class Liquidate extends Component {
     // Update connectors info by input change
     if(prevProps.from !== this.props.from || prevState.directionAmount !== this.state.directionAmount){
       if(this.props.from){
-      const smarTokenAddress = this.props.getInfoBySymbol()[3]
-      const decimals = this.props.getInfoBySymbol()[5].tokenDecimals
+      const tokenInfo = await this.props.getInfoBySymbol()
+      const smarTokenAddress = tokenInfo[3]
+      const decimals = tokenInfo[5].tokenDecimals
       const smartTokenBalance = await this.props.getTokenBalance(this.props.web3, smarTokenAddress, this.props.accounts[0])
 
       this.setState({ smartTokenBalance, decimals })
@@ -27,7 +28,8 @@ class Liquidate extends Component {
 
   liquidate = async() => {
     if(this.state.directionAmount > 0){
-      const converter = this.props.getInfoBySymbol()[0]
+      const tokenInfo = await this.props.getInfoBySymbol()
+      const converter = tokenInfo[0]
       const bancorGasLimit = await getBancorGasLimit()
       const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
 

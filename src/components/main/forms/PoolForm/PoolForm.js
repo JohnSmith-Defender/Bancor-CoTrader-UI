@@ -96,16 +96,22 @@ class PoolForm extends Component {
   smart token address,
   smart token contract,
   and all token info object */
-  getInfoBySymbol = () => {
+  getInfoBySymbol = async () => {
     if(this.state.from && this.state.bancorTokensStorageJson){
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const tokenInfo = findByProps(this.state.bancorTokensStorageJson, 'symbol', this.state.from)[0]
+      const smartTokenContract = new web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
+      const converterAddress = await smartTokenContract.methods.owner().call()
+      const converterContract = new web3.eth.Contract(ABIConverter, converterAddress)
+
+      console.log("Old converter", tokenInfo.converterAddress, "new converter", converterAddress)
+
       return [
-        web3.eth.Contract(ABIConverter, tokenInfo.converterAddress),
-        tokenInfo.converterAddress,
+        converterContract,
+        converterAddress,
         tokenInfo.tokenAddress,
         tokenInfo.smartTokenAddress,
-        web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress),
+        smartTokenContract,
         tokenInfo
       ]
     }
