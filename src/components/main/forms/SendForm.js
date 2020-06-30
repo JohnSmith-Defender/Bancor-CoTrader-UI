@@ -10,8 +10,7 @@ import { isMobile } from 'react-device-detect'
 
 import {
   ABISmartToken,
-  ABIBancorNetwork,
-  netId
+  ABIBancorNetwork
 } from '../../../config'
 
 import {
@@ -26,7 +25,6 @@ import getPath from '../../../service/getPath'
 import getRateByPath from '../../../service/getRateByPath'
 import getBancorGasLimit from '../../../service/getBancorGasLimit'
 
-import DirectionInfo from './modules/DirectionInfo'
 import FakeButton from '../../templates/FakeButton'
 import SetMinReturn from './modules/SetMinReturn'
 import Button from '@material-ui/core/Button';
@@ -235,26 +233,6 @@ class SendForm extends Component {
           )
           :
           (null)
-        }
-        <br/>
-        {
-          netId === 1
-          ?
-          (
-            <DirectionInfo
-            from={this.props.MobXStorage.from }
-            to={this.props.MobXStorage.to}
-            directionAmount={this.state.directionAmount}
-            bancorTokensStorageJson={this.props.MobXStorage.bancorTokensStorageJson}
-            web3={this.props.MobXStorage.web3}
-            accounts={this.props.MobXStorage.accounts}
-            useERC20AsSelectFrom={true}
-            useERC20AsSelectTo={true}
-            amountReturn={this.state.amountReturn}
-            fee={this.state.fee}
-            />
-          )
-          :(null)
         }
         </div>
       )

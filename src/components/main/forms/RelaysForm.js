@@ -13,8 +13,7 @@ import getBancorContractByName from '../../../service/getBancorContractByName'
 import {
   ABISmartToken,
   ABIConverter,
-  ABIBancorNetwork,
-  netId
+  ABIBancorNetwork
 } from '../../../config'
 
 import {
@@ -31,7 +30,6 @@ import findByProps from '../../../service/findByProps'
 import { isMobile } from 'react-device-detect'
 
 import SelectSymbols from './modules/SelectSymbols'
-import DirectionInfo from './modules/DirectionInfo'
 import FakeButton from '../../templates/FakeButton'
 
 
@@ -275,26 +273,6 @@ class RelaysForm extends Component {
             )
             :
             (null)
-          }
-          <br/>
-          {
-            netId === 1
-            ?
-            (
-              <DirectionInfo
-              from={this.props.MobXStorage.from}
-              to={this.props.MobXStorage.to}
-              directionAmount={this.state.directionAmount}
-              bancorTokensStorageJson={this.props.MobXStorage.bancorTokensStorageJson}
-              web3={this.props.MobXStorage.web3}
-              accounts={this.props.MobXStorage.accounts}
-              useERC20AsSelectFrom={this.props.MobXStorage.useERC20AsSelectFrom}
-              useERC20AsSelectTo={this.props.MobXStorage.useERC20AsSelectTo}
-              amountReturn={this.state.amountReturn}
-              fee={this.state.fee}
-              />
-            )
-            :(null)
           }
           </div>
       )

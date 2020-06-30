@@ -18,8 +18,7 @@ import getBancorContractByName from '../../../service/getBancorContractByName'
 import {
   ABISmartToken,
   ABIBancorNetwork,
-  ABIConverter,
-  netId
+  ABIConverter
 } from '../../../config'
 
 import {
@@ -27,7 +26,6 @@ import {
   //fromWeiByDecimals
 } from '../../../service/weiByDecimals'
 
-import DirectionInfo from './modules/DirectionInfo'
 import SetMinReturn from './modules/SetMinReturn'
 import FakeButton from '../../templates/FakeButton'
 import { Alert, Form, Col, Row } from "react-bootstrap"
@@ -257,26 +255,6 @@ class TradeForm extends Component {
           )
           :
           (null)
-        }
-        <br/>
-        {
-          netId === 1
-          ?
-          (
-            <DirectionInfo
-            from={this.props.MobXStorage.from}
-            to={this.props.MobXStorage.to}
-            directionAmount={this.state.directionAmount}
-            bancorTokensStorageJson={this.props.MobXStorage.bancorTokensStorageJson}
-            web3={this.props.MobXStorage.web3}
-            accounts={this.props.MobXStorage.accounts}
-            useERC20AsSelectFrom={true}
-            useERC20AsSelectTo={true}
-            amountReturn={this.state.amountReturn}
-            fee={this.state.fee}
-            />
-          )
-          :(null)
         }
         </div>
 
