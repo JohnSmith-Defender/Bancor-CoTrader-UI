@@ -24,6 +24,7 @@ export const toWeiByDecimals = async (address, amount, web3) => {
     const factor = 10 ** decimals
     amount = new BigNumber(amount)
     amount = amount.multipliedBy(factor)
+    BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
     return new BigNumber(amount).toString()
   }catch(e){
     return toWei(amount)
@@ -42,10 +43,11 @@ export const fromWeiByDecimals = async (address, amount, web3) => {
       decimals = await token.methods.decimals().call()
     }
 
-    // calculate 
+    // calculate
     const factor = 10 ** decimals
     amount = new BigNumber(amount)
     amount = amount.dividedBy(factor)
+    BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
     return new BigNumber(amount).toString()
   }catch(e){
     return fromWei(amount)
@@ -61,6 +63,7 @@ export const fromWeiByDecimals = async (address, amount, web3) => {
       const factor = 10 ** decimals
       amount = new BigNumber(amount)
       amount = amount.multipliedBy(factor)
+      BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
       return new BigNumber(amount).toString()
     }catch(e){
       return toWei(amount)
@@ -73,6 +76,7 @@ export const fromWeiByDecimals = async (address, amount, web3) => {
       const factor = 10 ** decimals
       amount = new BigNumber(amount)
       amount = amount.dividedBy(factor)
+      BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
       return new BigNumber(amount).toString()
     }catch(e){
       return fromWei(amount)

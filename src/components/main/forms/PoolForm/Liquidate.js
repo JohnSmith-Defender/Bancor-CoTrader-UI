@@ -3,7 +3,7 @@ import { Form, Alert } from "react-bootstrap"
 import { toWeiByDecimalsInput, fromWeiByDecimalsInput } from '../../../../service/weiByDecimals'
 import getBancorGasLimit from '../../../../service/getBancorGasLimit'
 import Button from '@material-ui/core/Button'
-
+import BigNumber from 'bignumber.js'
 
 class Liquidate extends Component {
   state = {
@@ -32,8 +32,9 @@ class Liquidate extends Component {
       const converter = tokenInfo[0]
       const bancorGasLimit = await getBancorGasLimit()
       const gasPrice = Number(bancorGasLimit) < 6000000000 ? bancorGasLimit : 6000000000 // 6gwei by default
+      const toWeiInput = BigNumber(toWeiByDecimalsInput(this.state.decimals, String(this.state.directionAmount)))
 
-      converter.methods.liquidate(toWeiByDecimalsInput(this.state.decimals, String(this.state.directionAmount)))
+      converter.methods.liquidate(String(toWeiInput))
       .send({ from:this.props.accounts[0], gasPrice})
     }
     else {
