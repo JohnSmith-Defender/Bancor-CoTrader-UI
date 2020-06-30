@@ -101,10 +101,9 @@ class PoolForm extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const tokenInfo = findByProps(this.state.bancorTokensStorageJson, 'symbol', this.state.from)[0]
       const smartTokenContract = new web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
+      // get latest converter address not from api, but from contracts 
       const converterAddress = await smartTokenContract.methods.owner().call()
       const converterContract = new web3.eth.Contract(ABIConverter, converterAddress)
-
-      console.log("Old converter", tokenInfo.converterAddress, "new converter", converterAddress)
 
       return [
         converterContract,
