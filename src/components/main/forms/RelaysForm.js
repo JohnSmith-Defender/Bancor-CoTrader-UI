@@ -13,7 +13,7 @@ import getBancorContractByName from '../../../service/getBancorContractByName'
 import {
   ABISmartToken,
   ABIConverter,
-  ABIBancorNetwork
+  ABIBancorNetwork,
 } from '../../../config'
 
 import {
