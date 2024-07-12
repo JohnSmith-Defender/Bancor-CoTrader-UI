@@ -52,6 +52,16 @@ class SelectSymbols extends Component {
     this.setState({ useERC20AsSelect: !this.state.useERC20AsSelect })
   }
 
+  findTokenAddressBySymbol = (symbol, isERC20) => {
+    const selecter = isERC20 ? 'symbol' : 'smartTokenSymbol'
+    const tokenObj = this.state.bancorTokensStorageJson.find((item) => item[selecter] && item[selecter] === symbol)
+    if(tokenObj){
+      return String(tokenObj.tokenAddress).toLowerCase()
+    }else{
+      return null
+    }
+  }
+
 
   render() {
     return (
@@ -83,6 +93,18 @@ class SelectSymbols extends Component {
               options={this.state.useERC20AsSelect ? this.state.officialSymbols :this.state.officialSmartTokenSymbols}
               onChange={(s) => this.updateMobxSelect(s[0])}
               placeholder={`Choose token to ${this.props.symbolDirection === 'from' ? 'send' :'receive'}`}
+              renderMenuItemChildren={(options, props) => (
+                 <div>
+                   <img
+                   style={{height: "35px", width: "35px"}}
+                   src={`https://tokens.1inch.exchange/${this.findTokenAddressBySymbol(options, this.state.useERC20AsSelect)}.png`}
+                   alt="Logo"
+                   onError={(e)=>{e.target.onerror = null; e.target.src="https://etherscan.io/images/main/empty-token.png"}}
+                   />
+                   &nbsp; &nbsp;
+                   {options}
+                 </div>
+               )}
           />
           </React.Fragment>
         )

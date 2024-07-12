@@ -101,7 +101,7 @@ class PoolForm extends Component {
       const web3 = getWeb3ForRead(this.props.MobXStorage.web3)
       const tokenInfo = findByProps(this.state.bancorTokensStorageJson, 'symbol', this.state.from)[0]
       const smartTokenContract = new web3.eth.Contract(ABISmartToken, tokenInfo.smartTokenAddress)
-      // get latest converter address not from api, but from contracts 
+      // get latest converter address not from api, but from contracts
       const converterAddress = await smartTokenContract.methods.owner().call()
       const converterContract = new web3.eth.Contract(ABIConverter, converterAddress)
 
@@ -115,6 +115,16 @@ class PoolForm extends Component {
       ]
     }
   }
+
+  findTokenAddressBySmartTokenSymbol = (symbol) => {
+    const tokenObj = this.state.bancorTokensStorageJson.find((item) => item.symbol && item.symbol === symbol)
+    if(tokenObj){
+      return String(tokenObj.tokenAddress).toLowerCase()
+    }else{
+      return null
+    }
+  }
+
   // TODO move this to a Presentational component
     render(){
       return(
@@ -144,6 +154,18 @@ class PoolForm extends Component {
                     options={this.state.officialSymbols}
                     onChange={(s) => this.setState({from: s[0]})}
                     placeholder="Choose a symbol for send"
+                    renderMenuItemChildren={(options, props) => (
+                       <div>
+                         <img
+                         style={{height: "35px", width: "35px"}}
+                         src={`https://tokens.1inch.exchange/${this.findTokenAddressBySmartTokenSymbol(options)}.png`}
+                         alt="Logo"
+                         onError={(e)=>{e.target.onerror = null; e.target.src="https://etherscan.io/images/main/empty-token.png"}}
+                         />
+                         &nbsp; &nbsp;
+                         {options}
+                       </div>
+                     )}
                 />
                 <br/>
                 {

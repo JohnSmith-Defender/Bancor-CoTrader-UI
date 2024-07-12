@@ -3,7 +3,7 @@ export const API_endpoint = "https://api-bancor.cotrader.com"
 export const StableSymbol = "USDB(USDB)"
 export const ETHAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 
-// MAINNET
+// // MAINNET
 export const CoTraderPoolPortal = "0x3f49fEddB3c63E36552679BC972857312dC8b4b7"
 export const BancorRegistryMAIN = "0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4"
 export const ETHBNT = "0xb1cd6e4153b2a390cf00a6556b0fc1458c4a5533"
